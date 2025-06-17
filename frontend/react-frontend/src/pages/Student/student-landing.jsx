@@ -1,5 +1,5 @@
 import React from 'react';
-import './student_landing.css';
+import './student-landing.css';
 
 const CourseList = () => {
   const courses = [
@@ -45,3 +45,4 @@ const CourseList = () => {
 };
 
 export default CourseList;
+3

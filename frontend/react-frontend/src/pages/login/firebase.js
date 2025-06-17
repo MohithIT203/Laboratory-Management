@@ -16,3 +16,4 @@ auth.languageCode = "en";
 const provider = new GoogleAuthProvider();
 
 export { auth, provider };
+

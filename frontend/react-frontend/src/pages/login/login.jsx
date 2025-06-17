@@ -9,7 +9,6 @@ import "./login.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -25,7 +24,7 @@ const Login = () => {
 
         if (userEmail.endsWith("@bitsathy.ac.in")) {
           alert("Student");
-          navigate("/student-dashboard");
+          navigate("/student");
         } else {
           navigate("/Teacher-dashboard");
         }
@@ -50,6 +49,7 @@ const Login = () => {
               className="inputField"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
@@ -71,6 +71,7 @@ const Login = () => {
               className="inputField"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoComplete="current-password"
               required
             />
           </div>
@@ -93,3 +94,4 @@ const Login = () => {
 };
 
 export default Login;
+  

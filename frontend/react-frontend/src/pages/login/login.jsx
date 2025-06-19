@@ -26,7 +26,7 @@ const Login = () => {
           alert("Student");
           navigate("/student");
         } else {
-          navigate("/Teacher-dashboard");
+          navigate("/teacher");
         }
       })
       .catch((error) => {

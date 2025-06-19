@@ -59,6 +59,22 @@ button {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
+
+.pdf-link {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.pdf-link a {
+  color: #2e7d32;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.pdf-link a:hover {
+  color: #1b5e20;
+}
+
 /* .inner-div{
   display: flex;
 } */

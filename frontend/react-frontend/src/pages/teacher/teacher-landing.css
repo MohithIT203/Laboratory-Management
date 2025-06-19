@@ -1,0 +1,203 @@
+/* Container */
+.dashboard-container {
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Header */
+.dashboard-container h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+}
+
+.dashboard-container p {
+  margin-bottom: 2rem;
+  color: #475569;
+}
+
+/* Dashboard cards */
+.dashboard-cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+/* All cards with green to white gradient */
+.card {
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  color: #a50707; /* darker green text to contrast on white */
+  padding: 1rem 1.5rem;
+  font-size: 20px;
+  font-weight: bolder;
+  height: 130px;
+  border-radius: 1rem;
+  flex: 1 1 100px;
+  box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Filter card: transparent with subtle neumorphic style (unchanged) */
+.card:nth-child(3) + .card {
+  background: transparent; /* keep transparent */
+  color: #065f46;
+  box-shadow: inset 4px 4px 8px rgba(16, 185, 129, 0.15),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8),
+    4px 4px 15px rgba(16, 185, 129, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.card h3 {
+  font-size: 30px;
+  color: rgb(31, 132, 31);
+}
+
+/* Select styling with advanced design */
+.card select {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border: 1.8px solid #10b981;
+  border-radius: 1rem;
+  background: #ffffffcc; /* semi-transparent white */
+  color: #065f46;
+  box-shadow: 2px 2px 6px rgba(16, 185, 129, 0.15), inset 1px 1px 3px #d1fae5;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.card select:hover,
+.card select:focus {
+  border-color: #059669;
+  box-shadow: 0 0 8px #059669, inset 1px 1px 3px #a7f3d0;
+  outline: none;
+}
+
+/* Create button with green to white gradient */
+.create-btn {
+  background: linear-gradient(135deg, #34d399 0%, #ffffff 100%);
+  color: #047857;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(162, 171, 168, 0.3);
+  margin-bottom: 2rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(52, 211, 153, 0.4);
+}
+
+/* Slot list */
+.slot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Slot card */
+.slot-card {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid #10b981;
+}
+
+.slot-card h3 {
+  margin-top: 0;
+  color: #047857;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.your-slot-badge {
+  background-color: #10b981;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+/* Materials */
+.materials {
+  background-color: #ecfdf5;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Popup */
+.popup {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  width: 90%;
+  max-width: 500px;
+}
+
+.popup h3 {
+  margin-top: 0;
+  color: #047857;
+}
+
+.popup label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.popup input,
+.popup select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  margin-top: 0.25rem;
+}
+
+.popup button {
+  margin-top: 1rem;
+  background-color: #047857;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: #065f46;
+}
+
+/* Responsive improvements */
+@media (max-width: 600px) {
+  .dashboard-cards {
+    flex-direction: column;
+  }
+}

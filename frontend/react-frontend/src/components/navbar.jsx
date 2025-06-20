@@ -11,13 +11,15 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 const pages = ['My Bookings', 'Attendence', 'Book Slot'];
 const settings = ['Account', 'Logout'];
 
 function MiniAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate=useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -33,6 +35,19 @@ function MiniAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handlelogout = async (setting) => {
+   
+  if (setting.toLowerCase() === "logout") {
+     try {
+      const response = await axios.post("http://localhost:4000/api/user/logout", {
+      },{ withCredentials: true });
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      alert("Logout error");
+    }
+  }
+};
 
   return (
     <AppBar
@@ -129,7 +144,7 @@ function MiniAppBar() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }} onClick={() => handlelogout(setting)}>
                     {setting}
                   </Typography>
                 </MenuItem>

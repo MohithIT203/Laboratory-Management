@@ -30,7 +30,7 @@ const Login = () => {
         userEmail: email,
       },{ withCredentials: true });
       if (response.data.role === "Student") {
-        navigate("/student/dashboard");
+        navigate("/student/dashboard",{ state: { Studentdept: response.data.dept }});
       } else if (response.data.role === "faculty") {
         navigate("/faculty/dashboard");
       }

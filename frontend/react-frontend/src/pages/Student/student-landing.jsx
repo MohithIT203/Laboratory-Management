@@ -1,26 +1,53 @@
-import React from "react";
+import React, { useState ,useEffect} from "react";
+import { useLocation } from "react-router-dom";
 import "./student-landing.css";
-
+import MiniAppBar from "../../components/navbar";
+import axios from 'axios';
 const CourseList = () => {
-  const courses = [
-    {
-      id: 1,
-      name: "COMPUTER SCIENCE",
-      faculty: ["Dr. Alice", "Prof. Bob", "Ms. Clara"],
-    },
-    {
-      id: 2,
-      name: "MECHANICAL ENGINEERING",
-      faculty: ["Mr. Dave", "Dr. Eva", "Prof. Frank"],
-    },
-    {
-      id: 3,
-      name: "CIVIL ENGINEERING",
-      faculty: ["Ms. Grace", "Dr. Henry", "Prof. Irene"],
-    },
-  ];
+  const location = useLocation();
+  const userDept=location.state.Studentdept;
+  console.log(userDept);
+  // const courses = [
+  //   {
+  //     id: 1,
+  //     name: "COMPUTER SCIENCE",
+  //     faculty: ["Dr. Alice", "Prof. Bob", "Ms. Clara"],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "MECHANICAL ENGINEERING",
+  //     faculty: ["Mr. Dave", "Dr. Eva", "Prof. Frank"],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "CIVIL ENGINEERING",
+  //     faculty: ["Ms. Grace", "Dr. Henry", "Prof. Irene"],
+  //   },
+  // ];
+const [courses,setCourses]=useState([]);
+
+
+useEffect(() => {
+  if (userDept) {
+    axios
+      .get(`http://localhost:4000/student/courses/${userDept}`)
+      .then((response) => {
+        setCourses(response.data);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch courses:', error);
+      });
+      
+  }
+  else{
+    alert('Login!!');
+  }
+}, [userDept]);
+
 
   return (
+    <>
+    <MiniAppBar/>
     <div className="wrapper">
       <div className="course_content">
         <h3 style={{ position: "relative", left: "55px" }}>
@@ -28,11 +55,11 @@ const CourseList = () => {
         </h3>
         <div className="allItems">
           {courses.map((course) => (
-            <div key={course.id} className="content">
-              <h5 style={{ margin: "10px 10px 10px 0px" }}>{course.name}</h5>
+            <div key={course.Course_id} className="content">
+              <h3 style={{ margin: "10px 10px 10px 0px" }}>{course.Course_name}</h3>
               <p style={{ margin: "0px", fontSize: "17px" }}>Faculties:</p>
               <ol className="list_item">
-                {course.faculty.map((name, index) => (
+                {course.Staff_name.map((name, index) => (
                   <li key={index}>{name}</li>
                 ))}
               </ol>
@@ -42,6 +69,7 @@ const CourseList = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

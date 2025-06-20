@@ -118,7 +118,7 @@ const SlotList = () => {
         >
           <label
             htmlFor="filter"
-            style={{ fontWeight: "bold", color: "#475569" }}
+            style={{ fontWeight: "bold", color: "#212020" }}
           >
             Filter:
           </label>

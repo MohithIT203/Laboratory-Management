@@ -1,0 +1,152 @@
+/* Main container */
+
+.attendance-container {
+    padding: 2rem;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fbfd;
+    min-height: 100vh;
+  }
+  
+  /* Top cards layout */
+  .stats-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Each top summary card */
+  .acard {
+    flex: 1;
+    min-width: 200px;
+    background: white;
+    padding: 1.2rem 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  
+  .acard:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* Green background card */
+  .green-card {
+    background: #e7f9ef;
+    border-left: 6px solid #24c98b;
+  }
+  
+  /* Text and Icon in cards */
+  .acard p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 0.3rem;
+  }
+  
+  .acard h2 {
+    font-size: 1.75rem;
+    margin: 0;
+    color: #222;
+  }
+  
+  .acard .icon {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 1.4rem;
+    opacity: 0.7;
+  }
+  
+  /* Colored icons */
+  .icon.green {
+    color: #24c98b;
+  }
+  
+  .icon.red {
+    color: #f44336;
+  }
+  
+  .icon.blue {
+    color: #4a90e2;
+  }
+  
+  /* Attendance History Section */
+  .history-title {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem;
+    color: #1a1a1a;
+  }
+  
+  /* Individual session card */
+  .session-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
+  }
+  
+  /* Header of session card */
+  .session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .session-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2d2d2d;
+  }
+  
+  .session-subtitle {
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  /* Present badge */
+  .present-badge {
+    background-color: #e0f8ec;
+    color: #1aaa66;
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
+  
+  .badge-icon {
+    font-size: 1rem;
+  }
+  
+  /* Info below session title */
+  .session-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 0.8rem;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .info-icon {
+    color: #888;
+  }
+  
+  /* Marked time */
+  .marked-time {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 0.5rem;
+  }
+  

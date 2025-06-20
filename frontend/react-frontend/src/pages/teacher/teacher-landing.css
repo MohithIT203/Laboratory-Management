@@ -1,4 +1,9 @@
 /* Container */
+
+body{
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 .dashboard-container {
   padding: 2rem;
   font-family: "Segoe UI", sans-serif;
@@ -15,7 +20,7 @@
 
 .dashboard-container p {
   margin-bottom: 2rem;
-  color: #475569;
+  color: #212020;
 }
 
 /* Dashboard cards */

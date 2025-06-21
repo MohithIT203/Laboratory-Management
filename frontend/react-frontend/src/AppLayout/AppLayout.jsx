@@ -12,7 +12,7 @@ const AppLayout = () => {
         <Route path="/" element={<Login />} />
         <Route path="/student" element={<CourseList />} />
         <Route path="/teacher" element={<SlotList />} />
-        <Route path="/attendance-student" element={<StudentAttendance/>} />
+        <Route path="/student-attendance" element={<StudentAttendance/>} />
       </Routes>
     </BrowserRouter>
   );

@@ -4,17 +4,13 @@ import EmailIcon from "@mui/icons-material/Email";
 import KeyIcon from "@mui/icons-material/Key";
 import { auth, provider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
+import axios from "axios";
 import "./login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Form submitted");
-  };
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -34,14 +30,46 @@ const Login = () => {
       });
   };
 
+  const handleLogin = async () => {
+    // Hardcoded credentials
+    if (email === "harrish@gmail.com" && password === "harrish") {
+      const definedEmail = "harrish2005@gmail.com";
+      const definedPassword = "harrish";
+
+      // You can store it in localStorage/sessionStorage or just log it
+      console.log("Defined Email:", definedEmail);
+      console.log("Defined Password:", definedPassword);
+
+      navigate("/student");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/user/login",
+        { userEmail: email },
+        { withCredentials: true }
+      );
+
+      if (response.data.role === "Student") {
+        navigate("/student/dashboard");
+      } else if (response.data.role === "faculty") {
+        navigate("/faculty/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Login error");
+    }
+  };
+
   return (
     <div className="mainContainer">
       <div className="outerdiv">
         <h2 className="head">BIT LAB SLOT BOOKING</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
-              <EmailIcon style={{ color: "#6018be" }} /> Email:
+              <EmailIcon style={{ color: "#0d9f62" }} /> Email:
             </label>
             <input
               type="email"
@@ -55,29 +83,22 @@ const Login = () => {
           </div>
 
           <div style={{ marginBottom: "15px" }}>
-            <label
-              style={{
-                color: "#4b5563",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <KeyIcon style={{ color: "#6018be" }} /> Password:
+            <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
+              <KeyIcon style={{ color: "#0d9f62" }} /> Password:
             </label>
             <input
               type="password"
-              placeholder="Enter your Password"
+              placeholder="Enter your password"
               className="inputField"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
             />
           </div>
 
           <div>
-            <button type="submit" className="submitBtn">
+            <button type="button" className="submitBtn" onClick={handleLogin}>
               Login
             </button>
           </div>
@@ -94,4 +115,3 @@ const Login = () => {
 };
 
 export default Login;
-  

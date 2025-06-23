@@ -4,13 +4,12 @@ import "./teacher-landing.css";
 const SlotList = () => {
   const [slots, setSlots] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [weekDates, setWeekDates] = useState([]);
   const [filter, setFilter] = useState("All Slots");
 
   const [newSlot, setNewSlot] = useState({
     title: "",
     date: "",
-    time: "8:45 AM TO 10:30 AM",
+    time: "",
     venue: "AIML LAB 1",
     capacity: 20,
     pdfName: "",
@@ -34,18 +33,8 @@ const SlotList = () => {
   const venueOptions = [
     "AIML LAB 1",
     "AIML LAB 2",
-    "AIML LAB 3",
-    "AIML LAB 4",
-    "AIML LAB 5",
     "IT LAB 1",
     "IT LAB 2",
-    "IT LAB 3",
-    "IT LAB 4",
-    "IT LAB 5",
-    "CSE LAB 1",
-    "CSE LAB 2",
-    "CSE LAB 3",
-    "CSE LAB 4",
     "MECH CAD LAB",
     "MECH CT LAB",
   ];
@@ -75,6 +64,22 @@ const SlotList = () => {
   };
 
   const handleConfirm = () => {
+    const { title, date, time, venue, capacity, pdfData } = newSlot;
+    if (!title || !date || !time || !venue || !capacity || !pdfData) {
+      alert("Please fill in all required fields and upload a PDF.");
+      return;
+    }
+
+    // Duplicate check
+    const isDuplicate = slots.some(
+      (slot) => slot.date === date && slot.time === time && slot.venue === venue
+    );
+
+    if (isDuplicate) {
+      alert("A slot already exists for the selected venue, date, and time.");
+      return;
+    }
+
     const id = slots.length + 1;
     const newEntry = {
       id,
@@ -93,6 +98,17 @@ const SlotList = () => {
     localStorage.setItem("createdSlots", JSON.stringify(updatedSlots));
   };
 
+  const getAvailableTimeSlots = () => {
+    return timeSlots.filter((time) => {
+      return !slots.some(
+        (slot) =>
+          slot.date === newSlot.date &&
+          slot.venue === newSlot.venue &&
+          slot.time === time
+      );
+    });
+  };
+
   const totalBookings = slots.reduce(
     (sum, slot) => sum + (slot.enrolled || 0),
     0
@@ -102,7 +118,6 @@ const SlotList = () => {
     <div className="dashboard-container">
       <h2>Faculty Dashboard</h2>
       <p>Welcome back, Dr. Sarah Johnson</p>
-
       <div className="dashboard-cards">
         <div className="card">
           <p>Total Slots</p>
@@ -128,7 +143,12 @@ const SlotList = () => {
             onChange={(e) => setFilter(e.target.value)}
             className="filter-select"
           >
-            <option>All Slots</option>
+            <option value="All Slots">All Slots</option>
+            {subjectOptions.map((subject, i) => (
+              <option key={i} value={subject}>
+                {subject}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -138,101 +158,139 @@ const SlotList = () => {
       </button>
 
       <div className="slot-list">
-        {slots.map((slot) => (
-          <div key={slot.id} className="slot-card">
-            <div className="slot-header">
-              <h3>
-                {slot.title} <span className="your-slot-badge">Your Slot</span>
-              </h3>
-            </div>
-            <p>
-              <b>📅</b> {new Date(slot.date).toDateString()}
-            </p>
-            <p>
-              <b>⏰</b> {slot.time}
-            </p>
-            <p>
-              <b>📍</b> {slot.venue}
-            </p>
-            <p>
-              <b>👥</b> 0/{slot.capacity} Capacity
-            </p>
-            {slot.pdfData && (
-              <div className="materials">
-                <b>📄 PDF Material:</b>{" "}
-                <a
-                  href={slot.pdfData}
-                  download={slot.pdfName}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {slot.pdfName}
-                </a>
+        {slots
+          .filter((slot) => filter === "All Slots" || slot.title === filter)
+          .map((slot) => (
+            <div key={slot.id} className="slot-card">
+              <div className="slot-header">
+                <h3>
+                  {slot.title}{" "}
+                  <span className="your-slot-badge">Your Slot</span>
+                </h3>
               </div>
-            )}
-            <button
-              className="remove-btn bottom-right"
-              title="Remove Slot"
-              onClick={() => handleRemove(slot.id)}
-              style={{ backgroundColor: "red" }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+              <p>
+                <b>📅</b> {new Date(slot.date).toDateString()}
+              </p>
+              <p>
+                <b>⏰</b> {slot.time}
+              </p>
+              <p>
+                <b>📍</b> {slot.venue}
+              </p>
+              <p>
+                <b>👥</b> 0/{slot.capacity} Capacity
+              </p>
+              {slot.pdfData && (
+                <div className="materials">
+                  <b>📄 PDF Material:</b>{" "}
+                  <a
+                    href={slot.pdfData}
+                    download={slot.pdfName}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {slot.pdfName}
+                  </a>
+                </div>
+              )}
+              <button
+                className="remove-btn bottom-right"
+                title="Remove Slot"
+                onClick={() => handleRemove(slot.id)}
+                style={{
+                  backgroundColor: "#e53e3e", // bright red
+                  marginTop: "20px",
+                  height: "36px",
+                  width: "120px", // wider so text fits nicely
+                  borderRadius: "8px",
+                  border: "none",
+                  color: "white",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 8px rgba(229, 62, 62, 0.4)",
+                  transition: "background-color 0.3s ease",
+                  userSelect: "none",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#c53030")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = "#e53e3e")
+                }
+              >
+                Delete
+              </button>
+            </div>
+          ))}
       </div>
 
       {showPopup && (
         <div className="popup">
           <h3>Create Slot</h3>
+
           <label>
-            Subject:
+            Subject<span style={{ color: "red" }}>*</span>:
             <select
               value={newSlot.title}
               onChange={(e) =>
                 setNewSlot({ ...newSlot, title: e.target.value })
               }
+              required
             >
+              <option value="">-- Select Subject --</option>
               {subjectOptions.map((s, i) => (
                 <option key={i}>{s}</option>
               ))}
             </select>
           </label>
+
           <label>
-            Date:
+            Date<span style={{ color: "red" }}>*</span>:
             <input
               type="date"
-              style={{ width: "482px" }}
               value={newSlot.date}
               onChange={(e) => setNewSlot({ ...newSlot, date: e.target.value })}
+              required
             />
           </label>
+
           <label>
-            Time:
+            Time<span style={{ color: "red" }}>*</span>:
             <select
               value={newSlot.time}
               onChange={(e) => setNewSlot({ ...newSlot, time: e.target.value })}
+              required
             >
-              {timeSlots.map((t, i) => (
+              <option value="">-- Select Time Slot --</option>
+              {getAvailableTimeSlots().map((t, i) => (
                 <option key={i}>{t}</option>
               ))}
             </select>
+            {getAvailableTimeSlots().length === 0 && (
+              <p style={{ color: "red", fontSize: "0.9rem" }}>
+                No available slots for this lab and date.
+              </p>
+            )}
           </label>
+
           <label>
-            Venue:
+            Venue<span style={{ color: "red" }}>*</span>:
             <select
               value={newSlot.venue}
               onChange={(e) =>
                 setNewSlot({ ...newSlot, venue: e.target.value })
               }
+              required
             >
               {venueOptions.map((v, i) => (
                 <option key={i}>{v}</option>
               ))}
             </select>
           </label>
+
           <label>
-            Capacity:
+            Capacity<span style={{ color: "red" }}>*</span>:
             <input
               type="number"
               min="1"
@@ -240,15 +298,23 @@ const SlotList = () => {
               onChange={(e) =>
                 setNewSlot({ ...newSlot, capacity: parseInt(e.target.value) })
               }
+              required
             />
           </label>
+
           <label>
-            Upload PDF Material:
-            <input type="file" accept=".pdf" onChange={handleFileUpload} />
+            Upload PDF Material<span style={{ color: "red" }}>*</span>:
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleFileUpload}
+              required
+            />
             {newSlot.pdfName && (
               <p style={{ fontSize: "0.9rem" }}>Selected: {newSlot.pdfName}</p>
             )}
           </label>
+
           <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
             <button onClick={handleConfirm}>Confirm</button>
             <button

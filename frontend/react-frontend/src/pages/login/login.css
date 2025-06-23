@@ -17,7 +17,7 @@
     width: 100%;
     padding: 40px;
     max-width: 400px;
-    border-top: 6px solid #6018be;
+    border-top: 6px solid #0d9f62;
     background-color: white;
   }
   
@@ -65,8 +65,8 @@
   .submitBtn {
     width: 170px;
     height: 36px;
-    border: 1px solid #6018be;
-    background-color: #6018be;
+    border: 1px solid #0d9f62;
+    background-color: #0d9f62;
     color: white;
     font-weight: bold;
     border-radius: 5px;
@@ -76,8 +76,8 @@
   }
   
   .submitBtn:hover {
-    background-color: #4b1390;
-    border-color: #4b1390;
+    background-color: #05724e;
+    border-color: #0d9f62;
   }
   
   /* ✅ Responsive styles for mobile */

@@ -1,0 +1,48 @@
+.viewslots-container {
+    padding: 2rem;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f6fa;
+    min-height: 100vh;
+  }
+  
+  .viewslots-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+  }
+  
+  .viewslots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+  }
+  
+  .viewslots-card {
+    background-color: #ffffff;
+    padding: 1.2rem;
+    border-radius: 10px;
+    min-width: 250px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 6px solid #4a90e2;
+  }
+  
+  .viewslots-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+  }
+  
+  .viewslots-card h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: #34495e;
+  }
+  
+  .viewslots-card p {
+    margin: 0.2rem 0;
+    color: #555;
+    font-size: 0.95rem;
+  }
+  

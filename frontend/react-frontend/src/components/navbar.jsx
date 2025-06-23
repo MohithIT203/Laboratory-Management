@@ -1,19 +1,19 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
 
-const pages = ['My Bookings', 'Attendence', 'Book Slot'];
-const settings = ['Account', 'Logout'];
+const pages = ["My Bookings", "Attendance", "Book Slot"];
+const settings = ["Account", "Logout"];
 
 function MiniAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -25,11 +25,9 @@ function MiniAppBar() {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
@@ -37,53 +35,59 @@ function MiniAppBar() {
   return (
     <AppBar
       position="static"
-      elevation={0} 
+      elevation={4}
       sx={{
-        backgroundColor: '#819A91', 
-        borderBottom: 'none', 
-        boxShadow: 'none', 
+        backgroundColor: "#047857", // solid green
       }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo */}
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href="#"
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'Poppins, sans-serif',
-              fontWeight: 600,
-              letterSpacing: '.1rem',
-              color: '#ffffff',
-              textDecoration: 'none',
+              display: { xs: "none", md: "flex" },
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 700,
+              letterSpacing: ".1rem",
+              color: "white",
+              textDecoration: "none",
             }}
           >
             Lab Management
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          {/* Mobile menu icon */}
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
-              color="#fffff"
+              color="inherit"
             >
               <MenuIcon />
             </IconButton>
             <Menu
               anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-              keepMounted
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{ display: { xs: 'block', md: 'none' } }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+              sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontFamily: "Poppins, sans-serif",
+                      color: "#047857",
+                      fontWeight: 500,
+                    }}
+                  >
                     {page}
                   </Typography>
                 </MenuItem>
@@ -91,18 +95,31 @@ function MiniAppBar() {
             </Menu>
           </Box>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
+          {/* Desktop menu items */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "flex-end",
+              gap: 2,
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
                 sx={{
-                  my: 2,
-                  color: '#ffffff',
-                  display: 'block',
-                  fontFamily: 'Poppins, sans-serif',
-                  textTransform: 'none',
+                  color: "white",
+                  fontFamily: "Poppins, sans-serif",
                   fontWeight: 500,
+                  textTransform: "none",
+                  borderRadius: "12px",
+                  px: 2.5,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: "#065f46",
+                    transform: "scale(1.05)",
+                  },
                 }}
               >
                 {page}
@@ -110,28 +127,54 @@ function MiniAppBar() {
             ))}
           </Box>
 
+          {/* Avatar */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0,paddingLeft:"25px" } }>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{
+                  p: 0,
+                  ml: 2,
+                  border: "2px solid white",
+                  borderRadius: "50%",
+                  "&:hover": { borderColor: "#d1fae5" },
+                }}
+              >
                 <Avatar
-                    sx={{ height:"50px",width:"50px" }}
-                alt="User Avatar" src="https://thumbs.dreamstime.com/b/man-profile-cartoon-smiling-round-icon-vector-illustration-graphic-design-135443422.jpg" />
+                  sx={{ width: 48, height: 48 }}
+                  alt="User Avatar"
+                  src="https://thumbs.dreamstime.com/b/man-profile-cartoon-smiling-round-icon-vector-illustration-graphic-design-135443422.jpg"
+                />
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '40px' }}
               anchorEl={anchorElUser}
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-              keepMounted
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  mt: 1.5,
+                  borderRadius: 2,
+                  minWidth: 140,
+                  boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+                  "& .MuiMenuItem-root": {
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: 500,
+                    px: 2.5,
+                    color: "#047857",
+                    "&:hover": {
+                      backgroundColor: "#e6f4f1",
+                      color: "#065f46",
+                    },
+                  },
+                },
+              }}
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
-                    {setting}
-                  </Typography>
+                  {setting}
                 </MenuItem>
               ))}
             </Menu>

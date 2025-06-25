@@ -65,8 +65,9 @@
   .submitBtn {
     width: 170px;
     height: 36px;
-    border: 1px solid #6018be;
-    background-color: #6018be;
+    /* border: 1px solid #6018be;
+    background-color: #6018be; */
+    background-image: linear-gradient(to right, #2563eb, #9333ea);
     color: white;
     font-weight: bold;
     border-radius: 5px;

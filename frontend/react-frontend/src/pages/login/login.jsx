@@ -32,7 +32,7 @@ const Login = () => {
       if (response.data.role === "Student") {
         navigate("/student/dashboard",{ state: { Studentdept: response.data.dept }});
       } else if (response.data.role === "faculty") {
-        navigate("/faculty/dashboard");
+        navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
       }
     } catch (err) {
       console.error(err);

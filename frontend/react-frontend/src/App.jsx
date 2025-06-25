@@ -1,10 +1,21 @@
 import React from "react";
 import AppLayout from "./AppLayout/AppLayout";
-import FacultyLanding from "./pages/faculty/faculty-landing";
+import MiniAppBar from "./components/navbar";
+import SlotList from "./pages/teacher/teacher-landing";
+import StudentAttendance from "./pages/Student/studentAttendence";
+// import BasicModal from "./AppLayout/modal";
 
 const App = () => {
-  return <AppLayout />;
-  // return <FacultyLanding/>
+  return (
+    <div>
+      {/* <MiniAppBar/> */}
+      <AppLayout />
+      {/* <StudentAttendance/> */}
+      {/* <BasicModal/> */}
+      {/* <SlotList/> */}
+    </div>
+  );
 };
+
 
 export default App;

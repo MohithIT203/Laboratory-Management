@@ -1,4 +1,4 @@
-/* Container */
+Container
 .dashboard-container {
   padding: 2rem;
   font-family: "Segoe UI", sans-serif;
@@ -146,42 +146,25 @@
   font-size: 0.9rem;
 }
 
-/* Popup */
-.popup {
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translate(-50%, 0);
-  background-color: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-  z-index: 999;
-  width: 90%;
-  max-width: 500px;
-  
-}
-
-.popup h3 {
-  margin-top: 0;
-  color: #047857;
-}
-
 .popup label {
   display: block;
-  margin-bottom: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
   font-weight: 500;
 }
 
 .popup input,
 .popup select {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   padding: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid #cbd5e1;
-  margin-top: 0.25rem;
-  
+  margin-bottom: 1rem;
 }
+
+
 
 .popup button {
   margin-top: 1rem;
@@ -196,15 +179,40 @@
 .popup button:hover {
   background-color: #065f46;
 }
-.popcontainer{
-    height: 100vh;
-    width:100vh;
-    /* background-color: red; */
+/* .dashboard-container {
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
 }
 
-/* Responsive improvements */
+/* Ensure inputs/selects span full width */
+/* .dashboard-container select,
+.dashboard-container input {
+  width: 100%;
+  box-sizing: border-box;
+}
+ * */
+
 @media (max-width: 600px) {
   .dashboard-cards {
     flex-direction: column;
   }
+    .popup label {
+    font-size: 0.9rem;
+  }
+
+  .popup input,
+  .popup select {
+    font-size: 0.95rem;
+    padding: 0.5rem;
+  }
+  .popup{
+    overflow: auto;
+  }
+  .popup button {
+    font-size: 0.95rem;
+  }
 }
+
+

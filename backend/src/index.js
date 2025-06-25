@@ -5,7 +5,7 @@ const courses=require('../Routes/course');
 const cors=require('cors');
 const app = express()
 const jwt = require('jsonwebtoken');
-
+const SlotFaculty=require('../Routes/newSlot');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const PORT = process.env.PORT;
@@ -27,7 +27,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 app.use(login);
-app.use(courses)
+app.use(courses);
+app.use(SlotFaculty);
 app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);
 })

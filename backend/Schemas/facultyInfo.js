@@ -22,5 +22,7 @@ const Staff=new mongoose.Schema({
     
 })
 
+
+
 const StaffSchema=mongoose.model("faculty",Staff);
 module.exports = StaffSchema;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const CookieParser = require("cookie-parser");
 const User = require('../Schemas/AccessSchema');
 const Student = require('../Schemas/studentInfo');
 const Faculty = require('../Schemas/facultyInfo');
@@ -37,6 +38,7 @@ router.post('/api/user/login', async (req, res) => {
         message: 'Login successful',
         role: user.role,
         dept: student?.dept || null,
+        user_id:student._id,
       });
     } else if (user.role === 'faculty') {
       const faculty = await Faculty.findOne({ email: userEmail }); 
@@ -46,6 +48,7 @@ router.post('/api/user/login', async (req, res) => {
         email:faculty.email,
         name: faculty?.Staff_name || null,
         dept: faculty?.dept || null,
+
       });
     }
 
@@ -66,6 +69,21 @@ router.get("/api/courses/:dept", async (req, res) => {
   } catch (err) {
     console.error("Error fetching courses:", err);
     res.status(500).json({ error: "Failed to fetch courses" });
+  }
+});
+
+//VERIFY ROUTE
+router.get('/auth/verify', (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized: No token' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.status(200).json({ role: decoded.role, email: decoded.email });
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid or expired token' });
   }
 });
 

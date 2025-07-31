@@ -28,7 +28,6 @@ const Slot = new mongoose.Schema({
         required: true,
         
     },
-    
     venue:{
         type:String,
         required:true,
@@ -37,7 +36,15 @@ const Slot = new mongoose.Schema({
         type:Number,
         required:true,
         
-    }
+    },
+    pdf_material: {
+        type: String,
+        required: false,
+    },
+    video_material: {
+        type: String,
+        required: false,
+    },
 
 })
 

@@ -53,6 +53,7 @@
     margin-left: 80px;
     padding: 5px 5px;
     width: 240px;
+    border:1px solid;
     border-radius: 5px;
   }
   
@@ -65,8 +66,8 @@
   .submitBtn {
     width: 170px;
     height: 36px;
-    /* border: 1px solid #6018be;
-    background-color: #6018be; */
+     border: 1px solid #6018be;
+    /* background-color: #6018be;  */
     background-image: linear-gradient(to right, #2563eb, #9333ea);
     color: white;
     font-weight: bold;
@@ -79,9 +80,10 @@
   .submitBtn:hover {
     background-color: #4b1390;
     border-color: #4b1390;
+    
   }
   
-  /* ✅ Responsive styles for mobile */
+
   @media screen and (max-width: 480px) {
     .outerdiv {
       padding: 20px;

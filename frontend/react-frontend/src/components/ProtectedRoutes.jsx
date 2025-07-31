@@ -1,28 +1,34 @@
+// src/components/ProtectedRoute.jsx
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import axios from 'axios';
-// import Spinner from './Spinner'; // Import spinner
 
-axios.defaults.withCredentials = true; 
+axios.defaults.withCredentials = true;
 
-function ProtectedRoute({ allowedRoles, children }) {
-    const [authorized, setAuthorized] = useState(null);
+const ProtectedRoute = ({ allowedRoles }) => {
+  const [authorized, setAuthorized] = useState(null);
 
-    useEffect(() => {
-        axios.get('http://localhost:4000/auth/verify')
-            .then(res => {
-                if (allowedRoles.includes(res.data.role)) {
-                    setAuthorized(true);
-                } else {
-                    setAuthorized(false);
-                }
-            })
-            .catch(() => setAuthorized(false));
-    }, []);
 
-    if (authorized === null) return ;
+  useEffect(() => {
+    const verify = async () => {
+      try {
+        const res = await axios.get('http://localhost:4000/auth/verify');
+        if (allowedRoles.includes(res.data.role)) {
+          setAuthorized(true);
+        } else {
+          setAuthorized(false);
+        }
+      } catch (err) {
+        setAuthorized(false);
+      }
+    };
 
-    return authorized ? children : <Navigate to="/" />;
-}
+    verify();
+  }, [allowedRoles]);
+
+  if (authorized === null) return <div>Loading...</div>;
+
+  return authorized ? <Outlet /> : <Navigate to="/" replace />;
+};
 
 export default ProtectedRoute;

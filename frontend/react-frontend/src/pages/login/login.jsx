@@ -6,11 +6,13 @@ import { auth, provider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
 import axios from "axios";
 import "./login.css";
+import LoginPopup from "./loginPopup";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [alert, setAlert] = useState({ show: false, type: "", message: "" });
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -29,19 +31,23 @@ const Login = () => {
       const response = await axios.post("http://localhost:4000/api/user/login", {
         userEmail: email,
       },{ withCredentials: true });
+       setAlert({ show: true, type: "success", message: "Login Successful!" });
       if (response.data.role === "Student") {
-        navigate("/student/dashboard",{ state: { Studentdept: response.data.dept }});
+         localStorage.setItem("Student_id", response.data.user_id);
+        navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
       } else if (response.data.role === "faculty") {
         navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
       }
     } catch (err) {
       console.error(err);
-      alert("Login error");
+      setAlert({ show: true, type: "error", message: "Login Failed. Try again." });
     }
   };
 
   return (
     <div className="mainContainer">
+      
+         {alert.show && <LoginPopup type={alert.type} message={alert.message} />}
       <div className="outerdiv">
         <h2 className="head">BIT LAB SLOT BOOKING</h2>
         <form onSubmit={(e) => e.preventDefault()}>

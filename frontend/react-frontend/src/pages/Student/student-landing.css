@@ -44,7 +44,7 @@
   padding-left: 20px;
 }
 
-button {
+.details{
   background-color: #388E3C;
   color: white;
   border: none;
@@ -197,4 +197,16 @@ button {
 .no-slots p {
   font-size: 14px;
   color: #999;
+}
+.book-btn{
+  background-color: #5fe065;
+  color:white;
+  border: none;
+  border-radius: 5px;
+  height:30px;
+  width:100%;
+  cursor: pointer;
+}
+.book-btn:hover{
+  background-color: #81cf85;
 }

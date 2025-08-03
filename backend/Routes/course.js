@@ -7,8 +7,12 @@ const Slot = require("../Schemas/SlotCreationSchema");
 const BookedSlot=require("../Schemas/studentSlot");
 const auth = require("../middlewares/auth");
 //add new course
+
+
 router.post("/add/course", async (req, res) => {
-  console.log(req.body);
+  
+
+  // console.log(req.body);
   const { Course_id, Course_name, staffs, dept } = req.body;
 
   if (!Course_id || !Course_name || !staffs || !dept) {
@@ -37,18 +41,26 @@ router.post("/add/course", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-router.post("/student/slots", async (req, res) => {
-  const { dept } = req.body;
+
+router.post("/slots", async (req, res) => {
+ const { dept, Student_id } = req.body;
+
 
   try {
-    const booked = await BookedSlot.find({ isBooked: true }).select("Slot_id");
+    const booked = await BookedSlot.find({ isBooked: true ,Student_id: Student_id,}).select("Slot_id");
     const bookedSlotIds = booked.map((b) => b.Slot_id.toString());
+    console.log(Student_id);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const slots = await Slot.find({
       dept,
       _id: { $nin: bookedSlotIds },
+      Date: { $gte: today }
     });
 
+    console.log(slots);
     if (slots.length > 0) {
       res.json(slots);
     } else {

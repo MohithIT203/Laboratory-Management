@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import BookIcon from "@mui/icons-material/Book";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import GroupIcon from "@mui/icons-material/Group";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
 import MiniAppBar from "../../components/navbar";
@@ -17,7 +24,8 @@ const CourseList = () => {
   const navigate = useNavigate();
 
   const userDept = location?.state?.Studentdept;
-  const userId = location?.state?.Student_id || localStorage.getItem("Student_id");
+  const userId =
+    location?.state?.Student_id || localStorage.getItem("Student_id");
 
   const [courses, setCourses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
@@ -26,8 +34,9 @@ const CourseList = () => {
   useEffect(() => {
     if (userDept) {
       axios
-        .post(`http://localhost:4000/student/slots`, {
+        .post(`http://localhost:4000/slots`, {
           dept: userDept,
+          Student_id:userId
         })
         .then((response) => {
           setCourses(response.data);
@@ -36,40 +45,42 @@ const CourseList = () => {
           console.error("Failed to fetch courses:", error);
         });
 
-        fetchMyBookings();
+      fetchMyBookings();
     } else {
       alert("Please login first!");
       navigate("/");
     }
   }, [userDept, navigate]);
 
- const handleBookSlot = (Slot_id) => {
-  axios
-    .post(`http://localhost:4000/student/book-slot`, {
-      Slot_id,
-      Student_id: userId,
-      isBooked: true,
-    })
-    .then(() => {
-      setCourses((prev) => prev.filter(slot => slot._id !== Slot_id));
-      
-      axios
-        .post(`http://localhost:4000/student/slots`, {
-          dept: userDept,
-          Student_id: userId
-        })
-        .then((response) => setCourses(response.data));
-      fetchMyBookings();
-    })
-    .catch((err) => console.log("Error Booking Slot:", err));
-};
+  const handleBookSlot = (Slot_id) => {
+    axios
+      .post(`http://localhost:4000/student/book-slot`, {
+        Slot_id,
+        Student_id: userId,
+        isBooked: true,
+      })
+      .then(() => {
+        setCourses((prev) => prev.filter((slot) => slot._id !== Slot_id));
 
+        axios
+          .post(`http://localhost:4000/slots`, {
+            dept: userDept,
+            Student_id: userId,
+          })
+          .then((response) => setCourses(response.data));
+        fetchMyBookings();
+      })
+      .catch((err) => console.log("Error Booking Slot:", err));
+  };
 
   const fetchMyBookings = async () => {
     try {
-        const response = await axios.post(`http://localhost:4000/student/my-bookings`, {
-        Student_id: userId,
-      });
+      const response = await axios.post(
+        `http://localhost:4000/student/my-bookings`,
+        {
+          Student_id: userId,
+        }
+      );
       setMyBookings(response.data);
     } catch (err) {
       console.error("Error fetching bookings:", err);
@@ -120,7 +131,9 @@ const CourseList = () => {
           <div className="tab-section">
             <div className="tabs">
               <div
-                className={`tab ${active === "available" ? "active" : "inactive"}`}
+                className={`tab ${
+                  active === "available" ? "active" : "inactive"
+                }`}
                 onClick={() => handleTabChange("available")}
               >
                 Available Slots
@@ -142,50 +155,231 @@ const CourseList = () => {
               />
               <div className="date-filter">
                 <FaFilter color="#555" />
-                <input type="text" placeholder="dd-mm-yyyy" className="date-text" />
+                <input
+                  type="text"
+                  placeholder="dd-mm-yyyy"
+                  className="date-text"
+                />
                 <FaCalendarAlt color="#555" />
               </div>
             </div>
 
             {/* Slot List */}
             <div className="slot-list">
-              {active === "available" &&
-                courses.map((slot) => (
-                  <div key={slot._id} className="slot-card">
-                    <div className="slot-header">
-                      <h3>
-                        {slot.Course}{" "}
-                        <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
-                      </h3>
-                    </div>
-                    <p><b>📅</b> {new Date(slot.Date).toDateString()}</p>
-                    <p><b>⏰</b> {slot.Time}</p>
-                    <p><b>📍</b> {slot.venue}</p>
-                    <p><b>📑 </b><a href={slot.pdf_material} target="_blank" style={{textDecoration:"none"}}>Pdf Material</a></p>
-                    <p><b>📓 </b><a href={slot.video_material} target="_blank" style={{textDecoration:"none"}}>Video Material</a></p>
-                    <button className="book-btn" onClick={() => handleBookSlot(slot._id)}>
-                      Book Now
-                    </button>
-                  </div>
-                ))}
+              {/* Available Slots */}
+              {active === "available" && (
+                <>
+                  {courses.length > 0 ? (
+                    courses.map((slot) => (
+                      <div key={slot._id} className="slot-card">
+                        <div className="slot-header">
+                          <h3>
+                            {slot.Course}{" "}
+                            <span className="your-slot-badge">Your Slot</span>
+                          </h3>
+                        </div>
 
-              {active === "booked" &&
-                myBookings.map((slot) => (
-                  <div key={slot._id} className="slot-card booked">
-                    <div className="slot-header">
-                      <h3>
-                        {slot.Course}{" "}
-                        <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
-                      </h3>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <BookIcon fontSize="small" />
+                          {new Date(slot.Date).toDateString()}
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <AccessTimeIcon fontSize="small" />
+                          {slot.Time}
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <LocationOnIcon fontSize="small" />
+                          {slot.venue}
+                        </p>
+
+                        {/* <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <GroupIcon fontSize="small" />
+                          0/{slot.capacity} Capacity
+                        </p> */}
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <PictureAsPdfIcon fontSize="small" />
+                          <a
+                            href={slot.pdf_material}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Pdf Material
+                          </a>
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                          }}
+                        >
+                          <OndemandVideoIcon fontSize="small" />
+                          <a
+                            href={slot.video_material}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Video Material
+                          </a>
+                        </p>
+                        <button
+                          className="book-btn"
+                          onClick={() => handleBookSlot(slot._id)}
+                        >
+                          Book Now
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-slots">
+                      <FaCalendarAlt size={60} color="#c0c0c0" />
+                      <h4>No available slots</h4>
+                      <p>Check back later for new lab sessions</p>
                     </div>
-                    <p><b>📅</b> {new Date(slot.Date).toDateString()}</p>
-                    <p><b>⏰</b> {slot.Time}</p>
-                    <p><b>📍</b> {slot.venue}</p>
-                    <p><b>📑 </b><a href={slot.pdf_material} target="_blank">Pdf Material</a></p>
-                    <p><b>📓 </b><a href={slot.video_material} target="_blank">Video Material</a></p>
-                    <p style={{ color: "#4caf50" }}><b>✅ Booked</b></p>
-                  </div>
-                ))}
+                  )}
+                </>
+              )}
+
+              {/* Booked Slots */}
+              {active === "booked" && (
+                <>
+                  {myBookings.length > 0 ? (
+                    myBookings.map((slot) => (
+                      <div key={slot._id} className="slot-card">
+                        <div className="slot-header">
+                          <h3>
+                            {slot.Course}{" "}
+                            <span className="your-slot-badge">Your Slot</span>
+                          </h3>
+                        </div>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <BookIcon fontSize="small" />
+                          {new Date(slot.Date).toDateString()}
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <AccessTimeIcon fontSize="small" />
+                          {slot.Time}
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <LocationOnIcon fontSize="small" />
+                          {slot.venue}
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <GroupIcon fontSize="small" />
+                          0/{slot.capacity} Capacity
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <PictureAsPdfIcon fontSize="small" />
+                          <a
+                            href={slot.pdf_material}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Pdf Material
+                          </a>
+                        </p>
+
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                          }}
+                        >
+                          <OndemandVideoIcon fontSize="small" />
+                          <a
+                            href={slot.video_material}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none" }}
+                          >
+                            Video Material
+                          </a>
+                        </p>
+                        <button className="remove-btn-bottom-right">Cancel</button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-slots">
+                      <FaCalendarAlt size={60} color="#c0c0c0" />
+                      <h4>No booked slots</h4>
+                      <p>You haven’t booked any slots yet.</p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

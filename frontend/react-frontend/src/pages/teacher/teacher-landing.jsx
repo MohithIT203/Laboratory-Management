@@ -4,6 +4,12 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { useLocation } from "react-router-dom";
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import BookIcon from '@mui/icons-material/Book';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GroupIcon from '@mui/icons-material/Group';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import "./teacher-landing.css";
 import axios from "axios";
 
@@ -223,20 +229,20 @@ const SlotList = () => {
         + Create New Slot
       </button>
 
-      <div className="slot-list">
+      {/* <div className="slot-list">
         {processedSlots.map((slot) => (
           <div key={slot._id} className="slot-card">
             <div className="slot-header">
               <h3>{slot.Course} <span className="your-slot-badge">Your Slot</span></h3>
             </div>
-            <p><b>📅</b> {new Date(slot.Date).toDateString()}</p>
+            <p><b><BookIcon/></b> {new Date(slot.Date).toDateString()}</p>
             <p><b>⏰</b> {slot.Time}</p>
             <p><b>📍</b> {slot.venue}</p>
             <p><b>👥</b> 0/{slot.capacity} Capacity</p>
-            {/* {slot.pdf_material && */}
+            
             <p><b>📑 </b><a href={slot.pdf_material} target="_blank" style={{textDecoration:"none"}}>Pdf Material</a></p>
-            {/* } */}
-            {/* {slot.video_material && */}
+         
+            
             <p><b>📓 </b><a href={slot.video_material} target="_blank"style={{textDecoration:"none"}}>Video Material</a></p>
 
             <button className="remove-btn-bottom-right" title="Remove Slot" onClick={() => handleOpenDelete(slot._id)} style={{ backgroundColor: "red" }}>
@@ -244,7 +250,71 @@ const SlotList = () => {
             </button>
           </div>
         ))}
+      </div> */}
+
+   <div className="slot-list">
+  {processedSlots.map((slot) => (
+    <div key={slot._id} className="slot-card">
+      <div className="slot-header">
+        <h3>{slot.Course} <span className="your-slot-badge">Your Slot</span></h3>
       </div>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <BookIcon fontSize="small" />
+        {new Date(slot.Date).toDateString()}
+      </p>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <AccessTimeIcon fontSize="small" />
+        {slot.Time}
+      </p>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <LocationOnIcon fontSize="small" />
+        {slot.venue}
+      </p>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <GroupIcon fontSize="small" />
+        0/{slot.capacity} Capacity
+      </p>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <PictureAsPdfIcon fontSize="small" />
+        <a
+          href={slot.pdf_material}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
+        >
+          Pdf Material
+        </a>
+      </p>
+
+      <p style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <OndemandVideoIcon fontSize="small" />
+        <a
+          href={slot.video_material}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: "none" }}
+        >
+          Video Material
+        </a>
+      </p>
+
+      <button
+        className="remove-btn-bottom-right"
+        title="Remove Slot"
+        onClick={() => handleOpenDelete(slot._id)}
+        style={{ backgroundColor: "red" }}
+      >
+        Delete
+      </button>
+    </div>
+  ))}
+</div>
+
 
       {/* Create Slot Modal */}
       <Modal open={open} onClose={() => setOpen(false)}>

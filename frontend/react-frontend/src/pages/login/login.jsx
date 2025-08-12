@@ -36,6 +36,9 @@ const Login = () => {
          localStorage.setItem("Student_id", response.data.user_id);
         navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
       } else if (response.data.role === "faculty") {
+         localStorage.setItem("Facultyname", response.data.name);
+      localStorage.setItem("FacultyEmail", response.data.email);
+      localStorage.setItem("Facultydept", response.data.dept);
         navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
       }
     } catch (err) {

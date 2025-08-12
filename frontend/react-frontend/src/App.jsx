@@ -1,6 +1,6 @@
 import React from "react";
 import AppLayout from "./AppLayout/AppLayout";
-import MiniAppBar from "./components/navbar";
+// import MiniAppBar from "./components/navbar";
 import SlotList from "./pages/teacher/teacher-landing";
 import StudentAttendance from "./pages/Student/StudentAttendance";
 import LoginPopup from "./pages/login/loginPopup";

@@ -5,6 +5,8 @@ import CourseList from "../pages/Student/student-landing";
 import SlotList from "../pages/teacher/teacher-landing";
 import ProtectedRoute from "../components/ProtectedRoutes";
 import NotFound from "../pages/Not Found/Notfound";
+import StaffSlots from "../pages/teacher/teacher-slots";
+import StaffAttendance from "../pages/teacher/teacher-attendance";
 
 
 const AppLayout = () => {
@@ -21,6 +23,8 @@ const AppLayout = () => {
         {/* Protected Faculty Routes */}
         <Route element={<ProtectedRoute allowedRoles={["faculty"]} />}>
           <Route path="/faculty/dashboard" element={<SlotList />} />
+          <Route path="/faculty/attendance" element={<StaffSlots/>} />
+          <Route path="/faculty/students" element={<StaffAttendance/>} />
         </Route>
       </Routes>
     // </BrowserRouter>

@@ -60,17 +60,7 @@ router.post('/api/user/login', async (req, res) => {
 });
 
 
-router.get("/api/courses/:dept", async (req, res) => {
-  try {
-    const { dept } = req.params;
-    const courses = await Course.find({ dept });
-    const courseNames = courses.map(c => c.Course_name);
-    res.json(courseNames); // Send just the names
-  } catch (err) {
-    console.error("Error fetching courses:", err);
-    res.status(500).json({ error: "Failed to fetch courses" });
-  }
-});
+
 
 //VERIFY ROUTE
 router.get('/auth/verify', (req, res) => {

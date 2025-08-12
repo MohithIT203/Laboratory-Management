@@ -9,7 +9,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
-import MiniAppBar from "../../components/navbar";
+import MiniAppBar from "../../components/Student_navbar";
 import {
   FaBookOpen,
   FaClipboardList,
@@ -57,7 +57,6 @@ const CourseList = () => {
       .post(`http://localhost:4000/student/book-slot`, {
         Slot_id,
         Student_id: userId,
-        isBooked: true,
       })
       .then(() => {
         setCourses((prev) => prev.filter((slot) => slot._id !== Slot_id));
@@ -156,11 +155,12 @@ const CourseList = () => {
               <div className="date-filter">
                 <FaFilter color="#555" />
                 <input
-                  type="text"
-                  placeholder="dd-mm-yyyy"
+                  type="date"
+                  
+                  // placeholder="dd-mm-yyyy"
                   className="date-text"
                 />
-                <FaCalendarAlt color="#555" />
+                {/* <FaCalendarAlt color="#555" /> */}
               </div>
             </div>
 
@@ -174,9 +174,10 @@ const CourseList = () => {
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course}{" "}
-                            <span className="your-slot-badge">Your Slot</span>
+                            {slot.Course.toUpperCase()}
+                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
                           </h3>
+                            
                         </div>
 
                         <p
@@ -285,7 +286,7 @@ const CourseList = () => {
                         <div className="slot-header">
                           <h3>
                             {slot.Course}{" "}
-                            <span className="your-slot-badge">Your Slot</span>
+                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
                           </h3>
                         </div>
 

@@ -25,7 +25,7 @@ const CourseList = () => {
 
   const userDept = location?.state?.Studentdept;
   const userId =
-    location?.state?.Student_id || localStorage.getItem("Student_id");
+    location?.state?.student_id || localStorage.getItem("student_id");
 
   const [courses, setCourses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);

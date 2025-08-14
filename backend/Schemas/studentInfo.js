@@ -15,7 +15,7 @@ const Student=new mongoose.Schema({
         required:true
     },
     dept:{
-        type:mongoose.Schema.Types.String,
+        type:mongoose.Schema.Types.String,  
         required:true
     }
     

@@ -31,6 +31,9 @@ const handleDetails=async (slotId)=>{
   return (
     <div>
       <StaffAppBar />
+        <h2 style={{
+          paddingLeft:"20px"
+        }}>All Slots</h2>
       <div className="slot-cards">
         {allSlots.map((slot, index) => (
           <div key={index} className="slot">

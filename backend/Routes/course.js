@@ -119,27 +119,38 @@ router.get('/faculty/students/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
 
-    // Find slot by ID and get booked_students array
-    const slot = await Slot.findById(SlotId).select("booked_students");
-
+    const slot = await Slot.findById(SlotId).select("students_attendance");
     if (!slot) {
       return res.status(404).json({ message: "No slot found with this ID" });
     }
 
-    // Extract student IDs
-    const studentIds = slot.booked_students;
-
-    if (!studentIds || studentIds.length === 0) {
-      return res.status(200).json({ message: "No students booked this slot" });
+    if (!slot.students_attendance || slot.students_attendance.length === 0) {
+      return res.status(200).json({ message: "No students booked this slot", students: [] });
     }
 
-    // Find all students whose IDs are in booked_students
+    // Extract IDs for the query
+    const studentIds = slot.students_attendance.map(s => s.student_id);
+    // Fetch student details
     const students = await Student.find({ _id: { $in: studentIds } });
+   
+
+    // Merge attendance & marks into student records
+    const studentsWithAttendance = students.map(student => {
+      const attendanceRecord = slot.students_attendance.find(
+        s => s.student_id === student._id.toString()
+      );
+      return {
+        ...student.toObject(),
+        attendance: attendanceRecord?.attendance||"absent",
+        score: attendanceRecord?.marks ?? ""
+      };
+    });
+    // console.log(studentsWithAttendance);
 
     res.json({
       slotId: SlotId,
-      totalStudents: students.length,
-      students
+      totalStudents: studentsWithAttendance.length,
+      students: studentsWithAttendance
     });
 
   } catch (err) {
@@ -147,6 +158,33 @@ router.get('/faculty/students/:SlotId', async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.put("/faculty/update-scores/:slotId", async (req, res) => {
+  try {
+    const { slotId } = req.params;
+    const { students } = req.body; // [{_id, score}]
+
+    const slot = await Slot.findById(slotId);
+
+    if (!slot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    students.forEach(({ _id, score }) => {
+      const stuRecord = slot.students_attendance.find(s => s.student_id.toString() === _id);
+      if (stuRecord) {
+        stuRecord.marks = score;
+      }
+    });
+
+    await slot.save();
+    res.json({ message: "Scores updated successfully" });
+  } catch (err) {
+    console.error("Error updating scores:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 
 module.exports = router;

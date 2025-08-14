@@ -25,6 +25,7 @@ const Login = () => {
         console.error("Google sign-in error:", error);
       });
   };
+  
 
   const handlelogin = async (email) => {
     try {
@@ -33,7 +34,7 @@ const Login = () => {
       },{ withCredentials: true });
        setAlert({ show: true, type: "success", message: "Login Successful!" });
       if (response.data.role === "Student") {
-         localStorage.setItem("Student_id", response.data.user_id);
+         localStorage.setItem("student_id", response.data.user_id);
         navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
       } else if (response.data.role === "faculty") {
          localStorage.setItem("Facultyname", response.data.name);
@@ -85,7 +86,7 @@ const Login = () => {
           </div>
 
           <div>
-            <button type="submit" className="submitBtn">
+            <button type="submit" className="submitBtn" >
               Login
             </button>
           </div>

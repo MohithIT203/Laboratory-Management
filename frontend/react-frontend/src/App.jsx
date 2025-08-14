@@ -4,6 +4,7 @@ import AppLayout from "./AppLayout/AppLayout";
 import SlotList from "./pages/teacher/teacher-landing";
 import StudentAttendance from "./pages/Student/StudentAttendance";
 import LoginPopup from "./pages/login/loginPopup";
+// import AttendanceOTP from "./pages/teacher/sample";
 
 // import BasicModal from "./AppLayout/modal";
 
@@ -12,6 +13,7 @@ const App = () => {
     <div>
       {/* <MiniAppBar/> */}
       <AppLayout />
+      {/* <AttendanceOTP/> */}
       
       {/* <StudentAttendance/> */}
       {/* <BasicModal/> */}

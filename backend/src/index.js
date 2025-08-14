@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const SlotFaculty=require('../Routes/newSlot');
 const bookSlot=require('../Routes/BookSlot');
 const new_Slot=require('../Routes/new_course');
+const Otp=require('../Routes/Otp');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const PORT = process.env.PORT||3000;
@@ -32,6 +33,7 @@ app.use(login);
 app.use(courses);
 app.use(SlotFaculty);
 app.use(bookSlot);
+app.use(Otp);
 // app.use(new_Slot);
 app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);

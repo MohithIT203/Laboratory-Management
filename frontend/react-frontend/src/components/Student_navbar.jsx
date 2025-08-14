@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-const pages = ['My Bookings', 'Attendence', 'Book Slot'];
+const pages = ['Dashboard', 'Attendance', 'Book Slot'];
 const settings = ['Account', 'Logout'];
 
 function MiniAppBar() {
@@ -28,8 +28,15 @@ function MiniAppBar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+const handleCloseNavMenu = (page) => {
+    setAnchorElNav(null); // Close mobile menu
+    if (page === "Attendance") {
+      navigate('/student/attendance');
+    } else if (page === "Book Slot") {
+      navigate('/student/all-slots');
+    } else if (page === "Dashboard") {
+      navigate('/student/dashboard');
+    }
   };
 
   const handleCloseUserMenu = () => {
@@ -97,7 +104,7 @@ function MiniAppBar() {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={()=>handleCloseNavMenu(page)}>
                   <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
                     {page}
                   </Typography>
@@ -110,7 +117,7 @@ function MiniAppBar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={()=>handleCloseNavMenu(page)}
                 sx={{
                   my: 2,
                   color: '#ffffff',

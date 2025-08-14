@@ -7,6 +7,7 @@ import ProtectedRoute from "../components/ProtectedRoutes";
 import NotFound from "../pages/Not Found/Notfound";
 import StaffSlots from "../pages/teacher/teacher-slots";
 import StaffAttendance from "../pages/teacher/teacher-attendance";
+import StudentAttendance from "../pages/Student/StudentAttendance";
 
 
 const AppLayout = () => {
@@ -18,6 +19,7 @@ const AppLayout = () => {
         {/* Protected Student Routes */}
         <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
           <Route path="/student/dashboard" element={<CourseList />} />
+          <Route path="/student/attendance" element={<StudentAttendance/>} />
         </Route>
 
         {/* Protected Faculty Routes */}

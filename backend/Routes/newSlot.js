@@ -2,7 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Slot = require('../Schemas/new_SlotSchema');
-const router = express.Router(); // 
+const router = express.Router();
 
 
 router.post('/api/courses', async (req, res) => { 
@@ -28,8 +28,8 @@ router.post('/api/faculty/allSlots', async (req, res) => { ///Changing here <<<
   const { FacultyEmail } = req.body;
 
   try {
-    const slots = await Slot.find({ email: FacultyEmail })//.select("Course Date capacity Time venue pdf_material video_material Staff_name experiment");
-    console.log(slots);
+    const slots = await Slot.find({ email: FacultyEmail }).select("Course Date capacity Time venue pdf_material video_material Staff_name experiment");
+    // console.log(slots[0].booked_students);
     return res.status(200).json(slots);
   } catch (err) {
     console.error("Error fetching slots:", err);

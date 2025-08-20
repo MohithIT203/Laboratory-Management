@@ -77,7 +77,7 @@ const handleDetails=async (slotId)=>{
               </p>
               <p>
                 <strong>Total Students : </strong>
-                {slot.booked_students.length}
+                {slot.students.length}
               </p>
               <p>
                 <strong>{slot.venue}</strong>

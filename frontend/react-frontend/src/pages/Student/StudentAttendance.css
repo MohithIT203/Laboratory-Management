@@ -119,7 +119,17 @@
     gap: 6px;
     font-weight: 500;
   }
-  
+  .absent-badge{
+    background-color:rgb(222, 35, 35);
+    color:white;
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
   .badge-icon {
     font-size: 1rem;
   }

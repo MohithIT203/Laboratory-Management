@@ -4,11 +4,11 @@ const experiment_schema=new mongoose.Schema({
   exp_name:String,
   exp_description:String
 });
-const student_schema=new mongoose.Schema({
-  student_id:String,
-  attendance:String,
-  marks:Number,
-});
+const student_schema = new mongoose.Schema({
+  studentId: { type: String, required: true },
+  attendance: { type: String, enum: ["present", "absent"], default: "absent" },
+  marks: { type: Number, default: 0 },
+})
 const Slot = new mongoose.Schema({
     Staff_name: {
         type: String,
@@ -62,15 +62,10 @@ const Slot = new mongoose.Schema({
         type:Number,
         required:false,
     },
-    booked_students:{
-        type:[String],
-        required:false,
-    },
-    students_attendance:{
+    students:{
         type:[student_schema],
         required:false,
         default:[],
-
     }
 })
 

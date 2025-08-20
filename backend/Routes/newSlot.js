@@ -28,7 +28,7 @@ router.post('/api/faculty/allSlots', async (req, res) => { ///Changing here <<<
   const { FacultyEmail } = req.body;
 
   try {
-    const slots = await Slot.find({ email: FacultyEmail }).select("Course Date capacity Time venue pdf_material video_material Staff_name experiment");
+    const slots = await Slot.find({ email: FacultyEmail }).select("Course Date capacity Time venue pdf_material video_material Staff_name experiment total_booked");
     // console.log(slots[0].booked_students);
     return res.status(200).json(slots);
   } catch (err) {

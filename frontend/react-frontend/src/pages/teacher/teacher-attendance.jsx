@@ -16,7 +16,7 @@ const StaffAttendance = () => {
   const [showBtn, setshowBtn] = useState(true);
   const [active, setactive] = useState("all");
   const [loading, setLoading] = useState(false); 
-  const [dirty, setDirty] = useState(false); 
+  // const [dirty, setDirty] = useState(false); 
 
   const fetchStudents = async () => {
     setactive("all");
@@ -71,7 +71,7 @@ const StaffAttendance = () => {
 
   const handleScoreChange = (_id, value) => {
     setStudents((prev) =>
-      prev.map((stu) => (stu._id === _id ? { ...stu, score: value } : stu))
+      prev.map((stu) => (stu._id === _id ? { ...stu, marks: value } : stu))
     );
     setDirty(true);
   };
@@ -92,7 +92,7 @@ const StaffAttendance = () => {
       await axios.put(`http://localhost:4000/faculty/update-scores/${slotId}`, {
         students: students.map((s) => ({
           _id: s._id,
-          score: s.score,
+          score: s.marks,
         })),
       });
       alert("✅ Scores updated successfully!");
@@ -208,7 +208,7 @@ const StaffAttendance = () => {
               <tbody>
                 {students.length !== 0 ? (
                   students.map(
-                    ({ _id, Student_name, regno, attendance, score }, index) => (
+                    ({ _id, Student_name, regno, attendance, marks }, index) => (
                       <tr key={_id} className={attendance}>
                         <td>{index + 1}</td>
                         <td>{Student_name?.toUpperCase() || "N/A"}</td>
@@ -230,7 +230,7 @@ const StaffAttendance = () => {
                               type="number"
                               min="0"
                               max="100"
-                              value={score ?? ""}
+                              value={ marks?? ""}
                               onChange={(e) =>
                                 handleScoreChange(_id, e.target.value)
                               }

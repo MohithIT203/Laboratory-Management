@@ -71,36 +71,4 @@ router.get("/api/exp/:course", async (req, res) => {
   }
 });
 
-
-// router.post("/slots", async (req, res) => {
-//  const { dept, Student_id } = req.body;
-
-
-//   try {
-//     const booked = await BookedSlot.find({ isBooked: true ,Student_id: Student_id,}).select("Slot_id");
-//     const bookedSlotIds = booked.map((b) => b.Slot_id.toString());
-//     console.log(Student_id);
-
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-
-//     const slots = await Slot.find({
-//       dept,
-//       _id: { $nin: bookedSlotIds },
-//       Date: { $gte: today }
-//     });
-
-//     console.log(slots);
-//     if (slots.length > 0) {
-//       res.json(slots);
-//     } else {
-//       res.status(404).json({ message: "No available slots found" });
-//     }
-//   } catch (err) {
-//     console.error("Error fetching slots:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
-
-
 module.exports = router;

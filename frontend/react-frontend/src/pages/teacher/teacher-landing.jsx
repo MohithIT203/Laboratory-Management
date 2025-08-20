@@ -335,7 +335,7 @@ const SlotList = () => {
 
               <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <GroupIcon fontSize="small" />
-                0/{slot.capacity} Capacity
+                {slot.total_booked}/{slot.capacity} Capacity
               </p>
 
               <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>

@@ -1,52 +1,155 @@
 // routes/slotRoutes.js
 const express = require('express');
 const Slot = require('../Schemas/new_SlotSchema');
+const Student=require('../Schemas/studentInfo');
 // const Slot = require('../Schemas/studentSlot');
 const router = express.Router();
 
-router.post('/student/book-slot', async (req, res) => {
+
+router.post("/student/book-slot", async (req, res) => {
   const { Slot_id, Student_id } = req.body;
 
   try {
-  
-    const selectedSlot = await Slot.findOne({ _id:Slot_id });
+    const selectedSlot = await Slot.findById(Slot_id);
+    const student = await Student.findById(Student_id);
 
     if (!selectedSlot) {
       return res.status(404).send({ message: "Slot not found" });
     }
-    if (selectedSlot.booked_students.includes(Student_id)) {
+    if (!student) {
+      return res.status(404).send({ message: "Student not found" });
+    }
+
+    // check if student already booked in slot
+    if (selectedSlot.students.some(s => s.studentId === Student_id)) {
       return res.status(400).send({ message: "Student already booked this slot" });
     }
-    selectedSlot.booked_students.push(Student_id);
-    const saved = await selectedSlot.save();
 
-    return res.status(200).send({ message: "Slot booked successfully", slot: saved });
+    // check if slot already exists in student's slots
+    if (student.slots.some(s => s.slotId === Slot_id)) {
+      return res.status(400).send({ message: "Slot already added to student" });
+    }
+
+    // Add student to slot (follow slot schema)
+    selectedSlot.students.push({
+      studentId: Student_id,
+      attendance: "absent",
+      marks: 0
+    });
+    selectedSlot.total_booked = selectedSlot.students.length;
+
+    // Add slot to student (follow student schema)
+    student.slots.push({
+      slotId: Slot_id,
+      attendance: "absent",
+      marks: 0
+    });
+
+    // Save both
+    await selectedSlot.save();
+    await student.save();
+
+    return res.status(200).send({
+      message: "Slot booked successfully",
+      slot: selectedSlot,
+      student: student,
+    });
   } catch (err) {
     console.error("Error booking slot:", err);
     return res.status(500).send({ message: "Error occurred while booking slot" });
   }
 });
 
+
+
 router.post('/student/my-bookings', async (req, res) => {
   const { Student_id } = req.body;
 
   try {
-    // Find all slots booked by this student
-    const bookedSlots = await Slot.find({ booked_students: Student_id });
+    // Find all slots where students array contains the given Student_id
+    const bookedSlots = await Slot.find({
+      "students.studentId": Student_id
+    }).sort({ Date: 1 });;
 
     if (!bookedSlots.length) {
       return res.status(404).json({ message: "No bookings found for this student" });
     }
-    const bookedSlotIds = bookedSlots.map(slot => slot._id);
 
-    const slots = await Slot.find({ _id: { $in: bookedSlotIds } });
-
-    res.json(slots);
+    res.status(200).json(bookedSlots);
   } catch (err) {
     console.error("Error fetching student's bookings:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+router.post("/slots", async (req, res) => {
+  const { dept, Student_id } = req.body;
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const slots = await Slot.find({
+      dept,
+      "students.studentId": { $ne: Student_id },
+      Date: { $gte: today }
+    });
+
+    if (slots.length > 0) {
+      return res.json(slots);
+    } else {
+      return res.status(404).json({ message: "No available slots found" });
+    }
+  } catch (err) {
+    console.error("Error fetching slots:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+router.get("/student/attendance-history/:Student_id", async (req, res) => {
+  const { Student_id } = req.params;
+
+  try {
+    const student = await Student.findById(Student_id).select("slots");
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Collect slotIds from student's record
+    const slotIds = student.slots.map((s) => s.slotId);
+
+    // Fetch slot details
+    const slots = await Slot.find({ _id: { $in: slotIds } }).select(
+      "Staff_name Course experiment Date Time venue"
+    );
+
+    // Merge attendance + marks into slot details
+    const mergedSlots = slots.map((slot) => {
+      const studentSlot = student.slots.find(
+        (s) => String(s.slotId) === String(slot._id)
+      );
+      return {
+        _id: slot._id,
+        Staff_name: slot.Staff_name,
+        Course: slot.Course,
+        experiment: slot.experiment,
+        Date: slot.Date,
+        Time: slot.Time,
+        venue: slot.venue,
+        attendance: studentSlot?.attendance || "absent",
+        marks: studentSlot?.marks||0,
+      };
+    });
+
+    res.status(200).json({ slots: mergedSlots });
+  } catch (err) {
+    console.error("Error fetching slots:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 
 

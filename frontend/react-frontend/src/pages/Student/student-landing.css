@@ -205,14 +205,33 @@
   color: #999;
 }
 .book-btn{
-  background-color:rgba(3, 255, 163, 0.64);
-  /* color:white; */
+   width: 100%;
+  height: 40px;
+  
+  background-color: rgba(16, 185, 129, 0.9);
+ 
+  color:white;
   border: none;
-  border-radius: 5px;
-  height:40px;
-  width:100%;
+  border-radius: 8px;
+  margin-top: 10px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.book-btn:hover{
-  background-color: rgba(84, 236, 180, 0.4);
+.book-btn:hover,
+.clear-btn:hover{
+   background-color: rgba(52, 211, 153, 0.7);
+}
+.clear-btn{
+  width: 50%;
+  height: 40px;
+  background-color: rgba(16, 185, 129, 0.9);
+  color:white;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.clear-btn:hover{
+   background-color: rgba(52, 211, 153, 0.7);
 }

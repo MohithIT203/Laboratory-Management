@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./StudentAttendance.css";
-import { FaCalendarAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaCalendarAlt, FaCheckCircle, FaTimesCircle,FaUserCircle } from "react-icons/fa";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoCalendarOutline } from "react-icons/io5";
 import { HiOutlineLocationMarker } from "react-icons/hi";
@@ -10,54 +10,80 @@ import axios from "axios";
 const StudentAttendance = () => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
+  const [attendance, setAttendance] = useState([]);
+  const [state, setState] = useState("");
+  const [score, setscore] = useState("");
+  const studentId = localStorage.getItem("student_id");
 
+  // ✅ Fetch attendance history on mount
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:4000/student/attendance-history/${studentId}`
+        );
+        setAttendance(res.data.slots || []);
+        setState(res.data.attendance);
+        setscore(res.data.score);
+      } catch (err) {
+        console.error("Error fetching history", err);
+      }
+    };
+    fetchHistory();
+  }, [studentId]);
+
+  // ✅ OTP Verification
   const verifyOtp = async (e) => {
     e.preventDefault();
-
     try {
-      
-      const studentId = localStorage.getItem("student_id");
-
       const res = await axios.post("http://localhost:4000/verify-otp", {
         Student_id: studentId,
-        otp: Number(otp)
+        otp: Number(otp),
       });
-
-      
-        setMessage(res.data.message);
-      
+      setMessage(res.data.message);
     } catch (err) {
       console.error("Error verifying OTP", err);
       setMessage("❌ Error verifying OTP.");
     }
   };
 
+
+  const totalSessions = attendance.length;
+  const presentCount = attendance.filter((s) => s.attendance === "present").length;
+  const absentCount = totalSessions - presentCount;
+  const attendanceRate =
+    totalSessions > 0 ? ((presentCount / totalSessions) * 100).toFixed(1) : 0;
+
   return (
     <>
       <MiniAppBar />
       <div className="attendance-container">
+        {/* Stats Cards */}
         <div className="stats-cards">
           <div className="acard green-card">
             <p>Attendance Rate</p>
-            <h2>100%</h2>
+            <h2>{attendanceRate}%</h2>
             <FiTrendingUp className="icon" />
           </div>
           <div className="acard">
             <p>Total Sessions</p>
-            <h2>1</h2>
+            <h2>{totalSessions}</h2>
             <IoCalendarOutline className="icon blue" />
           </div>
           <div className="acard">
             <p>Present</p>
-            <h2>1</h2>
+            <h2>{presentCount}</h2>
             <FaCheckCircle className="icon green" />
           </div>
           <div className="acard">
             <p>Absent</p>
-            <h2 className="red">0</h2>
+            <h2 className="red">{absentCount}</h2>
             <FaTimesCircle className="icon red" />
           </div>
-           <div className="otp-block">
+        </div>
+
+        {/* OTP Block */}
+        <div className="otp-block">
           <form onSubmit={verifyOtp}>
             {message && <p style={{ marginTop: "10px" }}>{message}</p>}
             <input
@@ -67,49 +93,72 @@ const StudentAttendance = () => {
               value={otp}
               required
               onChange={(e) => setOtp(e.target.value)}
-              style={{
-                height: "25px",
-                margin: "10px",
-                maxWidth: "300px",
-              }}
+              style={{ height: "25px", margin: "10px", maxWidth: "300px" }}
             />
             <button className="verify-btn" type="submit">
               Verify OTP
             </button>
           </form>
         </div>
-        </div>
 
-       
-
+        {/* Attendance History */}
         <h3 className="history-title">Attendance History</h3>
-        <div className="session-card">
-          <div className="session-header">
-            <div>
-              <h4>Data Structures 2</h4>
-              <p className="session-subtitle">
-                Binary Trees and Graph Algorithms Implementation
+        {attendance.length === 0 ? (
+          <p>No attendance records found.</p>
+        ) : (
+          attendance.map((slot) => (
+            <div key={slot._id} className="session-card">
+              <div className="session-header">
+                <div>
+                  <h4>{slot.Course}</h4>
+                  <p className="session-subtitle">{slot.experiment.exp_name} : {slot.experiment.exp_description}</p>
+                </div>
+                <span
+                  className={
+                    slot.attendance === "present"
+                      ? "present-badge"
+                      : "absent-badge"
+                  }
+                >
+                  {slot.attendance === "present" ? (
+                    <>
+                      <FaCheckCircle className="badge-icon" />Present
+                    </>
+                  ) : (
+                    <>
+                      <FaTimesCircle className="badge-icon" /> Absent
+                    </>
+                  )}
+                </span>
+              </div>
+              <div className="session-info">
+                <div className="info-item">
+                  <FaCalendarAlt className="info-icon" />
+                  <span>{new Date(slot.Date).toDateString()}</span>
+                </div>
+                <div className="info-item">
+                  🕒{" "}
+                  <span>
+                    {slot.Time}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <HiOutlineLocationMarker className="info-icon" />
+                  <span>{slot.venue}</span>
+                </div>
+                <div className="info-item">
+                  <FaUserCircle />
+                  <span>
+                    Mr/Ms {slot.Staff_name}
+                  </span>
+                </div>
+              </div>
+              <p className="marked-time">
+                Marked on {slot.marks}
               </p>
             </div>
-            <span className="present-badge">
-              <FaCheckCircle className="badge-icon" /> Present
-            </span>
-          </div>
-          <div className="session-info">
-            <div className="info-item">
-              <FaCalendarAlt className="info-icon" />
-              <span>Monday, January 20, 2025</span>
-            </div>
-            <div className="info-item">
-              🕒 <span>8:45 AM - 10:30 AM</span>
-            </div>
-            <div className="info-item">
-              <HiOutlineLocationMarker className="info-icon" />
-              <span>CSE Lab 1</span>
-            </div>
-          </div>
-          <p className="marked-time">Marked on Jan 20, 2025, 4:05 PM</p>
-        </div>
+          ))
+        )}
       </div>
     </>
   );

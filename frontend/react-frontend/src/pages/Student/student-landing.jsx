@@ -10,33 +10,31 @@ import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
 import MiniAppBar from "../../components/Student_navbar";
-import {
-  FaBookOpen,
-  FaClipboardList,
-  FaClock,
-  FaCalendarAlt,
-  FaFilter,
-} from "react-icons/fa";
+import { FaBookOpen, FaClipboardList, FaClock, FaCalendarAlt, FaFilter } from "react-icons/fa";
 import axios from "axios";
 
 const CourseList = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const userDept = location?.state?.Studentdept ||localStorage.getItem("student_dept");;
-  const userId =
-    location?.state?.student_id || localStorage.getItem("student_id");
+  const userDept = location?.state?.Studentdept || localStorage.getItem("student_dept");
+  const userId = location?.state?.student_id || localStorage.getItem("student_id");
 
   const [courses, setCourses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
   const [active, setActive] = useState("available");
+
+  // filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  
 
   useEffect(() => {
     if (userDept) {
       axios
         .post(`http://localhost:4000/slots`, {
           dept: userDept,
-          Student_id:userId
+          Student_id: userId,
         })
         .then((response) => {
           setCourses(response.data);
@@ -66,7 +64,10 @@ const CourseList = () => {
             dept: userDept,
             Student_id: userId,
           })
-          .then((response) => setCourses(response.data));
+          .then((response) => {
+            setCourses(response.data);
+          });
+
         fetchMyBookings();
       })
       .catch((err) => console.log("Error Booking Slot:", err));
@@ -74,12 +75,9 @@ const CourseList = () => {
 
   const fetchMyBookings = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:4000/student/my-bookings`,
-        {
-          Student_id: userId,
-        }
-      );
+      const response = await axios.post(`http://localhost:4000/student/my-bookings`, {
+        Student_id: userId,
+      });
       setMyBookings(response.data);
     } catch (err) {
       console.error("Error fetching bookings:", err);
@@ -90,6 +88,25 @@ const CourseList = () => {
     setActive(tab);
     if (tab === "booked") fetchMyBookings();
   };
+
+  // 🔹 filtering logic
+  const filterSlots = (slots) => {
+    return slots.filter((slot) => {
+      const matchesSearch =
+        slot.Course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        slot.venue.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesDate =
+        !filterDate || new Date(slot.Date).toISOString().split("T")[0] === filterDate;
+
+     
+
+      return matchesSearch && matchesDate;
+    });
+  };
+
+  const filteredCourses = filterSlots(courses);
+  const filteredBookings = filterSlots(myBookings);
 
   return (
     <>
@@ -105,11 +122,7 @@ const CourseList = () => {
                 <p>My Bookings</p>
                 <FaBookOpen size={24} color="#4caf50" />
               </div>
-              <h3
-              style={{
-                fontSize:"25px"
-              }}
-              >{myBookings.length}</h3>
+              <h3 style={{ fontSize: "25px" }}>{myBookings.length}</h3>
             </div>
 
             <div className="stucard">
@@ -117,10 +130,7 @@ const CourseList = () => {
                 <p>Total Slots</p>
                 <FaClipboardList size={24} color="#2196f3" />
               </div>
-              <h3
-              style={{
-                fontSize:"25px"
-              }}>{courses.length + myBookings.length}</h3>
+              <h3 style={{ fontSize: "25px" }}>{courses.length + myBookings.length}</h3>
             </div>
 
             <div className="stucard">
@@ -128,8 +138,12 @@ const CourseList = () => {
                 <h3>Next Session</h3>
                 <FaClock size={22} color="#f57c00" />
               </div>
-              <h4 className="session-time">(10:50 AM – 12:30 PM)</h4>
-              <h3>DBMS – IT Lab 2</h3>
+             
+              
+              <h4 className="session-time">{myBookings[0]?.Time}</h4>
+              <h4>{myBookings[0]?.Course.toUpperCase()} - {myBookings[0]?.venue}</h4>
+            
+            
             </div>
           </div>
 
@@ -137,9 +151,7 @@ const CourseList = () => {
           <div className="tab-section">
             <div className="tabs">
               <div
-                className={`tab ${
-                  active === "available" ? "active" : "inactive"
-                }`}
+                className={`tab ${active === "available" ? "active" : "inactive"}`}
                 onClick={() => handleTabChange("available")}
               >
                 Available Slots
@@ -158,17 +170,19 @@ const CourseList = () => {
                 type="text"
                 placeholder="Search slots by title or lab name..."
                 className="search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div className="date-filter">
                 <FaFilter color="#555" />
                 <input
                   type="date"
-                  
-                  // placeholder="dd-mm-yyyy"
                   className="date-text"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
                 />
-                {/* <FaCalendarAlt color="#555" /> */}
               </div>
+             
             </div>
 
             {/* Slot List */}
@@ -176,100 +190,55 @@ const CourseList = () => {
               {/* Available Slots */}
               {active === "available" && (
                 <>
-                  {courses.length > 0 ? (
-                    courses.map((slot) => (
+                  {filteredCourses.length > 0 ? (
+                    filteredCourses.map((slot) => (
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course.toUpperCase()}
-                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
+                            {slot.Course.toUpperCase()}{" "}- Exp.No:{slot.experiment.exp_no}
+                            <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
                           </h3>
-                            
                         </div>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <BookIcon fontSize="small" />
                           {new Date(slot.Date).toDateString()}
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <AccessTimeIcon fontSize="small" />
                           {slot.Time}
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <LocationOnIcon fontSize="small" />
                           {slot.venue}
                         </p>
 
-                        {/* <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <GroupIcon fontSize="small" />
-                          0/{slot.capacity} Capacity
-                        </p> */}
-
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <PictureAsPdfIcon fontSize="small" />
-                          <a
-                            href={slot.pdf_material}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none" }}
-                          >
+                          <a href={slot.pdf_material} 
+                           style={{
+                            textDecoration:"none"
+                          }}
+                          target="_blank" rel="noopener noreferrer">
                             Pdf Material
                           </a>
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <OndemandVideoIcon fontSize="small" />
-                          <a
-                            href={slot.video_material}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none" }}
+                          <a href={slot.video_material} 
+                          style={{
+                            textDecoration:"none"
+                          }}
+                          target="_blank" rel="noopener noreferrer"
+                          
                           >
                             Video Material
                           </a>
                         </p>
-                        <button
-                          className="book-btn"
-                          onClick={() => handleBookSlot(slot._id)}
-                        >
+                        <button className="book-btn" onClick={() => handleBookSlot(slot._id)}>
                           Book Now
                         </button>
                       </div>
@@ -278,7 +247,12 @@ const CourseList = () => {
                     <div className="no-slots">
                       <FaCalendarAlt size={60} color="#c0c0c0" />
                       <h4>No available slots</h4>
-                      <p>Check back later for new lab sessions</p>
+                      <p>Try adjusting search, date, or faculty filters</p>
+                      {(filterDate!="" || searchTerm!="" )&&
+                       <button
+                       className="clear-btn" onClick={(e) => {setFilterDate(""),setSearchTerm("")}}
+                       >Clear Filters</button>
+                      }
                     </div>
                   )}
                 </>
@@ -287,92 +261,48 @@ const CourseList = () => {
               {/* Booked Slots */}
               {active === "booked" && (
                 <>
-                  {myBookings.length > 0 ? (
-                    myBookings.map((slot) => (
+                  {filteredBookings.length > 0 ? (
+                    filteredBookings.map((slot) => (
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course}{" "}
-                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
+                            {slot.Course}{" "} - Exp.No:{slot.experiment.exp_no}
+                            <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
                           </h3>
                         </div>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <BookIcon fontSize="small" />
                           {new Date(slot.Date).toDateString()}
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <AccessTimeIcon fontSize="small" />
                           {slot.Time}
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <LocationOnIcon fontSize="small" />
                           {slot.venue}
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <GroupIcon fontSize="small" />
-                          0/{slot.capacity} Capacity
-                        </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <PictureAsPdfIcon fontSize="small" />
-                          <a
-                            href={slot.pdf_material}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none" }}
-                          >
+                          <a href={slot.pdf_material}  style={{
+                            textDecoration:"none"
+                          }}
+                          target="_blank" rel="noopener noreferrer">
                             Pdf Material
                           </a>
                         </p>
 
-                        <p
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
-                        >
+                        <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                           <OndemandVideoIcon fontSize="small" />
-                          <a
-                            href={slot.video_material}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: "none" }}
-                          >
+                          <a href={slot.video_material}  style={{
+                            textDecoration:"none"
+                          }}
+                          target="_blank" rel="noopener noreferrer">
                             Video Material
                           </a>
                         </p>
@@ -383,7 +313,12 @@ const CourseList = () => {
                     <div className="no-slots">
                       <FaCalendarAlt size={60} color="#c0c0c0" />
                       <h4>No booked slots</h4>
-                      <p>You haven’t booked any slots yet.</p>
+                      <p>Try adjusting search, date, or faculty filters</p>
+                       {(filterDate!="" || searchTerm!="" )&&
+                       <button
+                       className="clear-btn" onClick={(e) => {setFilterDate(""),setSearchTerm("")}}
+                       >Clear Filters</button>
+                      }
                     </div>
                   )}
                 </>

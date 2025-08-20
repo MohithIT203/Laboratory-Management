@@ -9,7 +9,7 @@ const SlotFaculty=require('../Routes/newSlot');
 const bookSlot=require('../Routes/BookSlot');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const PORT = process.env.PORT||3000;
+const PORT = process.env.PORT;
 
 const login=require('../Routes/login');
 

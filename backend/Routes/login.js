@@ -12,6 +12,7 @@ require('dotenv').config();
 // LOGIN ROUTE
 router.post('/api/user/login', async (req, res) => {
   const { userEmail } = req.body;
+  console.log("Login request received for email:", userEmail);
 
   try {
     const user = await User.findOne({ email: userEmail });

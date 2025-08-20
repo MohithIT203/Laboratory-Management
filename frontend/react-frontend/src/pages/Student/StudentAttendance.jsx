@@ -57,9 +57,7 @@ const StudentAttendance = () => {
             <h2 className="red">0</h2>
             <FaTimesCircle className="icon red" />
           </div>
-        </div>
-
-        <div className="otp-block">
+           <div className="otp-block">
           <form onSubmit={verifyOtp}>
             {message && <p style={{ marginTop: "10px" }}>{message}</p>}
             <input
@@ -80,6 +78,9 @@ const StudentAttendance = () => {
             </button>
           </form>
         </div>
+        </div>
+
+       
 
         <h3 className="history-title">Attendance History</h3>
         <div className="session-card">

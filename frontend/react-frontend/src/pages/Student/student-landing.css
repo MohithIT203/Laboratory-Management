@@ -87,7 +87,7 @@
 }
 
 .section-title {
-  margin-left: 55px;
+  margin-left: 10px;
   margin-bottom: 20px;
   color: #333;
 }
@@ -147,8 +147,8 @@
 }
 
 .tab.active {
-  color: #007bff;
-  border-color: #007bff;
+  color:#1b5e20;
+  border-color: green;
   font-weight: bold;
 }
 

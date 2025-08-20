@@ -12,14 +12,16 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./teacher-landing.css";
 import axios from "axios";
-import MiniAppBar from "../../components/Student_navbar";
 import StaffAppBar from "../../components/Staff_navbar";
 
 const SlotList = () => {
   const location = useLocation();
-const Facultyname = location.state?.Facultyname || localStorage.getItem("Facultyname");
-const Facultydept = location.state?.Facultydept || localStorage.getItem("Facultydept");
-const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("FacultyEmail");
+  const Facultyname =
+    location.state?.Facultyname || localStorage.getItem("Facultyname");
+  const Facultydept =
+    location.state?.Facultydept || localStorage.getItem("Facultydept");
+  const FacultyEmail =
+    location.state?.FacultyEmail || localStorage.getItem("FacultyEmail");
 
   const [slots, setSlots] = useState([]);
   const [open, setOpen] = useState(false);
@@ -32,11 +34,14 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
   const [venue, setvenue] = useState("");
   const [capacity, setcapacity] = useState("");
   const [allslots, setallslots] = useState([]);
-  const [materialLink, setmaterial] = useState([]);
-  const [video, setvideo] = useState([]);
+  const [materialLink, setmaterial] = useState(""); // string (fix)
+  const [video, setvideo] = useState(""); // string (fix)
   const [error, seterror] = useState("");
-  const [exp, setexp] = useState({}); // stores selected experiment
-  const [expDB, setexpDB] = useState([]); // stores experiments from backend
+  const [exp, setexp] = useState({});
+  const [expDB, setexpDB] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [slotLoading, setSlotLoading] = useState(true); // loader for all slots
+  const [filterSortOption, setFilterSortOption] = useState("all-latest");
 
   const timeSlots = [
     "8:45 AM TO 10:30 AM",
@@ -75,12 +80,7 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
       xs: "90vw",
       sm: 400,
     },
-    height: {
-      xs: "50vh",
-      sm: 595,
-    },
-    maxHeight: "90vh",
-    // overflowY: "hidden",
+    maxHeight: "80vh",
     overflowX: "hidden",
     bgcolor: "background.paper",
     border: "0px solid #000",
@@ -95,7 +95,6 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
     minWidth: "200px",
     top: "50%",
     left: "50%",
-    width: { sm: 100, xl: 400 },
     transform: "translate(-50%, -50%)",
     bgcolor: "background.paper",
     border: "0px solid #000",
@@ -104,14 +103,13 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
     p: 4,
   };
 
-  //Courses Method
+  // Fetch Courses
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(
           `http://localhost:4000/api/courses/${Facultydept}`
         );
-        // console.log(subject);
         setSubject(response.data);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -120,21 +118,44 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
     if (Facultydept) fetchCourses();
   }, [Facultydept]);
 
+  // Fetch Experiments for selected subject
   useEffect(() => {
     const fetchExperiments = async () => {
       try {
         const response = await axios.get(
           `http://localhost:4000/api/exp/${subject}`
         );
-
         setexpDB(response.data);
       } catch (error) {
         console.error("Failed to fetch experiments:", error);
+      } finally {
+        setloading(false);
       }
     };
-
-    if (subject) fetchExperiments();
+    if (subject) {
+      setloading(true);
+      fetchExperiments();
+    }
   }, [subject]);
+
+  // Fetch All Slots
+  useEffect(() => {
+    const fetchAllSlots = async () => {
+      try {
+        setSlotLoading(true);
+        const response = await axios.post(
+          `http://localhost:4000/api/faculty/allSlots`,
+          { FacultyEmail }
+        );
+        setallslots(response.data);
+      } catch (error) {
+        console.error("Failed to fetch slot details:", error);
+      } finally {
+        setSlotLoading(false);
+      }
+    };
+    if (FacultyEmail) fetchAllSlots();
+  }, [FacultyEmail]);
 
   const createSlot = async () => {
     try {
@@ -153,30 +174,21 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
       });
       setOpen(false);
       setallslots((prev) => [...prev, response.data.slot]);
+
+      // reset form
+      setsubject("");
+      setdate("");
+      settime("");
+      setvenue("");
+      setcapacity("");
+      setmaterial("");
+      setvideo("");
+      setexp({});
     } catch (error) {
-      seterror(error.response.data.message);
-      // console.log(error.response.data.message);
+      seterror(error.response?.data?.message || "Failed to create slot");
       console.error("Failed to create Slot:", error);
     }
   };
-
-  useEffect(() => {
-    const fetchAllSlots = async () => {
-      try {
-        const response = await axios.post(
-          `http://localhost:4000/api/faculty/allSlots`,
-          {
-            FacultyEmail,
-          }
-        );
-        // console.log(allslots);
-        setallslots(response.data);
-      } catch (error) {
-        console.error("Failed to fetch slot details:", error);
-      }
-    };
-    if (FacultyEmail) fetchAllSlots();
-  }, [FacultyEmail]);
 
   const handleOpenDelete = (id) => {
     setSelectedSlotId(id);
@@ -193,13 +205,16 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
       await axios.delete(
         `http://localhost:4000/api/faculty/allSlots/${selectedSlotId}`
       );
-      setallslots((prev) => prev.filter((slot) => slot._id !== selectedSlotId));
+      setallslots((prev) =>
+        prev.filter((slot) => slot._id !== selectedSlotId)
+      );
       setPopupOpen(false);
       setSelectedSlotId(null);
     } catch (error) {
       console.log("Error deleting the slot:", error);
     }
   };
+
   const handleConfirm = (e) => {
     e.preventDefault();
     const conflict = allslots.some(
@@ -207,26 +222,24 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
     );
 
     if (conflict) {
-      alert(
+      seterror(
         "⚠️ Slot conflict: Another slot exists with the same date, time, and venue."
       );
       return;
     }
     createSlot();
   };
-  const [filterSortOption, setFilterSortOption] = useState("all-latest");
 
+  // Filter + Sort
   const processedSlots = allslots
     .filter((slot) => {
-      const date = new Date(slot.Date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const slotDate = new Date(slot.Date).setHours(0, 0, 0, 0);
+      const today = new Date().setHours(0, 0, 0, 0);
 
       const [filterPart] = filterSortOption.split("-");
-      if (filterPart === "today")
-        return date.toDateString() === today.toDateString();
-      if (filterPart === "future") return date > today;
-      if (filterPart === "past") return date < today;
+      if (filterPart === "today") return slotDate === today;
+      if (filterPart === "future") return slotDate > today;
+      if (filterPart === "past") return slotDate < today;
       return true;
     })
     .sort((a, b) => {
@@ -238,9 +251,9 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
 
   return (
     <div className="dashboard-container">
-    <StaffAppBar/>
+      <StaffAppBar />
       <h2>Faculty Dashboard</h2>
-      <p>Welcome back, Dr.{Facultyname}</p>
+      <p>Welcome back, Dr. {Facultyname}</p>
 
       <div className="dashboard-cards">
         <div className="card">
@@ -287,81 +300,87 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
       >
         + Create New Slot
       </button>
-      <div className="slot-list">
-        {processedSlots.map((slot) => (
-          <div key={slot._id} className="slot-card">
-            <div className="slot-header">
-              <h3>
-                 {slot.Course} - Exp.No: {slot.experiment.exp_no}
-                 
-                 <span className="your-slot-badge">Your Slot</span>
-              </h3>
-               
+
+      {/* Loader */}
+      {slotLoading ? (
+        <div style={{ textAlign: "center", padding: "30px" }}>
+          <span className="loader"></span>
+          <p>Loading slots...</p>
+        </div>
+      ) : (
+        <div className="slot-list">
+          {processedSlots.map((slot) => (
+            <div key={slot._id} className="slot-card">
+              <div className="slot-header">
+                <h3>
+                  {slot.Course} - Exp.No: {slot.experiment.exp_no}
+                  <span className="your-slot-badge">Your Slot</span>
+                </h3>
+              </div>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <BookIcon fontSize="small" />
+                {new Date(slot.Date).toDateString()}
+              </p>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <AccessTimeIcon fontSize="small" />
+                {slot.Time}
+              </p>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <LocationOnIcon fontSize="small" />
+                {slot.venue}
+              </p>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <GroupIcon fontSize="small" />
+                0/{slot.capacity} Capacity
+              </p>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <PictureAsPdfIcon fontSize="small" />
+                <a
+                  href={slot.pdf_material}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none" }}
+                >
+                  Pdf Material
+                </a>
+              </p>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <OndemandVideoIcon fontSize="small" />
+                <a
+                  href={slot.video_material}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none" }}
+                >
+                  Video Material
+                </a>
+              </p>
+
+              <button
+                className="remove-btn-bottom-right"
+                title="Remove Slot"
+                onClick={() => handleOpenDelete(slot._id)}
+                style={{ backgroundColor: "red" }}
+              >
+                Delete
+              </button>
             </div>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <BookIcon fontSize="small"/>
-              {new Date(slot.Date).toDateString()}
-            </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <AccessTimeIcon fontSize="small" />
-              {slot.Time}
-            </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <LocationOnIcon fontSize="small" />
-              {slot.venue}
-            </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <GroupIcon fontSize="small" />
-              0/{slot.capacity} Capacity
-            </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <PictureAsPdfIcon fontSize="small" />
-              <a
-                href={slot.pdf_material}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: "none" }}
-              >
-                Pdf Material
-              </a>
-            </p>
-
-            <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <OndemandVideoIcon fontSize="small" />
-              <a
-                href={slot.video_material}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: "none" }}
-              >
-                Video Material
-              </a>
-            </p>
-
-            <button
-              className="remove-btn-bottom-right"
-              title="Remove Slot"
-              onClick={() => handleOpenDelete(slot._id)}
-              style={{ backgroundColor: "red" }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Create Slot Modal */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={style}>
           <form onSubmit={handleConfirm}>
-            {/* <form> */}
             <div className="popup">
-              <h2 style={{ marginTop: "-5px" }}>Create Slot</h2>
+              <h2>Create Slot</h2>
               <label>
                 Subject:
                 <select
@@ -380,19 +399,20 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   ))}
                 </select>
               </label>
+
               <label>
                 Experiment:
                 <select
+                  defaultValue=""
                   onChange={(e) => {
                     const selectedExp = JSON.parse(e.target.value);
                     setexp(selectedExp);
                   }}
                   required
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     -- Select Experiment --
                   </option>
-
                   {expDB.map((ex, i) => (
                     <option
                       key={i}
@@ -402,11 +422,12 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                         exp_description: ex.exp_description,
                       })}
                     >
-                      {ex.exp_no} - {ex.exp_name}-{ex.exp_description}
+                      {ex.exp_no} - {ex.exp_name} - {ex.exp_description}
                     </option>
                   ))}
                 </select>
               </label>
+
               <label>
                 Date:
                 <input
@@ -420,6 +441,7 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   }}
                 />
               </label>
+
               <label>
                 Time:
                 <select
@@ -438,6 +460,7 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   ))}
                 </select>
               </label>
+
               <label>
                 Venue:
                 <select
@@ -456,6 +479,7 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   ))}
                 </select>
               </label>
+
               <label>
                 Capacity:
                 <input
@@ -467,22 +491,27 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   onChange={(e) => setcapacity(e.target.value)}
                 />
               </label>
+
               <label>
                 PDF Material Link:
                 <input
                   type="text"
+                  value={materialLink}
                   onChange={(e) => setmaterial(e.target.value)}
                   required
-                ></input>
+                />
               </label>
+
               <label>
                 Video Material Link:
                 <input
                   type="text"
+                  value={video}
                   onChange={(e) => setvideo(e.target.value)}
                   required
-                ></input>
+                />
               </label>
+
               {error && (
                 <div
                   style={{
@@ -496,8 +525,8 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
                   ❌ {error}
                 </div>
               )}
+
               <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                {/* <button type="button" onClick={handleConfirm}>Confirm</button> */}
                 <button type="submit">Confirm</button>
                 <button
                   type="button"
@@ -523,15 +552,8 @@ const FacultyEmail = location.state?.FacultyEmail || localStorage.getItem("Facul
             variant="h6"
             sx={{ textAlign: "center" }}
           >
-            <ErrorOutlineIcon
-              sx={{
-                color: "red",
-                position: "relative",
-                top: "5px",
-                right: "10px",
-              }}
-            />
-            Are You Sure?
+            <ErrorOutlineIcon sx={{ color: "red", position: "relative" }} /> Are
+            You Sure?
           </Typography>
           <Typography sx={{ mt: 2 }}>
             Deleting this slot leads to loss of all the data related to this

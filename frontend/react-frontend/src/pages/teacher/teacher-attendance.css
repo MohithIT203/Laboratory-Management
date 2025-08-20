@@ -1,5 +1,5 @@
 .mark-attendance-container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
   background: #ffffff;
@@ -100,7 +100,7 @@
 .attendance-btn.present {
    color: green;
   font-weight: bold;
-  width:100%
+
 }
 
 /* .attendance-btn.present:hover {
@@ -118,6 +118,22 @@ color: #dc2626;
   background-color: #b91c1c;
   color: white;
 } */
+.tab-btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  margin-right: 6px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 90px;
+}
+.tab-btn.active {
+  background: green;
+  color: white;
+  border-color: green;
+}
+
 
 .attendance-btn.inactive {
   opacity: 0.5;
@@ -160,3 +176,22 @@ color: #dc2626;
   }
 }
 
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid green;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 

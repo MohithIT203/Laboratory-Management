@@ -35,6 +35,7 @@ const Login = () => {
        setAlert({ show: true, type: "success", message: "Login Successful!" });
       if (response.data.role === "Student") {
          localStorage.setItem("student_id", response.data.user_id);
+         localStorage.setItem("student_dept", response.data.dept);
         navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
       } else if (response.data.role === "faculty") {
          localStorage.setItem("Facultyname", response.data.name);

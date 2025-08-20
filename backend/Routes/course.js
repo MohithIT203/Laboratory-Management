@@ -115,7 +115,66 @@ router.get('/faculty/my-slots/:FacultyEmail',async (req,res)=>{
 })
 
 
+
+
 router.get('/faculty/students/:SlotId', async (req, res) => {
+  try {
+    const { SlotId } = req.params;
+
+    const slot = await Slot.findById(SlotId)
+      .select("booked_students students_attendance");
+    if (!slot) {
+      return res.status(404).json({ message: "No slot found with this ID" });
+    }
+
+    if (!slot.booked_students || slot.booked_students.length === 0) {
+      return res.status(200).json({
+        message: "No students booked this slot",
+        students: []
+      });
+    }
+
+    // Attendance map (key = student_id as string)
+    const attendanceMap = {};
+    (slot.students_attendance || []).forEach(record => {
+      attendanceMap[record.student_id] = {
+        attendance: record.attendance || "present",
+        marks: record.marks ?? ""
+      };
+    });
+
+    // Convert string IDs to ObjectId for Student query
+    const bookedIdsAsObjectId = slot.booked_students
+      .filter(id => mongoose.Types.ObjectId.isValid(id))
+      .map(id => new mongoose.Types.ObjectId(id));
+
+    const students = await Student.find({ _id: { $in: bookedIdsAsObjectId } });
+
+    // Merge booked_students array (source of truth) with attendance
+    const studentsWithAttendance = slot.booked_students.map(id => {
+      const studentDoc = students.find(s => s._id.toString() === id);
+      const attData = attendanceMap[id];
+      return {
+        ...(studentDoc ? studentDoc.toObject() : { _id: id, name: "Unknown" }),
+        attendance: attData?.attendance || "absent",
+        score: attData?.marks ?? ""
+      };
+    });
+
+    res.json({
+      slotId: SlotId,
+      totalStudents: studentsWithAttendance.length,
+      students: studentsWithAttendance
+    });
+
+  } catch (err) {
+    console.error("Error fetching students:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+router.get('/faculty/present-students/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
 
@@ -159,10 +218,59 @@ router.get('/faculty/students/:SlotId', async (req, res) => {
   }
 });
 
+router.get('/faculty/absent-students/:SlotId', async (req, res) => {
+  try {
+    const { SlotId } = req.params;
+
+    const slot = await Slot.findById(SlotId).select("booked_students students_attendance");
+    if (!slot) {
+      return res.status(404).json({ message: "No slot found with this ID" });
+    }
+
+    // If no students booked
+    if (!slot.booked_students || slot.booked_students.length === 0) {
+      return res.status(200).json({ message: "No students booked this slot", students: [] });
+    }
+
+    // Fetch all booked student details
+    const students = await Student.find({ _id: { $in: slot.booked_students } });
+
+    // ✅ Identify absent students
+    const absentStudents = students
+      .map(student => {
+        const attendanceRecord = slot.students_attendance.find(
+          s => s.student_id === student._id.toString()
+        );
+
+        // If no attendance record, mark absent
+        if (!attendanceRecord) {
+          return {
+            ...student.toObject(),
+            attendance: "absent",
+            marks: ""
+          };
+        }
+        return null; // skip present ones
+      })
+      .filter(s => s !== null);
+
+    res.json({
+      slotId: SlotId,
+      totalAbsent: absentStudents?.length||0,
+      absentStudents
+    });
+
+  } catch (err) {
+    console.error("Error fetching absent students:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 router.put("/faculty/update-scores/:slotId", async (req, res) => {
   try {
     const { slotId } = req.params;
-    const { students } = req.body; // [{_id, score}]
+    const { students } = req.body;
 
     const slot = await Slot.findById(slotId);
 

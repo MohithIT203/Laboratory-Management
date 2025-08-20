@@ -23,7 +23,7 @@ const CourseList = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const userDept = location?.state?.Studentdept;
+  const userDept = location?.state?.Studentdept ||localStorage.getItem("student_dept");;
   const userId =
     location?.state?.student_id || localStorage.getItem("student_id");
 
@@ -96,7 +96,7 @@ const CourseList = () => {
       <MiniAppBar />
       <div className="wrapper">
         <div className="course_content">
-          <h3 className="section-title">SLOTS</h3>
+          <h3 className="section-title">ALL SLOTS</h3>
 
           {/* Dashboard Cards */}
           <div className="carddiv">
@@ -105,7 +105,11 @@ const CourseList = () => {
                 <p>My Bookings</p>
                 <FaBookOpen size={24} color="#4caf50" />
               </div>
-              <h3>{myBookings.length}</h3>
+              <h3
+              style={{
+                fontSize:"25px"
+              }}
+              >{myBookings.length}</h3>
             </div>
 
             <div className="stucard">
@@ -113,7 +117,10 @@ const CourseList = () => {
                 <p>Total Slots</p>
                 <FaClipboardList size={24} color="#2196f3" />
               </div>
-              <h3>{courses.length + myBookings.length}</h3>
+              <h3
+              style={{
+                fontSize:"25px"
+              }}>{courses.length + myBookings.length}</h3>
             </div>
 
             <div className="stucard">

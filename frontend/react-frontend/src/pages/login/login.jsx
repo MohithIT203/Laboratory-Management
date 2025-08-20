@@ -6,70 +6,72 @@ import { auth, provider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
 import axios from "axios";
 import "./login.css";
+import LoginPopup from "./loginPopup";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [alert, setAlert] = useState({ show: false, type: "", message: "" });
 
   const handleGoogleSignIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        const userEmail = result.user.email;
-        console.log("Signed in with:", userEmail);
-
-        if (userEmail.endsWith("@bitsathy.ac.in")) {
-          alert("Student");
-          navigate("/student");
-        } else {
-          navigate("/teacher");
-        }
+        const emailFromGoogle = result.user.email;
+        console.log("Signed in with:", emailFromGoogle);
+        handlelogin(emailFromGoogle);
       })
       .catch((error) => {
         console.error("Google sign-in error:", error);
       });
   };
 
-  const handleLogin = async () => {
-    // Hardcoded credentials
-    if (email === "harrish@gmail.com" && password === "harrish") {
-      const definedEmail = "harrish2005@gmail.com";
-      const definedPassword = "harrish";
-
-      // You can store it in localStorage/sessionStorage or just log it
-      console.log("Defined Email:", definedEmail);
-      console.log("Defined Password:", definedPassword);
-
-      navigate("/student");
-      return;
-    }
-
+  const handlelogin = async (email) => {
     try {
       const response = await axios.post(
         "http://localhost:4000/api/user/login",
-        { userEmail: email },
+        {
+          userEmail: email,
+        },
         { withCredentials: true }
       );
-
+      setAlert({ show: true, type: "success", message: "Login Successful!" });
       if (response.data.role === "Student") {
-        navigate("/student/dashboard");
+        localStorage.setItem("Student_id", response.data.user_id);
+        navigate("/student/dashboard", {
+          state: {
+            Studentdept: response.data.dept,
+            Student_id: response.data.user_id,
+          },
+        });
       } else if (response.data.role === "faculty") {
-        navigate("/faculty/dashboard");
+        navigate("/faculty/dashboard", {
+          state: {
+            Facultyname: response.data.name,
+            Facultydept: response.data.dept,
+            FacultyEmail: response.data.email,
+          },
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Login error");
+      setAlert({
+        show: true,
+        type: "error",
+        message: "Login Failed. Try again.",
+      });
     }
   };
 
   return (
     <div className="mainContainer">
+      {alert.show && <LoginPopup type={alert.type} message={alert.message} />}
       <div className="outerdiv">
         <h2 className="head">BIT LAB SLOT BOOKING</h2>
         <form onSubmit={(e) => e.preventDefault()}>
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
-              <EmailIcon style={{ color: "#0d9f62" }} /> Email:
+              <EmailIcon style={{ color: "#6018be" }} /> Email:
             </label>
             <input
               type="email"
@@ -84,7 +86,7 @@ const Login = () => {
 
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
-              <KeyIcon style={{ color: "#0d9f62" }} /> Password:
+              <KeyIcon style={{ color: "#6018be" }} /> Password:
             </label>
             <input
               type="password"
@@ -98,7 +100,7 @@ const Login = () => {
           </div>
 
           <div>
-            <button type="button" className="submitBtn" onClick={handleLogin}>
+            <button type="submit" className="submitBtn">
               Login
             </button>
           </div>

@@ -5,16 +5,17 @@ const courses=require('../Routes/course');
 const cors=require('cors');
 const app = express()
 const jwt = require('jsonwebtoken');
-
+const SlotFaculty=require('../Routes/newSlot');
+const bookSlot=require('../Routes/BookSlot');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT||3000;
 
 const login=require('../Routes/login');
 
 app.use(express.json())
 
-
+app.use(cookieParser());
 
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -27,7 +28,9 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 app.use(login);
-app.use(courses)
+app.use(courses);
+app.use(SlotFaculty);
+app.use(bookSlot);
 app.listen(PORT, () => {
     console.log(`Running on Port ${PORT}`);
 })

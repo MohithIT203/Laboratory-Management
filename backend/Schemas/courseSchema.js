@@ -14,11 +14,16 @@ const CourseSchema = new mongoose.Schema({
     type: [String],        
     required: true
   },
+  experiments:{
+    type:[String],
+     default: [],
+    required:true
+  },
   dept: {
     type: String,
     required: true
   }
 });
 
-const Course = mongoose.model("Courses", CourseSchema); // ✅ NO typo
+const Course = mongoose.model("Courses", CourseSchema); 
 module.exports = Course;

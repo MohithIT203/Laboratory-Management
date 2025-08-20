@@ -1,49 +1,76 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Course = require('../Schemas/courseSchema') 
-const auth=require('../middlewares/auth')
+const mongoose = require('mongoose');
+
+const Course = require("../Schemas/courseSchema");
+const Slot = require("../Schemas/SlotCreationSchema");
+const BookedSlot=require("../Schemas/studentSlot");
+const auth = require("../middlewares/auth");
 //add new course
-router.post('/add/course',async (req, res) => {
-    console.log(req.body);
+
+
+router.post("/add/course", async (req, res) => {
+  
+
+  // console.log(req.body);
   const { Course_id, Course_name, staffs, dept } = req.body;
 
   if (!Course_id || !Course_name || !staffs || !dept) {
-    return res.status(400).json({ message: 'All fields are required' });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const existing = await Course.findOne({ Course_id });
     if (existing) {
-      return res.status(409).json({ message: 'Course already exists' });
+      return res.status(409).json({ message: "Course already exists" });
     }
 
     const newCourse = new Course({
       Course_id,
       Course_name,
       staffs,
-      dept
+      dept,
     });
 
     await newCourse.save();
-    res.status(201).json({ message: 'Course added successfully', course: newCourse });
+    res
+      .status(201)
+      .json({ message: "Course added successfully", course: newCourse });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-router.get('/student/courses/:dept', async (req, res) => {
-  const dept = req.params.dept;
+router.post("/slots", async (req, res) => {
+ const { dept, Student_id } = req.body;
+
+
   try {
-    const courses = await Course.find({ dept }); // use find instead of findOne to get all
-    if (courses.length > 0) {
-      res.json(courses);
+    const booked = await BookedSlot.find({ isBooked: true ,Student_id: Student_id,}).select("Slot_id");
+    const bookedSlotIds = booked.map((b) => b.Slot_id.toString());
+    console.log(Student_id);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const slots = await Slot.find({
+      dept,
+      _id: { $nin: bookedSlotIds },
+      Date: { $gte: today }
+    });
+
+    console.log(slots);
+    if (slots.length > 0) {
+      res.json(slots);
     } else {
-      res.status(404).json({ message: 'No courses found' });
+      res.status(404).json({ message: "No available slots found" });
     }
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching slots:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
 
 module.exports = router;

@@ -9,19 +9,13 @@ const Access = new mongoose.Schema({
     password: {
         type: mongoose.Schema.Types.String,
         required: true,
-        unique: true
     },
     role: {
         type: mongoose.Schema.Types.String,
         required: true
     },
-    refId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        refPath: 'role'
-    }
 
 })
 
-const AccessSchema = mongoose.model("UsersAccess", Access);
+const AccessSchema = mongoose.model("UsersAccessDoc", Access);
 module.exports = AccessSchema;

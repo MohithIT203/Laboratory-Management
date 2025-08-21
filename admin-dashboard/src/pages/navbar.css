@@ -1,0 +1,219 @@
+/* Navbar container */
+.navbar {
+  width: 95%;
+  max-width: 1600px;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  background-color: #10b981;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  z-index: 100;
+  margin: 20px ; /* ✅ Add this to keep spacing from top */
+}
+body {
+  margin: 0;
+}
+/* Navbar content */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Logo */
+.logo {
+  font-weight: bold;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  justify-content:left;
+
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-links a {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.nav-links a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 4px;
+  background:  rgb(69, 161, 57);
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+.nav-links a:hover::before {
+  width: 100%;
+}
+
+.nav-links a:hover {
+  transform: translateY(-2px);
+  color: white;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Profile container */
+.profile-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* default: pic on left */
+}
+
+.profile-pic {
+  width: 50px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.profile-pic:hover {
+  transform: scale(1.1);
+}
+
+/* Profile dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  z-index: 100;
+}
+
+.profile-dropdown a {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.profile-dropdown a:hover {
+  background: linear-gradient(90deg, #10b981, #ffffff);
+  transform: translateY(-2px);
+  color: white;
+  transition: background 0.2s;
+}
+
+/* Hamburger menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  margin-right: auto;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: currentColor;
+  display: block;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+/* Hamburger animation */
+.nav-links.active + .nav-actions .hamburger span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-links.active + .nav-actions .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-links.active + .nav-actions .hamburger span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .navbar {
+    width: 95%;              /* Adjust width on mobile */
+    top: 10px;
+    padding: 0.5rem 0.8rem;
+    
+  }
+  .navbar-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: center;
+  }
+  .nav-links {
+    position: absolute;
+    top: 110px;
+    left: 0;
+    right: 0;
+    background: inherit;
+    flex-direction: column;
+    text-align: center;
+    display: none;
+    padding: 1rem 0;
+    gap: 1rem;
+    border-radius: 0 0 10px 10px;
+    z-index: 99;
+    background-color: #10b981 ;
+  }
+
+  .nav-links.active {
+    display: flex;
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  .nav-actions
+  {
+    display: flex;
+    justify-content: flex-end; /* push content to the right */
+    align-items: center;
+    width: 100%;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .logo
+  {
+    display:none;
+  }
+  .profile-container {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .hamburger {
+    order: 1;
+    justify-content: flex-end;
+  }
+  
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

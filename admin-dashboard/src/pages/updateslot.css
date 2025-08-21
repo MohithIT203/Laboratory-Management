@@ -1,0 +1,248 @@
+.slot-cards {
+  margin: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content:flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+  border-radius: 1rem;
+  
+}
+
+.slot {
+  background-color: white;
+  border-radius: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  border-color: #10b981;
+}
+.slot:hover{
+  box-shadow: 0 4px 15px rgba(202, 123, 123, 0.1);
+  cursor:pointer;
+}
+.slot img {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.slot-info {
+  padding: 1rem;
+  text-align: left;
+}
+
+.slot-info p {
+  margin: 4px 0;
+  font-family: Poppins, sans-serif;
+}
+
+.view-btn {
+  width: 100%;
+  height: 40px;
+  
+  background-color: rgba(16, 185, 129, 0.9);
+ 
+  color:white;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-btn:hover {
+ background-color: rgba(52, 211, 153, 0.7);
+ transition: transform .1s;
+ transform: scale(1.1);
+  /* color: white; */
+}
+
+/* Container for search and date filter
+/* Container for search */
+.search-container {
+  display: flex;
+  height: 50px;
+  gap: 0.5rem;
+  width: 500px; 
+} 
+
+/* Search input */
+.search-container input[type="text"] {
+  flex-grow: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  max-width: 400px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+/* .search-container input[type="text"]:focus {
+  border-color: #10b981;
+  outline: none;
+  max-width: 300px;
+} */
+
+/* Search button */
+.search-container button {
+  /* padding: 0.5rem 1rem; */
+  background-color: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  max-width: 80px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.search-container button:hover,
+.search-container button:focus {
+  background-color: #38d9a9;
+  transform: translateY(-1px);
+}
+
+
+/* Container for date filter */
+.date-filter-container {
+  display: flex;
+  /* margin-left: 1030px; */
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  width: 300px; /* Adjust width as needed */
+}
+
+/* Date input */
+.date-filter-container input[type="date"] {
+  flex-grow: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.date-filter-container input[type="date"]:focus {
+  border-color: #10b981;
+  outline: none;
+}
+
+/* Date filter button */
+.date-filter-container button {
+  padding: 0.5rem 1rem;
+  background-color: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  max-width: 150px;
+  height: 40px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.date-filter-container button:hover,
+.date-filter-container button:focus {
+  background-color: #38d9a9;
+  transform: translateY(-1px);
+}
+.controls{
+  display: flex;
+  justify-content:space-between;
+  flex-wrap: wrap;
+  /* gap: 450px; */
+  margin: 30px;
+
+}
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .search-container,
+  .date-filter-container {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .search-container button,
+  .date-filter-container button {
+    font-size: small;
+  }
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.popup {
+  background: #fdfdfd;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.popup-header {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  padding: 12px;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: bold;
+}
+
+.popup-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup-content input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  gap: 10px;
+  background: #f9f9f9;
+}
+
+.save-btn {
+  background: #4cafef;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

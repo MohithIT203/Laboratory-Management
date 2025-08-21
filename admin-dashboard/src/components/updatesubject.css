@@ -1,0 +1,108 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* ✅ scroll horizontally on small screens */
+}
+* {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: 0.10px;
+  font: weight 400px;
+  font-style: normal;
+}
+.page-container {
+  padding-left: 40px;   /* ✅ moves content 40px to the right */
+  padding-top: 0px;    /* optional: gives some spacing below navbar */
+}
+
+/* Shared table styles */
+.teacher-table,
+.teacher-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-width: 600px;   /* ✅ ensures scroll instead of hiding buttons */
+}
+
+.teacher-table th,
+.teacher-table table th {
+  background: #f1f5f9;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px;
+  text-align: center;
+}
+
+.teacher-table td,
+.teacher-table table td {
+  padding: 16px;
+  background: white;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.teacher-table tr:hover td,
+.teacher-table table tr:hover td {
+  background: #f9fafb;
+}
+
+/* Action buttons cell */
+.teacher-table td:last-child,
+.teacher-table table td:last-child {
+  white-space: nowrap;   /* ✅ keep buttons inline */
+}
+
+/* Buttons */
+.edit-btn,
+.delete-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 3px;
+  transition: all 0.2s ease;
+  display: inline-block;   /* ✅ inline always */
+  vertical-align: middle;
+  max-width: 80px;
+}
+
+/* Edit button */
+.edit-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+}
+
+/* Delete button */
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .teacher-table,
+  .teacher-table table {
+    min-width: 600px;  /* ✅ keeps all columns + buttons visible via scroll */
+  }
+
+  .teacher-table td,
+  .teacher-table table td {
+    padding: 12px;
+  }
+}

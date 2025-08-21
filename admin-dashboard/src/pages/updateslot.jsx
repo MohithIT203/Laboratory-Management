@@ -1,56 +1,9 @@
+// updateslot.jsx
 import React, { useState } from "react";
 import "./updateslot.css";
 
 function AllSlots() {
   const slotsData = [
-    {
-      os: "Windows 10",
-      slotNo: 1,
-      date: "Fri Aug 22 2025",
-      time: "10:50 AM TO 12:30 PM",
-      location: "MECH CAD LAB",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
-    {
-      os: "Ubuntu 22.04",
-      slotNo: 2,
-      date: "Sat Aug 23 2025",
-      time: "9:00 AM TO 10:30 AM",
-      location: "CSE LAB 1",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
-    {
-      os: "Windows 10",
-      slotNo: 1,
-      date: "Fri Aug 22 2025",
-      time: "10:50 AM TO 12:30 PM",
-      location: "MECH CAD LAB",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
-    {
-      os: "Ubuntu 22.04",
-      slotNo: 2,
-      date: "Sat Aug 23 2025",
-      time: "9:00 AM TO 10:30 AM",
-      location: "CSE LAB 1",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
-    {
-      os: "Windows 10",
-      slotNo: 1,
-      date: "Fri Aug 22 2025",
-      time: "10:50 AM TO 12:30 PM",
-      location: "MECH CAD LAB",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
-    {
-      os: "Ubuntu 22.04",
-      slotNo: 2,
-      date: "Sat Aug 23 2025",
-      time: "9:00 AM TO 10:30 AM",
-      location: "CSE LAB 1",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    },
     {
       os: "Windows 10",
       slotNo: 1,
@@ -85,6 +38,18 @@ function AllSlots() {
     img: "",
   });
 
+  // Attendance view state
+  const [attendanceView, setAttendanceView] = useState(false);
+  const initialStudents = Array.from({ length: 5 }, (_, i) => ({
+    id: i + 1,
+    name: `Student ${i + 1}`,
+    roll: `REG2025${i + 1}`,
+    attendance: null,
+    marks: "",
+  }));
+  const [attendanceData, setAttendanceData] = useState(initialStudents);
+
+  // Search + Filter
   const handleSearch = () => {
     const filtered = slots.filter(
       (s) =>
@@ -108,6 +73,7 @@ function AllSlots() {
     setDisplaySlots(filtered);
   };
 
+  // Popup handlers
   const openEditPopup = (slot, index) => {
     setEditingSlot(index);
     setEditForm(slot);
@@ -130,67 +96,189 @@ function AllSlots() {
     closePopup();
   };
 
+  // Attendance handlers
+  const toggleAttendance = (id, status) => {
+    setAttendanceData((prev) =>
+      prev.map((stu) =>
+        stu.id === id
+          ? {
+              ...stu,
+              attendance: status,
+              marks: status === "absent" ? "" : stu.marks, // clear marks if absent
+            }
+          : stu
+      )
+    );
+  };
+
+  const handleMarksChange = (id, value) => {
+    setAttendanceData((prev) =>
+      prev.map((stu) => (stu.id === id ? { ...stu, marks: value } : stu))
+    );
+  };
+
+  const submitAttendance = () => {
+    // validation: marks required if present
+    const invalid = attendanceData.some(
+      (stu) =>
+        stu.attendance === "present" &&
+        (stu.marks === "" || stu.marks === null)
+    );
+
+    if (invalid) {
+      alert("⚠️ Please enter marks for all students marked as Present.");
+      return;
+    }
+
+    console.log("Submitted Attendance:", attendanceData);
+    alert("✅ Attendance & Marks Submitted!");
+    setAttendanceView(false);
+  };
+
   return (
     <div>
-      <div className="controls">
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search by Location or Slot No"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button onClick={handleSearch}>Search</button>
-        </div>
+      {!attendanceView ? (
+        <>
+          <div className="controls">
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search by Location or Slot No"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button onClick={handleSearch}>Search</button>
+            </div>
 
-        <div className="date-filter-container">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
-          <button onClick={handleDateFilter}>Filter by Date</button>
-        </div>
-      </div>
-
-      <div className="slot-cards">
-        {displaySlots.map((slot, index) => (
-          <div key={index} className="slot">
-            <img
-              src={slot.img}
-              style={{
-                height: "200px",
-                width: "100%",
-                maxWidth: "300px",
-                objectFit: "cover",
-                borderTopLeftRadius: "1rem",
-                borderTopRightRadius: "1rem",
-              }}
-              alt="Slot"
-            />
-            <div className="slot-info">
-              <p>
-                <strong>Slot No:</strong> {slot.slotNo}
-              </p>
-              <p>
-                <strong>Date:</strong> {slot.date}
-              </p>
-              <p>
-                <strong>Time:</strong> {slot.time}
-              </p>
-              <p>
-                <strong>{slot.location}</strong>
-              </p>
-              <button
-                className="view-btn"
-                onClick={() => openEditPopup(slot, index)}
-              >
-                Edit Details
-              </button>
+            <div className="date-filter-container">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+              <button onClick={handleDateFilter}>Filter by Date</button>
             </div>
           </div>
-        ))}
-      </div>
+
+          <div className="slot-cards">
+            {displaySlots.map((slot, index) => (
+              <div key={index} className="slot">
+                <img
+                  src={slot.img}
+                  style={{
+                    height: "200px",
+                    width: "100%",
+                    maxWidth: "300px",
+                    objectFit: "cover",
+                    borderTopLeftRadius: "1rem",
+                    borderTopRightRadius: "1rem",
+                  }}
+                  alt="Slot"
+                />
+                <div className="slot-info">
+                  <p>
+                    <strong>Slot No:</strong> {slot.slotNo}
+                  </p>
+                  <p>
+                    <strong>Date:</strong> {slot.date}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {slot.time}
+                  </p>
+                  <p>
+                    <strong>{slot.location}</strong>
+                  </p>
+                  <div className="action-buttons">
+                    <button
+                      className="view-btn"
+                      onClick={() => openEditPopup(slot, index)}
+                    >
+                      Edit Details
+                    </button>
+                    <button
+                      className="attendance-btn"
+                      onClick={() => setAttendanceView(true)}
+                    >
+                      View Attendance
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div>
+          <button
+            className="back-btn small-btn"
+            onClick={() => setAttendanceView(false)}
+          >
+            ← Back
+          </button>
+
+          {/* ✅ Scrollable table wrapper */}
+          <div className="table-wrapper">
+            <table className="attendance-table">
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th>Roll No.</th>
+                  <th>Attendance</th>
+                  <th>Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendanceData.map(({ id, name, roll, attendance, marks }, index) => (
+                  <tr key={id}>
+                    <td>{index + 1}</td>
+                    <td>{name}</td>
+                    <td>{roll}</td>
+                    <td>
+                      <div className="attendance-btns">
+                        <button
+                          className={`attendance-btn present ${
+                            attendance === "present" ? "" : "inactive"
+                          }`}
+                          onClick={() => toggleAttendance(id, "present")}
+                        >
+                          Present
+                        </button>
+                        <button
+                          className={`attendance-btn absent ${
+                            attendance === "absent" ? "" : "inactive"
+                          }`}
+                          onClick={() => toggleAttendance(id, "absent")}
+                        >
+                          Absent
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={marks}
+                        onChange={(e) => handleMarksChange(id, e.target.value)}
+                        className="score-input"
+                        placeholder="0-100"
+                        disabled={attendance === "absent"} // ✅ disabled if absent
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="submit-container">
+            <button className="submit-btn" onClick={submitAttendance}>
+              Submit
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Popup */}
       {editingSlot !== null && (

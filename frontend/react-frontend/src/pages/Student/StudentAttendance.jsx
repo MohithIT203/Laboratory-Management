@@ -15,12 +15,16 @@ const StudentAttendance = () => {
   const [score, setscore] = useState("");
   const studentId = localStorage.getItem("student_id");
 
-  // ✅ Fetch attendance history on mount
+  
   useEffect(() => {
-    const fetchHistory = async () => {
+    
+    fetchHistory();
+  }, [studentId]);
+
+  const fetchHistory = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:4000/student/attendance-history/${studentId}`
+          `${import.meta.env.VITE_SERVER_APP_URL}/student/attendance-history/${studentId}`
         );
         setAttendance(res.data.slots || []);
         setState(res.data.attendance);
@@ -29,14 +33,11 @@ const StudentAttendance = () => {
         console.error("Error fetching history", err);
       }
     };
-    fetchHistory();
-  }, [studentId]);
-
-  // ✅ OTP Verification
+  
   const verifyOtp = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:4000/verify-otp", {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/verify-otp`, {
         Student_id: studentId,
         otp: Number(otp),
       });
@@ -86,7 +87,7 @@ const StudentAttendance = () => {
         {/* OTP Block */}
         <div className="otp-block">
           <form onSubmit={verifyOtp}>
-            {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+            {message && <p style={{ marginLeft: "12px"}}>{message}</p>}
             <input
               type="text"
               maxLength={6}

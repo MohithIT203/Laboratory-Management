@@ -15,7 +15,7 @@ function StaffSlots() {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/faculty/my-slots/${FacultyEmail}`
+          `${import.meta.env.VITE_SERVER_APP_URL}/faculty/my-slots/${FacultyEmail}`
         );
         setallSlots(response.data);
       } catch (error) {

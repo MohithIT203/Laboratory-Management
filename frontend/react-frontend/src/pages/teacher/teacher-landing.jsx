@@ -108,7 +108,7 @@ const SlotList = () => {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/courses/${Facultydept}`
+          `${import.meta.env.VITE_SERVER_APP_URL}/api/courses/${Facultydept}`
         );
         setSubject(response.data);
       } catch (error) {
@@ -123,7 +123,7 @@ const SlotList = () => {
     const fetchExperiments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/exp/${subject}`
+          `${import.meta.env.VITE_SERVER_APP_URL}/api/exp/${subject}`
         );
         setexpDB(response.data);
       } catch (error) {
@@ -144,7 +144,7 @@ const SlotList = () => {
       try {
         setSlotLoading(true);
         const response = await axios.post(
-          `http://localhost:4000/api/faculty/allSlots`,
+          `${import.meta.env.VITE_SERVER_APP_URL}/api/faculty/allSlots`,
           { FacultyEmail }
         );
         setallslots(response.data);
@@ -159,7 +159,7 @@ const SlotList = () => {
 
   const createSlot = async () => {
     try {
-      const response = await axios.post(`http://localhost:4000/api/courses`, {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/courses`, {
         Staff_name: Facultyname,
         email: FacultyEmail,
         Course: subject,
@@ -203,7 +203,7 @@ const SlotList = () => {
   const handleRemove = async () => {
     try {
       await axios.delete(
-        `http://localhost:4000/api/faculty/allSlots/${selectedSlotId}`
+        `${import.meta.env.VITE_SERVER_APP_URL}/api/faculty/allSlots/${selectedSlotId}`
       );
       setallslots((prev) =>
         prev.filter((slot) => slot._id !== selectedSlotId)

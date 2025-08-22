@@ -29,7 +29,7 @@ const Login = () => {
 
   const handlelogin = async (email) => {
     try {
-      const response = await axios.post("http://localhost:4000/api/user/login", {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/user/login`, {
         userEmail: email,
       },{ withCredentials: true });
        setAlert({ show: true, type: "success", message: "Login Successful!" });

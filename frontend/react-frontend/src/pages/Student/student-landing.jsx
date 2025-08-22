@@ -33,7 +33,7 @@ const CourseList = () => {
   useEffect(() => {
     if (userDept) {
       axios
-        .post(`http://localhost:4000/slots`, {
+        .post(`${import.meta.env.VITE_SERVER_APP_URL}/slots`, {
           dept: userDept,
           Student_id: userId,
         })
@@ -53,7 +53,7 @@ const CourseList = () => {
 
   const handleBookSlot = (Slot_id) => {
     axios
-      .post(`http://localhost:4000/student/book-slot`, {
+      .post(`${import.meta.env.VITE_SERVER_APP_URL}/student/book-slot`, {
         Slot_id,
         Student_id: userId,
       })
@@ -61,7 +61,7 @@ const CourseList = () => {
         setCourses((prev) => prev.filter((slot) => slot._id !== Slot_id));
 
         axios
-          .post(`http://localhost:4000/slots`, {
+          .post(`${import.meta.env.VITE_SERVER_APP_URL}/slots`, {
             dept: userDept,
             Student_id: userId,
           })
@@ -84,7 +84,7 @@ const CourseList = () => {
 
   const fetchMyBookings = async () => {
     try {
-      const response = await axios.post(`http://localhost:4000/student/my-bookings`, {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/student/my-bookings`, {
         Student_id: userId,
       });
       setMyBookings(response.data);

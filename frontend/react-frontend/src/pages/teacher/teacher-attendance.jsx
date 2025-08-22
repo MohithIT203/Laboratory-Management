@@ -23,7 +23,7 @@ const StaffAttendance = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:4000/faculty/students/${slotId}`
+        `${import.meta.env.VITE_SERVER_APP_URL}/faculty/students/${slotId}`
       );
       setStudents(response.data.students);
     } catch (error) {
@@ -44,7 +44,7 @@ const StaffAttendance = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:4000/faculty/present-students/${slotId}`
+        `${import.meta.env.VITE_SERVER_APP_URL}/faculty/present-students/${slotId}`
       );
       setStudents(res.data.students);
     } catch (err) {
@@ -59,7 +59,7 @@ const StaffAttendance = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:4000/faculty/absent-students/${slotId}`
+        `${import.meta.env.VITE_SERVER_APP_URL}/faculty/absent-students/${slotId}`
       );
       setStudents(res.data.students);
     } catch (err) {
@@ -78,7 +78,7 @@ const StaffAttendance = () => {
 
   const postOtp = async (generatedOtp) => {
     try {
-      await axios.post(`http://localhost:4000/faculty/otp`, {
+      await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/faculty/otp`, {
         slotId,
         otp: generatedOtp,
       });
@@ -89,7 +89,7 @@ const StaffAttendance = () => {
 
   const handleSaveAllScores = async () => {
     try {
-      await axios.put(`http://localhost:4000/faculty/update-scores/${slotId}`, {
+      await axios.put(`${import.meta.env.VITE_SERVER_APP_URL}/faculty/update-scores/${slotId}`, {
         students: students.map((s) => ({
           _id: s._id,
           score: s.marks,

@@ -1,25 +1,41 @@
-// updateslot.jsx
-import React, { useState } from "react";
+// AllSlots.jsx
+import React, { useState, useEffect } from "react";
+import { Modal, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import "./updateslot.css";
 
 function AllSlots() {
   const slotsData = [
     {
-      os: "Windows 10",
-      slotNo: 1,
-      date: "Fri Aug 22 2025",
+      id: 1,
+      course: "Software Defined Networks",
+      os: "Exp.No : 1",
+      date: "2025-09-25",
       time: "10:50 AM TO 12:30 PM",
-      location: "MECH CAD LAB",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
+      totalStudents: 1,
+      location: "CSE LAB 1",
+      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp",
     },
     {
-      os: "Ubuntu 22.04",
-      slotNo: 2,
-      date: "Sat Aug 23 2025",
-      time: "9:00 AM TO 10:30 AM",
-      location: "CSE LAB 1",
-      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo=",
-    }
+      id: 2,
+      course: "Cloud Computing",
+      os: "Exp.No : 2",
+      date: "2025-09-26",
+      time: "10:50 AM TO 12:30 PM",
+      totalStudents: 1,
+      location: "CSE LAB 2",
+      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp",
+    },
+    {
+      id: 3,
+      course: "IoT Systems",
+      os: "Exp.No : 3",
+      date: "2025-09-27",
+      time: "10:50 AM TO 12:30 PM",
+      totalStudents: 1,
+      location: "ECE LAB 3",
+      img: "https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp",
+    },
   ];
 
   const [slots, setSlots] = useState(slotsData);
@@ -27,60 +43,62 @@ function AllSlots() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
-  // Popup state
-  const [editingSlot, setEditingSlot] = useState(null);
-  const [editForm, setEditForm] = useState({
-    os: "",
-    slotNo: "",
-    date: "",
-    time: "",
-    location: "",
-    img: "",
-  });
+  const [editingSlotIndex, setEditingSlotIndex] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [open, setOpen] = useState(false);
 
-  // Attendance view state
-  const [attendanceView, setAttendanceView] = useState(false);
-  const initialStudents = Array.from({ length: 5 }, (_, i) => ({
-    id: i + 1,
-    name: `Student ${i + 1}`,
-    roll: `REG2025${i + 1}`,
-    attendance: null,
-    marks: "",
-  }));
-  const [attendanceData, setAttendanceData] = useState(initialStudents);
+  const navigate = useNavigate();
 
-  // Search + Filter
-  const handleSearch = () => {
-    const filtered = slots.filter(
-      (s) =>
-        s.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.slotNo.toString().includes(searchTerm)
-    );
-    setDisplaySlots(filtered);
+  const styleModal = {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "column",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: { xs: "90vw", sm: 500 },
+    maxHeight: "80vh",
+    overflowY: "auto",
+    bgcolor: "background.paper",
+    border: "0px solid #000",
+    boxShadow: 24,
+    p: 3,
+    borderRadius: "8px",
   };
 
-  const handleDateFilter = () => {
-    if (!selectedDate) return;
-    const dateObj = new Date(selectedDate);
-    const filtered = slots.filter((s) => {
-      const slotDate = new Date(s.date);
-      return (
-        slotDate.getFullYear() === dateObj.getFullYear() &&
-        slotDate.getMonth() === dateObj.getMonth() &&
-        slotDate.getDate() === dateObj.getDate()
+  // 🔎 Search + Date Filter Combined
+  useEffect(() => {
+    let filtered = [...slots];
+
+    if (searchTerm.trim() !== "") {
+      filtered = filtered.filter(
+        (s) =>
+          s.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          s.os.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          s.course.toLowerCase().includes(searchTerm.toLowerCase())
       );
-    });
+    }
+
+    if (selectedDate) {
+      const dateObj = new Date(selectedDate);
+      filtered = filtered.filter((s) => {
+        const slotDate = new Date(s.date);
+        return (
+          slotDate.getFullYear() === dateObj.getFullYear() &&
+          slotDate.getMonth() === dateObj.getMonth() &&
+          slotDate.getDate() === dateObj.getDate()
+        );
+      });
+    }
+
     setDisplaySlots(filtered);
-  };
+  }, [searchTerm, selectedDate, slots]);
 
-  // Popup handlers
-  const openEditPopup = (slot, index) => {
-    setEditingSlot(index);
+  // Edit Slot Modal
+  const openEditModal = (slot, index) => {
+    setEditingSlotIndex(index);
     setEditForm(slot);
-  };
-
-  const closePopup = () => {
-    setEditingSlot(null);
+    setOpen(true);
   };
 
   const handleEditChange = (e) => {
@@ -90,256 +108,104 @@ function AllSlots() {
 
   const saveChanges = () => {
     const updatedSlots = [...slots];
-    updatedSlots[editingSlot] = editForm;
+    updatedSlots[editingSlotIndex] = editForm;
     setSlots(updatedSlots);
-    setDisplaySlots(updatedSlots);
-    closePopup();
-  };
-
-  // Attendance handlers
-  const toggleAttendance = (id, status) => {
-    setAttendanceData((prev) =>
-      prev.map((stu) =>
-        stu.id === id
-          ? {
-              ...stu,
-              attendance: status,
-              marks: status === "absent" ? "" : stu.marks, // clear marks if absent
-            }
-          : stu
-      )
-    );
-  };
-
-  const handleMarksChange = (id, value) => {
-    setAttendanceData((prev) =>
-      prev.map((stu) => (stu.id === id ? { ...stu, marks: value } : stu))
-    );
-  };
-
-  const submitAttendance = () => {
-    // validation: marks required if present
-    const invalid = attendanceData.some(
-      (stu) =>
-        stu.attendance === "present" &&
-        (stu.marks === "" || stu.marks === null)
-    );
-
-    if (invalid) {
-      alert("⚠️ Please enter marks for all students marked as Present.");
-      return;
-    }
-
-    console.log("Submitted Attendance:", attendanceData);
-    alert("✅ Attendance & Marks Submitted!");
-    setAttendanceView(false);
+    setOpen(false);
   };
 
   return (
     <div>
-      {!attendanceView ? (
-        <>
-          <div className="controls">
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="Search by Location or Slot No"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button onClick={handleSearch}>Search</button>
-            </div>
+      {/* Search & Date Filter */}
+      <div className="controls">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search by Course, Location, or Exp.No"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="date-filter-container">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
+        </div>
+      </div>
 
-            <div className="date-filter-container">
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-              <button onClick={handleDateFilter}>Filter by Date</button>
-            </div>
-          </div>
-
-          <div className="slot-cards">
-            {displaySlots.map((slot, index) => (
-              <div key={index} className="slot">
-                <img
-                  src={slot.img}
-                  style={{
-                    height: "200px",
-                    width: "100%",
-                    maxWidth: "300px",
-                    objectFit: "cover",
-                    borderTopLeftRadius: "1rem",
-                    borderTopRightRadius: "1rem",
-                  }}
-                  alt="Slot"
-                />
-                <div className="slot-info">
-                  <p>
-                    <strong>Slot No:</strong> {slot.slotNo}
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {slot.date}
-                  </p>
-                  <p>
-                    <strong>Time:</strong> {slot.time}
-                  </p>
-                  <p>
-                    <strong>{slot.location}</strong>
-                  </p>
-                  <div className="action-buttons">
-                    <button
-                      className="view-btn"
-                      onClick={() => openEditPopup(slot, index)}
-                    >
-                      Edit Details
-                    </button>
-                    <button
-                      className="attendance-btn"
-                      onClick={() => setAttendanceView(true)}
-                    >
-                      View Attendance
-                    </button>
-                  </div>
+      <div className="slot-cards">
+        {displaySlots.length > 0 ? (
+          displaySlots.map((slot, index) => (
+            <div key={slot.id} className="slot">
+              <img src={slot.img} alt="Slot" />
+              <div className="slot-info">
+                <p><strong>Course:</strong> {slot.course}</p>
+                <p><strong>{slot.os}</strong></p>
+                <p><strong>Date:</strong> {slot.date}</p>
+                <p><strong>Time:</strong> {slot.time}</p>
+                <p><strong>Total Students:</strong> {slot.totalStudents}</p>
+                <p><strong>Location:</strong> {slot.location}</p>
+                <div className="action-buttons">
+                  <button
+                    className="view-btn"
+                    onClick={() => openEditModal(slot, index)}
+                  >
+                    Edit Details
+                  </button>
+                  <button
+                    className="attendance-btn"
+                    onClick={() => navigate(`/attendance/${slot.id}`)}
+                  >
+                    View Attendance
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <div>
-          <button
-            className="back-btn small-btn"
-            onClick={() => setAttendanceView(false)}
-          >
-            ← Back
-          </button>
-
-          {/* ✅ Scrollable table wrapper */}
-          <div className="table-wrapper">
-            <table className="attendance-table">
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th>Name</th>
-                  <th>Roll No.</th>
-                  <th>Attendance</th>
-                  <th>Marks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendanceData.map(({ id, name, roll, attendance, marks }, index) => (
-                  <tr key={id}>
-                    <td>{index + 1}</td>
-                    <td>{name}</td>
-                    <td>{roll}</td>
-                    <td>
-                      <div className="attendance-btns">
-                        <button
-                          className={`attendance-btn present ${
-                            attendance === "present" ? "" : "inactive"
-                          }`}
-                          onClick={() => toggleAttendance(id, "present")}
-                        >
-                          Present
-                        </button>
-                        <button
-                          className={`attendance-btn absent ${
-                            attendance === "absent" ? "" : "inactive"
-                          }`}
-                          onClick={() => toggleAttendance(id, "absent")}
-                        >
-                          Absent
-                        </button>
-                      </div>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={marks}
-                        onChange={(e) => handleMarksChange(id, e.target.value)}
-                        className="score-input"
-                        placeholder="0-100"
-                        disabled={attendance === "absent"} // ✅ disabled if absent
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="submit-container">
-            <button className="submit-btn" onClick={submitAttendance}>
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Popup */}
-      {editingSlot !== null && (
-        <div className="popup-overlay">
-          <div className="popup">
-            <div className="popup-header">Edit Slot</div>
-            <div className="popup-content">
-              <label>OS:</label>
-              <input
-                type="text"
-                name="os"
-                value={editForm.os}
-                onChange={handleEditChange}
-              />
-              <label>Slot No:</label>
-              <input
-                type="number"
-                name="slotNo"
-                value={editForm.slotNo}
-                onChange={handleEditChange}
-              />
-              <label>Date:</label>
-              <input
-                type="text"
-                name="date"
-                value={editForm.date}
-                onChange={handleEditChange}
-              />
-              <label>Time:</label>
-              <input
-                type="text"
-                name="time"
-                value={editForm.time}
-                onChange={handleEditChange}
-              />
-              <label>Location:</label>
-              <input
-                type="text"
-                name="location"
-                value={editForm.location}
-                onChange={handleEditChange}
-              />
-              <label>Image URL:</label>
-              <input
-                type="text"
-                name="img"
-                value={editForm.img}
-                onChange={handleEditChange}
-              />
             </div>
-            <div className="popup-actions">
-              <button onClick={saveChanges} className="save-btn">
-                Save
-              </button>
-              <button onClick={closePopup} className="cancel-btn">
-                Cancel
-              </button>
-            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center", width: "100%" }}>No slots found</p>
+        )}
+      </div>
+
+      {/* MUI Modal */}
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box sx={styleModal}>
+          <h2>Edit Slot</h2>
+          <label>
+            Course:
+            <input type="text" name="course" value={editForm.course || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Exp No:
+            <input type="text" name="os" value={editForm.os || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Date:
+            <input type="text" name="date" value={editForm.date || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Time:
+            <input type="text" name="time" value={editForm.time || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Total Students:
+            <input type="number" name="totalStudents" value={editForm.totalStudents || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Location:
+            <input type="text" name="location" value={editForm.location || ""} onChange={handleEditChange} />
+          </label>
+          <label>
+            Image URL:
+            <input type="text" name="img" value={editForm.img || ""} onChange={handleEditChange} />
+          </label>
+          <div style={{ display: "flex", justifyContent: "flex-start" }}>
+            <button onClick={saveChanges} style={{ width: "100px", height: "40px", backgroundColor: "#10b981", color: "white", borderRadius: "5px" }}>Save</button>
+            <button onClick={() => setOpen(false)} style={{ width: "100px", height: "40px", backgroundColor: "#ccc", color: "#333", borderRadius: "5px" }}>Cancel</button>
           </div>
-        </div>
-      )}
+        </Box>
+      </Modal>
     </div>
   );
 }

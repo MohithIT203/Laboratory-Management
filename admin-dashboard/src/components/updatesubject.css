@@ -10,7 +10,7 @@
   font-style: normal;
 }
 .page-container {
-  padding-left: 40px;   /* ✅ moves content 40px to the right */
+  padding-left: 30px;   /* ✅ moves content 40px to the right */
   padding-top: 0px;    /* optional: gives some spacing below navbar */
 }
 
@@ -28,8 +28,8 @@
 
 .teacher-table th,
 .teacher-table table th {
-  background: #f1f5f9;
-  color: #374151;
+  background: #e0e0e0;
+  color: #3e4552;
   font-weight: 600;
   padding: 12px;
   text-align: center;
@@ -69,24 +69,39 @@
   vertical-align: middle;
   max-width: 80px;
 }
+.edits-btn,
+.deletes-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 3px;
+  transition: all 0.2s ease;
+  display: inline-block;   /* ✅ inline always */
+  vertical-align: middle;
+  max-width: 80px;
+}
 
 /* Edit button */
-.edit-btn {
+.edits-btn {
   background: #3b82f6;
+  height: 30px;
   color: white;
 }
 
-.edit-btn:hover {
+.edits-btn:hover {
   background: #2563eb;
 }
 
 /* Delete button */
-.delete-btn {
+.deletes-btn {
   background: #dc2626;
+  height: 30px;
   color: white;
 }
 
-.delete-btn:hover {
+.deletes-btn:hover {
   background: #b91c1c;
 }
 
@@ -105,4 +120,69 @@
   .teacher-table table td {
     padding: 12px;
   }
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-btn {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #45a049;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-exp-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.add-exp-btn:hover {
+  background-color: #45a049;
 }

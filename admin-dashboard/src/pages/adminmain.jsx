@@ -143,6 +143,7 @@ const handleEditStudent = (student) => {
         type="text"
         placeholder="Search Teacher..."
         value={teacherSearch}
+        className='search-bar'
         onChange={(e) => setTeacherSearch(e.target.value)}
       />
       <TeacherTable
@@ -165,7 +166,9 @@ const handleEditStudent = (student) => {
       <input
         type="text"
         placeholder="Search Student..."
+        className='search-bar'
         value={studentSearch}
+
         onChange={(e) => setStudentSearch(e.target.value)}
       />
       <StudentTable

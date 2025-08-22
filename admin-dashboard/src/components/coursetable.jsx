@@ -1,86 +1,82 @@
 import React, { useState } from "react";
-import { Eye, Trash2 } from "lucide-react";
-import "./updatesubject.css"; // reuse same css
+import { Eye, Trash2, Plus } from "lucide-react";
+import "./updatesubject.css";
 
-export default function CourseTable() {
-  // ✅ Dummy data
-  const [courses, setCourses] = useState([
-    {
-      course_name: "IoT",
-      course_code: "IOT101",
-      experiments: [
-        { exp_no: 1, exp_name: "Introduction to Sensors", description: "Basics of sensor interfacing" },
-        { exp_no: 2, exp_name: "Smart Home Automation", description: "Build a home automation system using Arduino + IoT" },
-        { exp_no: 3, exp_name: "IoT Cloud Data", description: "Send sensor data to the cloud" }
-      ]
-    },
-    {
-      course_name: "POC",
-      course_code: "POC202",
-      experiments: [
-        { exp_no: 1, exp_name: "Cloud Integration", description: "Hands-on with AWS services" },
-        { exp_no: 2, exp_name: "ML Deployment", description: "Deploy ML model on cloud platform" },
-        { exp_no: 3, exp_name: "Realtime Dashboard", description: "Stream data into dashboard" }
-      ]
-    }
-  ]);
-
-  const [selectedCourse, setSelectedCourse] = useState(null);
+export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, onUpdateExperiment }) {
+  const [selectedCourseCode, setSelectedCourseCode] = useState(null);
   const [selectedExperiment, setSelectedExperiment] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
-  const [page, setPage] = useState(1);
+  const [originalExpNo, setOriginalExpNo] = useState(null);
 
+  const [showExperimentPopup, setShowExperimentPopup] = useState(false);
+  const [showAddExperimentPopup, setShowAddExperimentPopup] = useState(false);
+  const [newExperiment, setNewExperiment] = useState({ exp_no: "", exp_name: "", description: "" });
+
+  const selectedCourse = courses.find(c => c.course_code === selectedCourseCode);
+
+  // View course experiments
   const handleViewCourse = (course) => {
-    setSelectedCourse(course);
+    setSelectedCourseCode(course.course_code);
     setSelectedExperiment(null);
   };
 
+  // Edit experiment
   const handleViewExperiment = (exp) => {
-    setSelectedExperiment(exp);
-    setPage(1);
-    setShowPopup(true);
+    setOriginalExpNo(exp.exp_no);
+    setSelectedExperiment({ ...exp });
+    setShowExperimentPopup(true);
   };
 
-  const handleDeleteCourse = (courseCode) => {
-    setCourses(courses.filter((c) => c.course_code !== courseCode));
+  const handleSaveExperiment = () => {
+    if (!selectedExperiment.exp_no || !selectedExperiment.exp_name || !selectedExperiment.description) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    onUpdateExperiment(selectedCourse.course_code, {
+      oldExpNo: originalExpNo,
+      ...selectedExperiment,
+      exp_no: Number(selectedExperiment.exp_no),
+    });
+
+    setShowExperimentPopup(false);
   };
 
-  const handleSave = () => {
-    const updatedCourses = courses.map((c) =>
-      c.course_code === selectedCourse.course_code
-        ? {
-            ...c,
-            experiments: c.experiments.map((e) =>
-              e.exp_no === selectedExperiment.exp_no ? selectedExperiment : e
-            )
-          }
-        : c
-    );
-    setCourses(updatedCourses);
-    setShowPopup(false);
+  // Add new experiment to selected course (after viewing course)
+  const handleAddNewExperiment = () => {
+    if (!newExperiment.exp_no || !newExperiment.exp_name || !newExperiment.description) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    onAddExperiment(selectedCourse.course_code, { ...newExperiment, exp_no: Number(newExperiment.exp_no) });
+    setNewExperiment({ exp_no: "", exp_name: "", description: "" });
+    setShowAddExperimentPopup(false);
   };
 
   return (
     <div className="table-wrapper">
+      {/* Courses Table */}
       <div className="teacher-table">
         <table>
           <thead>
             <tr>
               <th>Course Name</th>
               <th>Course Code</th>
+              <th>Department</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {courses.map((course, index) => (
-              <tr key={index}>
+            {courses.map(course => (
+              <tr key={course.course_code}>
                 <td>{course.course_name}</td>
                 <td>{course.course_code}</td>
+                <td>{course.department}</td>
                 <td>
                   <button className="edit-btn" onClick={() => handleViewCourse(course)}>
                     <Eye size={16} />
                   </button>
-                  <button className="delete-btn" onClick={() => handleDeleteCourse(course.course_code)}>
+                  <button className="delete-btn" onClick={() => onDeleteCourse(course.course_code)}>
                     <Trash2 size={16} />
                   </button>
                 </td>
@@ -90,10 +86,14 @@ export default function CourseTable() {
         </table>
       </div>
 
-      {/* ✅ Show experiments list for selected course */}
-      {selectedCourse && !showPopup && (
+      {/* Experiments Table */}
+      {selectedCourse && !showExperimentPopup && (
         <div className="teacher-table" style={{ marginTop: "20px" }}>
           <h3>{selectedCourse.course_name} - Experiments</h3>
+          {/* Add Experiment Button */}
+          <button className="add-btn" style={{ marginTop: "0px" ,width:"30px",height:"30px"}} onClick={() => setShowAddExperimentPopup(true)}>
+            +
+          </button>
           <table>
             <thead>
               <tr>
@@ -116,46 +116,81 @@ export default function CourseTable() {
               ))}
             </tbody>
           </table>
+
         </div>
       )}
 
-      {/* ✅ Popup for experiment details (merged into one page) */}
-{showPopup && selectedExperiment && (
-  <div className="popup-overlay">
-    <div className="popup-box">
-      <h3>Experiment Details</h3>
+      {/* Edit Experiment Popup */}
+      {showExperimentPopup && selectedExperiment && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h3>Edit Experiment</h3>
+            <label>
+              Experiment No:
+              <input
+                type="number"
+                value={selectedExperiment.exp_no}
+                onChange={(e) => setSelectedExperiment({ ...selectedExperiment, exp_no: e.target.value })}
+              />
+            </label>
+            <label>
+              Experiment Name:
+              <input
+                type="text"
+                value={selectedExperiment.exp_name}
+                onChange={(e) => setSelectedExperiment({ ...selectedExperiment, exp_name: e.target.value })}
+              />
+            </label>
+            <label>
+              Description:
+              <textarea
+                value={selectedExperiment.description}
+                onChange={(e) => setSelectedExperiment({ ...selectedExperiment, description: e.target.value })}
+              />
+            </label>
+            <div style={{ marginTop: "10px" }}>
+              <button className="edit-btn" onClick={handleSaveExperiment}>Save</button>
+              <button className="delete-btn" onClick={() => setShowExperimentPopup(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <p><strong>Experiment No:</strong> {selectedExperiment.exp_no}</p>
-
-      <label>
-        Experiment Name:
-        <input
-          type="text"
-          value={selectedExperiment.exp_name}
-          onChange={(e) =>
-            setSelectedExperiment({ ...selectedExperiment, exp_name: e.target.value })
-          }
-        />
-      </label>
-
-      <label>
-        Description:
-        <textarea
-          value={selectedExperiment.description}
-          onChange={(e) =>
-            setSelectedExperiment({ ...selectedExperiment, description: e.target.value })
-          }
-        />
-      </label>
-
-      <div style={{ marginTop: "10px" }}>
-        <button className="edit-btn" onClick={handleSave}>Save</button>
-        <button className="delete-btn" onClick={() => setShowPopup(false)}>Close</button>
-      </div>
-    </div>
-  </div>
-)}
-
+      {/* Add Experiment Popup */}
+      {showAddExperimentPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h3>Add Experiment</h3>
+            <label>
+              Experiment No:
+              <input
+                type="number"
+                value={newExperiment.exp_no}
+                onChange={(e) => setNewExperiment({ ...newExperiment, exp_no: e.target.value })}
+              />
+            </label>
+            <label>
+              Experiment Name:
+              <input
+                type="text"
+                value={newExperiment.exp_name}
+                onChange={(e) => setNewExperiment({ ...newExperiment, exp_name: e.target.value })}
+              />
+            </label>
+            <label>
+              Description:
+              <textarea
+                value={newExperiment.description}
+                onChange={(e) => setNewExperiment({ ...newExperiment, description: e.target.value })}
+              />
+            </label>
+            <div style={{ marginTop: "10px" }}>
+              <button className="edit-btn" onClick={handleAddNewExperiment}>Add</button>
+              <button className="delete-btn" onClick={() => setShowAddExperimentPopup(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

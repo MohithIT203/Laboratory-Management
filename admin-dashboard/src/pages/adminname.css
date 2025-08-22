@@ -105,3 +105,9 @@
 .table-container th {
   background-color: #f1f2f6;
 }
+.search-bar
+{
+  display: flex;
+  max-width: 600px;
+  border-radius: 5px;
+}

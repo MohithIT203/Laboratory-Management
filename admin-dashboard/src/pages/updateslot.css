@@ -28,16 +28,22 @@
   height: 180px;
   width: 100%;
   object-fit: cover;
+  border-radius: 8px 8px 0 0; /* rounded corners on top */
+  display: block;
 }
 
 .slot-info {
-  padding: 1rem;
-  text-align: left;
+  padding: 0.3rem;
+  /* text-align: left; */
 }
 
 .slot-info p {
-  margin: 4px 0;
-  font-family: Poppins, sans-serif;
+  margin: 3px 0;
+  white-space: nowrap;       /* prevent wrapping */
+  overflow: hidden;          /* hide overflow */
+  text-overflow: ellipsis;   /* show ... when text is long */
+  max-width: 220px;          /* adjust width based on card */
+  display: block;
 }
 
 /* Edit + Attendance buttons in a row */
@@ -182,32 +188,47 @@
 .popup {
   background: #fdfdfd;
   border-radius: 10px;
-  width: 400px;
-  max-width: 90%;
+  width: 400px;       /* desired width */
+  min-width: 400px;   /* ensures it doesn’t shrink below 900px */
+  max-width: 95%;     /* responsive for smaller screens */
+  max-height: 80%;
   animation: fadeIn 0.3s ease-in-out;
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;   /* scroll if content overflows vertically */
+  flex-shrink: 0;     /* prevents flex from shrinking it */
 }
 
+
+
 .popup-header {
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  background: none; /* remove any background */
   padding: 12px;
   font-size: 1.2rem;
-  color: white;
-  font-weight: bold;
+  color: #000; /* black text, change if needed */
+  /* font-weight: bold; */
+  text-align: center; /* optional: center the text */
 }
+
+
 
 .popup-content {
   padding: 15px;
+  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;       /* enables vertical scroll */
+  overflow-x: hidden;
+  max-height: calc(80vh - 60px);
 }
 
 .popup-content input {
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  max-width: 325px;
 }
 
 .popup-actions {
@@ -302,9 +323,12 @@
   border: none;
   width: 100%;
   border-radius: 5px;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
+  background-color: #2196f3;
+  color: white;
   white-space: nowrap; /* ✅ prevents wrapping */
 }
 
@@ -356,39 +380,41 @@
 .back-btn {
   display: flex;
   margin-bottom: 10px;
-  padding: 7px 8px;
+  /* padding: 0px 23px; */
   width:70px;
-  height: 30px;
-  font-size: 13px;
+  height: 40px;
+  font-size: 25px;
   border-radius: 4px;
-  background: #4cafef;
-  color: white;
+  color: #10b981;
+  background-color: white;
   border: none;
   cursor: pointer;
-  margin-left: 70px;
-  transition: background-color 0.2s ease-in-out;
+  margin-left: 0px;
+  /* transition: background-color 0.2s ease-in-out; */
 }
-.back-btn:hover {
-  background-color: #1976d2;
-}
+
 
 /* Submit button */
 .submit-container {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   margin-top: 15px;
 }
 
 .submit-btn {
-  display: flex;
-  width:75px;
-  background: #4cafef;
+  display:flex;
+  width:120px;
+  height: 40px;
+  background: #10b981;
   color: white;
   border: none;
-  padding: 6px 16px;
+  padding: 10px 16px;
   font-size: 13px;
   border-radius: 6px;
   cursor: pointer;
+  text-align: center;
+  justify-content: start;
+  margin-left: 40px;
   transition: background-color 0.2s ease-in-out;
 }
 

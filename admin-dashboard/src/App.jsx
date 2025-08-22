@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import AdminMain from "./pages/adminmain";
-import UpdateLabTime from "./pages/updateslot";
+import UpdateLabTime from "./pages/updateslot"; // AllSlots page
 import UpdateSubject from "./components/updatesubject";
 import Navbar from "./pages/navbar";
 import ProfilePopup from "./components/profile"; 
+import AttendancePage from "./pages/attendancepage"; // new attendance page
 import React from "react";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<AdminMain />} />
         <Route path="/update-slot" element={<UpdateLabTime />} />
         <Route path="/update-subject" element={<UpdateSubject />} />
+        <Route path="/attendance/:slotId" element={<AttendancePage />} />
         <Route path="/profile" element={<ProfileRoute profile={dummyProfile} />} />
       </Routes>
     </Router>

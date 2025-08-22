@@ -128,6 +128,7 @@ body {
   background: none;
   border: none;
   margin-right: auto;
+  color: white;
 }
 
 .hamburger span {
@@ -184,6 +185,8 @@ body {
 
   .nav-links.active {
     display: flex;
+    left: 40px;
+    top: 85px;
     animation: slideDown 0.3s ease forwards;
   }
 

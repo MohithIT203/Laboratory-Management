@@ -34,7 +34,7 @@
   left: 0;
   height: 6px;
   width: 100%;
-  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  /* background: linear-gradient(90deg, #2ecc71, #27ae60); */
 }
 
 /* Heading styling */

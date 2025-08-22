@@ -11,7 +11,7 @@ const new_Slot=require('../Routes/new_course');
 const Otp=require('../Routes/Otp');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const PORT = process.env.PORT||3000;
+const PORT = process.env.PORT||4000;
 
 const login=require('../Routes/login');
 
@@ -21,6 +21,7 @@ app.use(cookieParser());
 
 app.use(cors({
   origin: process.env.APPLICATION_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 

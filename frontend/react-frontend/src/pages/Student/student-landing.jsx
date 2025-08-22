@@ -9,7 +9,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
-import MiniAppBar from "../../components/navbar";
+import MiniAppBar from "../../components/Student_navbar";
 import {
   FaBookOpen,
   FaClipboardList,
@@ -23,9 +23,9 @@ const CourseList = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const userDept = location?.state?.Studentdept;
+  const userDept = location?.state?.Studentdept ||localStorage.getItem("student_dept");;
   const userId =
-    location?.state?.Student_id || localStorage.getItem("Student_id");
+    location?.state?.student_id || localStorage.getItem("student_id");
 
   const [courses, setCourses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
@@ -58,7 +58,6 @@ const CourseList = () => {
       .post(`http://localhost:4000/student/book-slot`, {
         Slot_id,
         Student_id: userId,
-        isBooked: true,
       })
       .then(() => {
         setCourses((prev) => prev.filter((slot) => slot._id !== Slot_id));
@@ -98,7 +97,7 @@ const CourseList = () => {
       <MiniAppBar />
       <div className="wrapper">
         <div className="course_content">
-          <h3 className="section-title">SLOTS</h3>
+          <h3 className="section-title">ALL SLOTS</h3>
 
           {/* Dashboard Cards */}
           <div className="carddiv">
@@ -107,7 +106,11 @@ const CourseList = () => {
                 <p>My Bookings</p>
                 <FaBookOpen size={24} color="#4caf50" />
               </div>
-              <h3>{myBookings.length}</h3>
+              <h3
+              style={{
+                fontSize:"25px"
+              }}
+              >{myBookings.length}</h3>
             </div>
 
             <div className="stucard">
@@ -115,7 +118,10 @@ const CourseList = () => {
                 <p>Total Slots</p>
                 <FaClipboardList size={24} color="#2196f3" />
               </div>
-              <h3>{courses.length + myBookings.length}</h3>
+              <h3
+              style={{
+                fontSize:"25px"
+              }}>{courses.length + myBookings.length}</h3>
             </div>
 
             <div className="stucard">
@@ -157,11 +163,12 @@ const CourseList = () => {
               <div className="date-filter">
                 <FaFilter color="#555" />
                 <input
-                  type="text"
-                  placeholder="dd-mm-yyyy"
+                  type="date"
+                  
+                  // placeholder="dd-mm-yyyy"
                   className="date-text"
                 />
-                <FaCalendarAlt color="#555" />
+                {/* <FaCalendarAlt color="#555" /> */}
               </div>
             </div>
 
@@ -175,9 +182,10 @@ const CourseList = () => {
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course}{" "}
-                            <span className="your-slot-badge">Your Slot</span>
+                            {slot.Course.toUpperCase()}
+                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
                           </h3>
+                            
                         </div>
 
                         <p
@@ -286,7 +294,7 @@ const CourseList = () => {
                         <div className="slot-header">
                           <h3>
                             {slot.Course}{" "}
-                            <span className="your-slot-badge">Your Slot</span>
+                            <span className="your-slot-badge">Faculty:{slot.Staff_name}</span>
                           </h3>
                         </div>
 

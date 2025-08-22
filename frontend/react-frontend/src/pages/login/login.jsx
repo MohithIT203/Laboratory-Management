@@ -25,6 +25,7 @@ const Login = () => {
         console.error("Google sign-in error:", error);
       });
   };
+  
 
   const handlelogin = async (email) => {
     try {
@@ -37,21 +38,14 @@ const Login = () => {
       );
       setAlert({ show: true, type: "success", message: "Login Successful!" });
       if (response.data.role === "Student") {
-        localStorage.setItem("Student_id", response.data.user_id);
-        navigate("/student/dashboard", {
-          state: {
-            Studentdept: response.data.dept,
-            Student_id: response.data.user_id,
-          },
-        });
+         localStorage.setItem("student_id", response.data.user_id);
+         localStorage.setItem("student_dept", response.data.dept);
+        navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
       } else if (response.data.role === "faculty") {
-        navigate("/faculty/dashboard", {
-          state: {
-            Facultyname: response.data.name,
-            Facultydept: response.data.dept,
-            FacultyEmail: response.data.email,
-          },
-        });
+         localStorage.setItem("Facultyname", response.data.name);
+      localStorage.setItem("FacultyEmail", response.data.email);
+      localStorage.setItem("Facultydept", response.data.dept);
+        navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
       }
     } catch (err) {
       console.error(err);
@@ -100,7 +94,7 @@ const Login = () => {
           </div>
 
           <div>
-            <button type="submit" className="submitBtn">
+            <button type="submit" className="submitBtn" >
               Login
             </button>
           </div>

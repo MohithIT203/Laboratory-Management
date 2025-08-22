@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
-
-const CourseSchema = new mongoose.Schema({
+const experiment_schema=new mongoose.Schema({
+  exp_no:Number,   
+  exp_name:String,
+  exp_description:String
+});
+const newCourseSchema = new mongoose.Schema({
   Course_id: {
     type: String,
     required: true,
@@ -10,7 +14,7 @@ const CourseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
- 
+  experiments:[experiment_schema],
   staffs: {               
     type: [String],        
     required: true
@@ -21,6 +25,5 @@ const CourseSchema = new mongoose.Schema({
   }
 });
 
-
-const Course = mongoose.model("Courses", CourseSchema); 
+const Course = mongoose.model("newCourses", newCourseSchema); 
 module.exports = Course;

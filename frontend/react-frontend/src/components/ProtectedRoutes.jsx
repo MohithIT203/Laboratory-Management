@@ -26,7 +26,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     verify();
   }, [allowedRoles]);
 
-  if (authorized === null) return <div>Loading...</div>;
+  if (authorized === null) return <div style={{position:"relative",alignSelf:"center",justifySelf:"center"}}>Loading...</div>;
 
   return authorized ? <Outlet /> : <Navigate to="/" replace />;
 };

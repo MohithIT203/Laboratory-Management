@@ -99,7 +99,7 @@
 }
 
 .section-title {
-  margin-left: 55px;
+  margin-left: 10px;
   margin-bottom: 20px;
   color: #333;
 }
@@ -159,8 +159,8 @@
 }
 
 .tab.active {
-  color: #007bff;
-  border-color: #007bff;
+  color:#1b5e20;
+  border-color: green;
   font-weight: bold;
 }
 
@@ -197,7 +197,7 @@
 .date-text {
   border: none;
   font-size: 14px;
-  width: 100px;
+  width: 110px;
   outline: none;
 }
 
@@ -217,14 +217,14 @@
   color: #999;
 }
 .book-btn{
-  background-color: #5fe065;
-  color:white;
+  background-color:rgba(3, 255, 163, 0.64);
+  /* color:white; */
   border: none;
   border-radius: 5px;
-  height:30px;
+  height:40px;
   width:100%;
   cursor: pointer;
 }
 .book-btn:hover{
-  background-color: #81cf85;
+  background-color: rgba(84, 236, 180, 0.4);
 }

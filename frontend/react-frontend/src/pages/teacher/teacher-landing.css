@@ -129,6 +129,11 @@ box-shadow: 0 8px 25px rgba(52, 211, 153, 0.4);
   border-left: 6px solid #10b981;
 }
 
+.slot-card:hover{
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* cursor: pointer; */
+}
+
 .slot-card h3 {
 margin-top: 0;
 color: #047857;
@@ -138,11 +143,11 @@ align-items: center;
 }
 
 .your-slot-badge {
-background-color: #10b981;
-color: white;
-font-size: 0.75rem;
-padding: 0.25rem 0.5rem;
-border-radius: 0.5rem;
+  background-color: #10b981;
+  color: white;
+  font-size: 15px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
 }
 
 /* Materials */
@@ -216,6 +221,37 @@ background-color: #065f46;
   font-family: 'Lexend', sans-serif;
   cursor: pointer;
 }
+
+.experiment-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-trigger {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  visibility: hidden;
+  background-color: #f9f9f9;
+  color: #333;
+  min-width: 200px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0;
+  white-space: normal;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown-trigger:hover .dropdown-content {
+  visibility: visible;
+}
+
 @media (max-width: 600px) {
   .dashboard-cards {
     flex-direction: column;
@@ -243,3 +279,22 @@ background-color: #065f46;
 }
 
 
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid green;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 

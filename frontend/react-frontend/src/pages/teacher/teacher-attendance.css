@@ -1,0 +1,197 @@
+.mark-attendance-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.mark-attendance-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* OTP Card */
+.otp-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.otp-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.otp-btn:hover {
+  background: linear-gradient(90deg, #15803d, #166534);
+  transform: translateY(-2px);
+}
+
+.otp-display {
+  margin-top: 15px;
+}
+
+.otp-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.otp-timer {
+  font-size: 0.9rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* Table Styling */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.attendance-table th {
+  background: #f1f5f9;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px;
+}
+
+.attendance-table td {
+  padding:20px;
+  
+  background: white;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.attendance-table th,
+.attendance-table td {
+  text-align: center;
+}
+.attendance-table tr:hover td {
+  background: #f9fafb;
+}
+
+
+
+
+
+.attendance-btn.present {
+   color: green;
+  font-weight: bold;
+
+}
+
+/* .attendance-btn.present:hover {
+  background-color: #15803d;
+  color: white;
+} */
+
+.attendance-btn.absent {
+color: #dc2626;
+ 
+  font-weight: bold;
+}
+
+/* .attendance-btn.absent:hover {
+  background-color: #b91c1c;
+  color: white;
+} */
+.tab-btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  margin-right: 6px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 90px;
+}
+.tab-btn.active {
+  background: green;
+  color: white;
+  border-color: green;
+}
+
+
+.attendance-btn.inactive {
+  opacity: 0.5;
+}
+
+/* Score Input */
+.score-input {
+  width: 70px;
+  padding: 6px;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.score-input:focus {
+  border: 1px solid #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .attendance-table td {
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+
+  /* Make attendance buttons stack on mobile so they don't squish */
+  .attendance-table td[data-label="Attendance"] {
+    display: flex;
+    /* justify-content; */
+    /* width:50%; */
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  /* Make score input fit better on mobile */
+  .attendance-table td[data-label="Score"] input {
+    max-width: 100%;
+  }
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid green;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 

@@ -1,38 +1,45 @@
 // routes/slotRoutes.js
 const express = require('express');
-const Slot = require('../Schemas/studentSlot');
+const Slot = require('../Schemas/new_SlotSchema');
+// const Slot = require('../Schemas/studentSlot');
 const router = express.Router();
-const Slot_Staff = require('../Schemas/SlotCreationSchema');
 
 router.post('/student/book-slot', async (req, res) => {
-  const { Slot_id, Student_id, isBooked } = req.body;
+  const { Slot_id, Student_id } = req.body;
 
   try {
-    const newSlot = new Slot({
-      Slot_id,
-      Student_id,
-      isBooked
-    });
+  
+    const selectedSlot = await Slot.findOne({ _id:Slot_id });
 
-    const saved = await newSlot.save();
-    return res.status(200).send({ message: "New slot booked", slot: saved });
+    if (!selectedSlot) {
+      return res.status(404).send({ message: "Slot not found" });
+    }
+    if (selectedSlot.booked_students.includes(Student_id)) {
+      return res.status(400).send({ message: "Student already booked this slot" });
+    }
+    selectedSlot.booked_students.push(Student_id);
+    const saved = await selectedSlot.save();
+
+    return res.status(200).send({ message: "Slot booked successfully", slot: saved });
   } catch (err) {
-    console.error("Error creating slot:", err);
-    return res.status(400).send("Error occurred while booking slot");
+    console.error("Error booking slot:", err);
+    return res.status(500).send({ message: "Error occurred while booking slot" });
   }
 });
+
 router.post('/student/my-bookings', async (req, res) => {
   const { Student_id } = req.body;
 
   try {
-    // 1. Find booked slots for this student
-    const booked = await Slot.find({ Student_id, isBooked: true });
+    // Find all slots booked by this student
+    const bookedSlots = await Slot.find({ booked_students: Student_id });
 
-    // 2. Extract all Slot_id values
-    const bookedSlotIds = booked.map((b) => b.Slot_id);
+    if (!bookedSlots.length) {
+      return res.status(404).json({ message: "No bookings found for this student" });
+    }
+    const bookedSlotIds = bookedSlots.map(slot => slot._id);
 
-    // 3. Get metadata of those slots from Slot_Staff collection
-    const slots = await Slot_Staff.find({ _id: { $in: bookedSlotIds } });
+    const slots = await Slot.find({ _id: { $in: bookedSlotIds } });
 
     res.json(slots);
   } catch (err) {
@@ -40,6 +47,7 @@ router.post('/student/my-bookings', async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 

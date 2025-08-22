@@ -7,9 +7,8 @@ const Slot = require("../Schemas/new_SlotSchema");
 const Student=require("../Schemas/studentInfo");
 const BookedSlot=require("../Schemas/studentSlot");
 const auth = require("../middlewares/auth");
-//add new course
 
-
+//ADD NEW COURSE
 router.post("/add/course", async (req, res) => {
 
   const { Course_id, Course_name, staffs, dept,experiments } = req.body;
@@ -41,7 +40,9 @@ router.post("/add/course", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-router.get("/api/courses/:dept", async (req, res) => {
+
+//GET DEPT COURSES
+router.get("/api/courses/:dept",async (req, res) => {
   try {
     const { dept } = req.params;
     const courses = await Course.find({ dept });
@@ -53,7 +54,7 @@ router.get("/api/courses/:dept", async (req, res) => {
   }
 });
 
-router.get("/api/exp/:course", async (req, res) => {
+router.get("/api/exp/:course",async (req, res) => {
   try {
     const { course } = req.params;
     
@@ -73,11 +74,11 @@ router.get("/api/exp/:course", async (req, res) => {
 });
 
 
-
+//GET FACULTY SLOTS
 router.get('/faculty/my-slots/:FacultyEmail',async (req,res)=>{
   try{
   const {FacultyEmail}=req.params;
-  const response=await Slot.find({email:FacultyEmail});
+  const response=await Slot.find({email:FacultyEmail}).select("Course experiment Date Time venue capacity pdf_material video_material total_booked students");
   if(response.length>0){
     res.json(response);
   }
@@ -93,7 +94,7 @@ router.get('/faculty/my-slots/:FacultyEmail',async (req,res)=>{
 
 
 
-
+//ALL STUDENTS
 router.get('/faculty/students/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
@@ -127,7 +128,7 @@ router.get('/faculty/students/:SlotId', async (req, res) => {
 });
 
 
-
+//PRESENT STUDENTS
 router.get('/faculty/present-students/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
@@ -169,7 +170,7 @@ router.get('/faculty/present-students/:SlotId', async (req, res) => {
   }
 });
 
-
+//ABSENT STUDENTS
 router.get('/faculty/absent-students/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
@@ -212,27 +213,29 @@ router.get('/faculty/absent-students/:SlotId', async (req, res) => {
 });
 
 
-
+//SCORE UPDATE
 router.put('/faculty/update-scores/:SlotId', async (req, res) => {
   try {
     const { SlotId } = req.params;
-    const { students } = req.body; // [{ _id, score }]
+    const { students } = req.body;
 
     const slot = await Slot.findById(SlotId);
     if (!slot) {
       return res.status(404).json({ message: "Slot not found" });
     }
 
-    // Update scores in both Slot.students[] and Student schema
+   
     for (const { _id, score } of students) {
-      // 1. Update inside Slot.students[]
       const stu = slot.students.find(s => s.studentId === _id);
       if (stu) {
         stu.marks = score;
       }
 
-      // 2. Update inside Student collection
-      await Student.findByIdAndUpdate(_id, { $set: { marks: score } });
+      
+      await Student.updateOne(
+      { _id, "slots.slotId": SlotId },
+      { $set: { "slots.$.marks": score } }
+      );
     }
 
     await slot.save();

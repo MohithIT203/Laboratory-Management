@@ -58,7 +58,7 @@ const Login = () => {
         <form onSubmit={(e) => e.preventDefault()}>
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
-              <EmailIcon style={{ color: "#6018be" }} /> Email:
+              <EmailIcon style={{ color: "#24c98b" }} /> Email:
             </label>
             <input
               type="email"
@@ -73,7 +73,7 @@ const Login = () => {
 
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
-              <KeyIcon style={{ color: "#6018be" }} /> Password:
+              <KeyIcon style={{ color: "#24c98b" }} /> Password:
             </label>
             <input
               type="password"

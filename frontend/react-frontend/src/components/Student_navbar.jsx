@@ -11,15 +11,26 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-const pages = ['Dashboard', 'Attendance', 'Book Slot'];
+const pages = ['Book Slot', 'Attendance','Dashboard'];
 const settings = ['Account', 'Logout'];
 
 function MiniAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const navigate=useNavigate();
+  const [active, setActive] = React.useState("Dashboard");
+    const navigate = useNavigate();
+    const location = useLocation();
+  
+    React.useEffect(() => {
+      const map = {
+        "/student/dashboard": "Dashboard",
+        "/student/attendance": "Attendance",
+        "/student/all-slots": "Slots Summary",
+      };
+      setActive(map[location.pathname] || "");
+    }, [location.pathname]);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -29,7 +40,7 @@ function MiniAppBar() {
   };
 
 const handleCloseNavMenu = (page) => {
-    setAnchorElNav(null); // Close mobile menu
+    setAnchorElNav(null); 
     if (page === "Attendance") {
       navigate('/student/attendance');
     } else if (page === "Book Slot") {
@@ -60,10 +71,11 @@ const handleCloseNavMenu = (page) => {
     <AppBar
       position="static"
       elevation={0} 
-      sx={{
-        backgroundColor: '#819A91', 
-        borderBottom: 'none', 
-        boxShadow: 'none', 
+       sx={{
+        background: "linear-gradient(135deg, #0dc789 0%, #067d58 100%)",
+        borderBottom: "none",
+        boxShadow: "none",
+        color: "white",
       }}
     >
       <Container maxWidth="xl">
@@ -117,14 +129,23 @@ const handleCloseNavMenu = (page) => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={()=>handleCloseNavMenu(page)}
+                onClick={() => handleCloseNavMenu(page)}
                 sx={{
                   my: 2,
-                  color: '#ffffff',
-                  display: 'block',
-                  fontFamily: 'Poppins, sans-serif',
-                  textTransform: 'none',
-                  fontWeight: 500,
+                  color: active === page ? "#000000" : "#ffffff",
+                  display: "block",
+                  fontFamily: "Inter, sans-serif",
+                  textTransform: "none",
+                  fontWeight: active === page ? 700 : 500,
+                  borderRadius: "8px",
+                  px: 2,
+                  background: active === page ? "#ffffff" : "transparent", 
+                  "&:hover": {
+                    background:
+                      active === page
+                        ? "#ffffff"
+                        : "rgba(255,255,255,0.2)", 
+                  },
                 }}
               >
                 {page}

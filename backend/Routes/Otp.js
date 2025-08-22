@@ -4,6 +4,7 @@ const router = express.Router();
 const Otp = require('../Schemas/otpSchema');
 const Faculty_Slot=require('../Schemas/new_SlotSchema');
 const Student=require('../Schemas/studentInfo');
+
 // Store OTP
 router.post('/faculty/otp', async (req, res) => {
     try {

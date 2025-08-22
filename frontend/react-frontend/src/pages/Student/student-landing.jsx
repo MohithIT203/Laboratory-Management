@@ -9,6 +9,7 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
+import LoginPopup from "../login/loginPopup" ;
 import MiniAppBar from "../../components/Student_navbar";
 import { FaBookOpen, FaClipboardList, FaClock, FaCalendarAlt, FaFilter } from "react-icons/fa";
 import axios from "axios";
@@ -70,7 +71,15 @@ const CourseList = () => {
 
         fetchMyBookings();
       })
-      .catch((err) => console.log("Error Booking Slot:", err));
+      .catch((error) => {console.log("Error Booking Slot:", error)
+        if (error.response) {
+      console.error("Error:", error.response.data.message);
+      <LoginPopup type={"critical"} message={error.response.data.message} />
+      // alert(error.response.data.message);
+    } else {
+      console.error("Unexpected Error:", error);
+    }
+      });
   };
 
   const fetchMyBookings = async () => {
@@ -195,7 +204,7 @@ const CourseList = () => {
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course.toUpperCase()}{" "}- Exp.No:{slot.experiment.exp_no}
+                            {slot.Course}{" "}- Exp.No:{slot.experiment.exp_no}
                             <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
                           </h3>
                         </div>

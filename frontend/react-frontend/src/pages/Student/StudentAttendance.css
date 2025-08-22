@@ -161,8 +161,7 @@
     margin-top: 0.5rem;
   }
   .otp-block{
-    width:100%;
-    /* height:120px; */
+    min-width:200px;
    background: white;
     border-radius: 14px;
     

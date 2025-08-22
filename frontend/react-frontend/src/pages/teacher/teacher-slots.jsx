@@ -35,7 +35,7 @@ const handleDetails=async (slotId)=>{
           paddingLeft:"20px"
         }}>All Slots</h2>
       <div className="slot-cards">
-        {allSlots.map((slot, index) => (
+        {allSlots?.map((slot, index) => (
           <div key={index} className="slot">
             <img
               src="https://media.istockphoto.com/id/1294693719/vector/illustration-of-person-working-in-tidy-modern-office.webp?b=1&s=612x612&w=0&k=20&c=xvbdMGTJRuMGWMdpxMllz4CJI5vXU8XFMVb75eG1uYo="
@@ -77,7 +77,7 @@ const handleDetails=async (slotId)=>{
               </p>
               <p>
                 <strong>Total Students : </strong>
-                {slot.students.length}
+                {slot.total_booked}
               </p>
               <p>
                 <strong>{slot.venue}</strong>

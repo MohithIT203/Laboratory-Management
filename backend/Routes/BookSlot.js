@@ -5,19 +5,24 @@ const Student=require('../Schemas/studentInfo');
 // const Slot = require('../Schemas/studentSlot');
 const router = express.Router();
 
-
+//BOOK NEW SLOT
 router.post("/student/book-slot", async (req, res) => {
   const { Slot_id, Student_id } = req.body;
 
   try {
     const selectedSlot = await Slot.findById(Slot_id);
     const student = await Student.findById(Student_id);
-
+    const capacity=selectedSlot.capacity;
+    const total=selectedSlot.total_booked;
     if (!selectedSlot) {
       return res.status(404).send({ message: "Slot not found" });
     }
     if (!student) {
       return res.status(404).send({ message: "Student not found" });
+    }
+
+    if(total+1>capacity){
+      return res.status(400).send({ message: "Choosen Slot reached Maximum Capacity" });
     }
 
     // check if student already booked in slot
@@ -61,7 +66,7 @@ router.post("/student/book-slot", async (req, res) => {
 });
 
 
-
+//VIEW BOOKED SLOTS
 router.post('/student/my-bookings', async (req, res) => {
   const { Student_id } = req.body;
 
@@ -107,7 +112,7 @@ router.post("/slots", async (req, res) => {
   }
 });
 
-
+//VIEW ATTENDANCE FOR THE SLOTS
 router.get("/student/attendance-history/:Student_id", async (req, res) => {
   const { Student_id } = req.params;
 
@@ -122,7 +127,7 @@ router.get("/student/attendance-history/:Student_id", async (req, res) => {
 
     // Fetch slot details
     const slots = await Slot.find({ _id: { $in: slotIds } }).select(
-      "Staff_name Course experiment Date Time venue"
+      "Staff_name Course experiment Date Time venue students"
     );
 
     // Merge attendance + marks into slot details
@@ -130,6 +135,7 @@ router.get("/student/attendance-history/:Student_id", async (req, res) => {
       const studentSlot = student.slots.find(
         (s) => String(s.slotId) === String(slot._id)
       );
+     
       return {
         _id: slot._id,
         Staff_name: slot.Staff_name,
@@ -142,16 +148,12 @@ router.get("/student/attendance-history/:Student_id", async (req, res) => {
         marks: studentSlot?.marks||0,
       };
     });
-
+    
     res.status(200).json({ slots: mergedSlots });
   } catch (err) {
     console.error("Error fetching slots:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
-
-
 
 module.exports = router;

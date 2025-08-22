@@ -1,40 +1,54 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import { useNavigate } from 'react-router-dom';
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const pages = ['Slots Summary', 'Dashboard', 'Attendance'];
-const settings = ['Account', 'Logout'];
+const pages = ["Slots Summary", "Attendance", "Dashboard"];
+const settings = ["Account", "Logout"];
 
 function StaffAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [active, setActive] = React.useState("Dashboard");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Open Menus
+  
+  React.useEffect(() => {
+    const map = {
+      "/faculty/dashboard": "Dashboard",
+      "/faculty/attendance": "Attendance",
+      "/faculty/all-slots": "Slots Summary",
+    };
+    setActive(map[location.pathname] || "");
+  }, [location.pathname]);
+
+  
   const handleOpenNavMenu = (event) => setAnchorElNav(event.currentTarget);
   const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
 
-  // Close Nav Menu + Navigate
+ 
   const handleCloseNavMenu = (page) => {
-    setAnchorElNav(null); // Close mobile menu
+    setAnchorElNav(null);
     if (page === "Attendance") {
-      navigate('/faculty/attendance');
+      navigate("/faculty/attendance");
     } else if (page === "Slots Summary") {
-      navigate('/faculty/all-slots');
+      navigate("/faculty/all-slots");
     } else if (page === "Dashboard") {
-      navigate('/faculty/dashboard');
+      navigate("/faculty/dashboard");
+    } else {
+      navigate("/faculty/dashboard");
     }
   };
 
@@ -46,8 +60,12 @@ function StaffAppBar() {
     setAnchorElUser(null); // Close user menu first
     if (setting.toLowerCase() === "logout") {
       try {
-        await axios.post("http://localhost:4000/api/user/logout", {}, { withCredentials: true });
-        navigate('/');
+        await axios.post(
+          "http://localhost:4000/api/user/logout",
+          {},
+          { withCredentials: true }
+        );
+        navigate("/");
       } catch (err) {
         console.error(err);
         alert("Logout error");
@@ -60,14 +78,14 @@ function StaffAppBar() {
       position="static"
       elevation={0}
       sx={{
-        backgroundColor: '#819A91',
-        borderBottom: 'none',
-        boxShadow: 'none',
+        background: "linear-gradient(135deg, #0dc789 0%, #067d58 100%)",
+        borderBottom: "none",
+        boxShadow: "none",
+        color: "white",
       }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-
           {/* Logo / Title */}
           <Typography
             variant="h5"
@@ -76,38 +94,43 @@ function StaffAppBar() {
             href="#"
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'Poppins, sans-serif',
+              display: { xs: "none", md: "flex" },
+              fontFamily: "Inter, sans-serif",
               fontWeight: 600,
-              letterSpacing: '.1rem',
-              color: '#ffffff',
-              textDecoration: 'none',
+              letterSpacing: ".1rem",
+              color: "#ffffff",
+              textDecoration: "none",
             }}
           >
             Lab Management
           </Typography>
 
           {/* Mobile Menu Button */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
-              sx={{ color: '#ffffff' }}
+              sx={{ color: "#ffffff" }}
             >
               <MenuIcon />
             </IconButton>
             <Menu
               anchorEl={anchorElNav}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
               keepMounted
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
               open={Boolean(anchorElNav)}
               onClose={() => setAnchorElNav(null)}
-              sx={{ display: { xs: 'block', md: 'none' } }}
+              sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
-                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
                     {page}
                   </Typography>
                 </MenuItem>
@@ -116,18 +139,33 @@ function StaffAppBar() {
           </Box>
 
           {/* Desktop Menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, flexDirection: "row-reverse" }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              flexDirection: "row-reverse",
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={() => handleCloseNavMenu(page)}
                 sx={{
                   my: 2,
-                  color: '#ffffff',
-                  display: 'block',
-                  fontFamily: 'Poppins, sans-serif',
-                  textTransform: 'none',
-                  fontWeight: 500,
+                  color: active === page ? "#000000" : "#ffffff",
+                  display: "block",
+                  fontFamily: "Inter, sans-serif",
+                  textTransform: "none",
+                  fontWeight: active === page ? 700 : 500,
+                  borderRadius: "8px",
+                  px: 2,
+                  background: active === page ? "#ffffff" : "transparent", 
+                  "&:hover": {
+                    background:
+                      active === page
+                        ? "#ffffff"
+                        : "rgba(255,255,255,0.2)", 
+                  },
                 }}
               >
                 {page}
@@ -138,7 +176,10 @@ function StaffAppBar() {
           {/* User Avatar Menu */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, paddingLeft: "25px" }}>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0, paddingLeft: "25px" }}
+              >
                 <Avatar
                   sx={{ height: "50px", width: "50px" }}
                   alt="User Avatar"
@@ -147,17 +188,25 @@ function StaffAppBar() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '40px' }}
+              sx={{ mt: "40px" }}
               anchorEl={anchorElUser}
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              anchorOrigin={{ vertical: "top", horizontal: "right" }}
               keepMounted
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => handleUserAction(setting)}>
-                  <Typography sx={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+                <MenuItem
+                  key={setting}
+                  onClick={() => handleUserAction(setting)}
+                >
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontFamily: "Poppins, sans-serif",
+                    }}
+                  >
                     {setting}
                   </Typography>
                 </MenuItem>

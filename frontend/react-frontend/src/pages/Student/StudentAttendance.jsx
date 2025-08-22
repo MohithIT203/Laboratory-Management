@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./StudentAttendance.css";
-import { FaCalendarAlt, FaCheckCircle, FaTimesCircle,FaUserCircle } from "react-icons/fa";
+import { FaCalendarAlt, FaCheckCircle, FaTimesCircle,FaUserCircle, FaAward  } from "react-icons/fa";
 import { FiTrendingUp } from "react-icons/fi";
 import { IoCalendarOutline } from "react-icons/io5";
 import { HiOutlineLocationMarker } from "react-icons/hi";
@@ -40,6 +40,7 @@ const StudentAttendance = () => {
         Student_id: studentId,
         otp: Number(otp),
       });
+      fetchHistory();
       setMessage(res.data.message);
     } catch (err) {
       console.error("Error verifying OTP", err);
@@ -93,7 +94,7 @@ const StudentAttendance = () => {
               value={otp}
               required
               onChange={(e) => setOtp(e.target.value)}
-              style={{ height: "25px", margin: "10px", maxWidth: "300px" }}
+              style={{ height: "25px", margin: "10px", minWidth: "200px" }}
             />
             <button className="verify-btn" type="submit">
               Verify OTP
@@ -152,9 +153,15 @@ const StudentAttendance = () => {
                     Mr/Ms {slot.Staff_name}
                   </span>
                 </div>
+                <div className="info-item">
+                  <FaAward />
+                  <span>
+                    Marks Scored : {slot.marks} / 100
+                  </span>
+                </div>
               </div>
               <p className="marked-time">
-                Marked on {slot.marks}
+                Marked on n/a
               </p>
             </div>
           ))

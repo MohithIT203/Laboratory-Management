@@ -252,7 +252,10 @@ const SlotList = () => {
   return (
     <div className="dashboard-container">
       <StaffAppBar />
-      <h2>Faculty Dashboard</h2>
+      <h2
+      style={{
+        marginLeft:"18px"
+      }}>Faculty Dashboard</h2>
       <p>Welcome back, Dr. {Facultyname}</p>
 
       <div className="dashboard-cards">

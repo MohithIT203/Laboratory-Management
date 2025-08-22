@@ -1,10 +1,10 @@
-// routes/slotRoutes.js
+
 const express = require('express');
 const mongoose = require('mongoose');
 const Slot = require('../Schemas/new_SlotSchema');
 const router = express.Router();
 
-
+//CREATE NEW SLOT
 router.post('/api/courses', async (req, res) => { 
 
 const existing = await Slot.findOne({ Date: req.body.Date, Time: req.body.Time, venue: req.body.venue });
@@ -23,13 +23,12 @@ if (existing) {
   }
 });
 
-
-router.post('/api/faculty/allSlots', async (req, res) => { ///Changing here <<<
+//VIEW ALL SLOTS
+router.post('/api/faculty/allSlots', async (req, res) => { 
   const { FacultyEmail } = req.body;
 
   try {
-    const slots = await Slot.find({ email: FacultyEmail }).select("Course Date capacity Time venue pdf_material video_material Staff_name experiment total_booked");
-    // console.log(slots[0].booked_students);
+    const slots = await Slot.find({ email: FacultyEmail }).select("Course Date capacity Time venue pdf_material video_material Staff_name experiment total_booked ");
     return res.status(200).json(slots);
   } catch (err) {
     console.error("Error fetching slots:", err);
@@ -37,6 +36,7 @@ router.post('/api/faculty/allSlots', async (req, res) => { ///Changing here <<<
   }
 });
 
+//DELETE SLOT
 router.delete('/api/faculty/allSlots/:id',async (req,res)=>{
   const slotId=req.params.id;
   try{
@@ -50,4 +50,5 @@ router.delete('/api/faculty/allSlots/:id',async (req,res)=>{
 
   }
 });
+
 module.exports = router;

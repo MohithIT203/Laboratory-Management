@@ -10,7 +10,7 @@ const authenticate = (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    return res.sendStatus(403);
+    return res.status(403).json({ message:"Authorization Token Required"});
   }
 };
 

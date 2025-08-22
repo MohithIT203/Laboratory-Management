@@ -24,7 +24,7 @@
     width: 100%;
     padding: 40px;
     max-width: 400px;
-    border-top: 6px solid #6018be;
+    border-top: 6px solid #24c98b;
     background-color: white;
   }
   
@@ -73,9 +73,9 @@
   .submitBtn {
     width: 170px;
     height: 36px;
-     border: 1px solid #6018be;
+     border: 1px solid #24c98b;
     /* background-color: #6018be;  */
-    background-image: linear-gradient(to right, #2563eb, #9333ea);
+    background-image: linear-gradient(to right, #20e197, #24c98b);
     color: white;
     font-weight: bold;
     border-radius: 5px;
@@ -85,8 +85,8 @@
   }
   
   .submitBtn:hover {
-    background-color: #4b1390;
-    border-color: #4b1390;
+    background-color: #069c63;
+    border-color: #24c98b;
     
   }
   

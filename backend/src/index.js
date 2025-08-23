@@ -1,29 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors=require('cors');
-const faculty=require('../routes/sample')
-const app = express()
+const cors = require('cors');
+const faculty = require('../routes/server');
 
+const app = express();
+const PORT = process.env.PORT || 4000;
 
-require('dotenv').config();
-const PORT = process.env.PORT||4000;
+// Middleware
+app.use(cors({ origin: "*" }));
+app.use(express.json());
 
-
-
-app.use(express.json())
-
+// Routes (all endpoints will start with /faculty)
 app.use(faculty);
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
 
-mongoose.connect("mongodb://localhost/backendCRUD")
-    .then(() => { console.log("Connected to database.") })
-    .catch((err) => { console.log(`Error:${err}`) })
-
-
-app.listen(PORT, () => {
-    console.log(`Running on Port ${PORT}`);
+// MongoDB Connection
+mongoose.connect("mongodb://127.0.0.1:27017/backendCRUD", {
 })
+.then(() => console.log("Connected to database."))
+.catch((err) => console.log(`Error: ${err}`));
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+

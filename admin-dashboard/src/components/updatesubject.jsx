@@ -1,36 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import CourseTable from "./coursetable";
 import LocationTable from "./locationtable";
 import "./updatesubject.css";
 
 export default function UpdateSubject() {
-  const [courses, setCourses] = useState([
-    {
-      course_name: "IoT",
-      course_code: "IOT101",
-      department: "CSE",
-      experiments: [
-        { exp_no: 1, exp_name: "Introduction to Sensors", description: "Basics of sensor interfacing" },
-        { exp_no: 2, exp_name: "Smart Home Automation", description: "Build a home automation system using Arduino + IoT" }
-      ]
-    },
-    {
-      course_name: "POC",
-      course_code: "POC202",
-      department: "ECE",
-      experiments: [
-        { exp_no: 1, exp_name: "Cloud Integration", description: "Hands-on with AWS services" },
-        { exp_no: 2, exp_name: "ML Deployment", description: "Deploy ML model on cloud platform" }
-      ]
-    }
-  ]);
-
-  const [locations, setLocations] = useState([
-    { lab_name: "Mech Lab 1", department: "Mechanical" },
-    { lab_name: "CSE Lab 5", department: "CSE" },
-  ]);
+  const [courses, setCourses] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [lab, setLab] = useState("");
+  const [dept, setDept] = useState("");
 
   const [showCoursePopup, setShowCoursePopup] = useState(false);
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
+
   const [newCourse, setNewCourse] = useState({
     course_name: "",
     course_code: "",
@@ -38,44 +20,85 @@ export default function UpdateSubject() {
     experiments: []
   });
 
+  const [newLocation, setNewLocation] = useState({
+    lab_name: "",
+    department: ""
+  });
+
+  // Fetch courses from backend
+  useEffect(() => {
+    axios.get("http://localhost:4000/courses")
+      .then(res => setCourses(res.data))
+      .catch(err => console.error("Error fetching courses:", err));
+  }, []);
+
+  useEffect(() => {
+    axios.get("http://localhost:4000/locations")
+      .then(res => setLocations(res.data))
+      .catch(err => console.error("Error fetching Locations:", err));
+  }, []);
+
   // Add new course
   const handleSubmitCourse = () => {
     if (!newCourse.course_name || !newCourse.course_code || !newCourse.department) {
-      alert("Please fill all course fields");
+      alert("Please fill all fields");
       return;
     }
-    setCourses([...courses, newCourse]);
-    setNewCourse({ course_name: "", course_code: "", department: "", experiments: [] });
-    setShowCoursePopup(false);
+
+    axios.post("http://localhost:4000/courses", newCourse)
+      .then(res => {
+        setCourses([...courses, res.data]);
+        setNewCourse({ course_name: "", course_code: "", department: "", experiments: [] });
+        setShowCoursePopup(false);
+      })
+      .catch(err => console.error("Error adding course:", err));
   };
 
-  // Delete course
-  const handleDeleteCourse = (courseCode) => {
-    setCourses(courses.filter(c => c.course_code !== courseCode));
+  // Delete course (using _id)
+  const handleDeleteCourse = (courseId) => {
+    axios.delete(`http://localhost:4000/courses/${courseId}`)
+      .then(() => {
+        setCourses(courses.filter(c => c._id !== courseId));
+      })
+      .catch(err => console.error("Error deleting course:", err));
   };
 
-  // Update experiment in existing courses
-  const handleUpdateExperiment = (courseCode, updatedExperiment) => {
-    const { oldExpNo, ...newExp } = updatedExperiment;
-    setCourses(courses.map(c =>
-      c.course_code === courseCode
-        ? {
-            ...c,
-            experiments: c.experiments.map(exp =>
-              exp.exp_no === oldExpNo ? newExp : exp
-            )
-          }
-        : c
-    ));
+  // Add new experiment
+  const handleAddExperiment = (courseId, exp) => {
+    axios.post(`http://localhost:4000/courses/${courseId}/experiments`, exp)
+      .then(res => {
+        setCourses(courses.map(c => c._id === courseId ? res.data : c));
+      })
+      .catch(err => console.error("Error adding experiment:", err));
   };
 
-  // Add experiment to course (after viewing course)
-  const handleAddExperiment = (courseCode, exp) => {
-    setCourses(courses.map(c =>
-      c.course_code === courseCode
-        ? { ...c, experiments: [...c.experiments, exp] }
-        : c
-    ));
+  // Update experiment
+  const handleUpdateExperiment = (courseId, expId, updatedExp) => {
+    axios.put(`http://localhost:4000/courses/${courseId}/experiments/${expId}`, updatedExp)
+      .then(res => {
+        setCourses(courses.map(c => c._id === courseId ? res.data : c));
+      })
+      .catch(err => console.error("Error updating experiment:", err));
+  };
+
+  // Add new location
+  const handleSubmitLocation = () => {
+    if (!lab || !dept) {
+      alert("Please fill all fields");
+      return;
+    }
+    axios.post("http://localhost:4000/locations", {
+  lab: lab,
+  dept:dept
+
+})
+.then(res => {
+  setLocations([...locations, res.data]); // Use backend response
+  setNewLocation({ lab_name: "", department: "" });
+  setShowLocationPopup(false);
+})
+.catch(err => console.error("Error updating location:", err));
+
   };
 
   return (
@@ -99,10 +122,12 @@ export default function UpdateSubject() {
 
         {/* Locations Section */}
         <div className="table-section">
-          <h3>Locations</h3>
+          <div className="section-header">
+            <h3>Locations</h3>
+            <button className="add-btn" onClick={() => setShowLocationPopup(true)}>+</button>
+          </div>
           <LocationTable
             data={locations}
-            onEdit={() => {}}
             onDelete={labName => setLocations(locations.filter(l => l.lab_name !== labName))}
           />
         </div>
@@ -112,34 +137,37 @@ export default function UpdateSubject() {
           <div className="popup-overlay">
             <div className="popup-box">
               <h3>Add New Course</h3>
-              <label>
-                Course Name:
-                <input
-                  type="text"
-                  value={newCourse.course_name}
-                  onChange={e => setNewCourse({ ...newCourse, course_name: e.target.value })}
-                />
+              <label>Course Name:
+                <input type="text" value={newCourse.course_name} onChange={e => setNewCourse({ ...newCourse, course_name: e.target.value })} />
               </label>
-              <label>
-                Course Code:
-                <input
-                  type="text"
-                  value={newCourse.course_code}
-                  onChange={e => setNewCourse({ ...newCourse, course_code: e.target.value })}
-                />
+              <label>Course Code:
+                <input type="text" value={newCourse.course_code} onChange={e => setNewCourse({ ...newCourse, course_code: e.target.value })} />
               </label>
-              <label>
-                Department:
-                <input
-                  type="text"
-                  value={newCourse.department}
-                  onChange={e => setNewCourse({ ...newCourse, department: e.target.value })}
-                />
+              <label>Department:
+                <input type="text" value={newCourse.department} onChange={e => setNewCourse({ ...newCourse, department: e.target.value })} />
               </label>
-
               <div style={{ marginTop: "10px" }}>
                 <button className="edits-btn" onClick={handleSubmitCourse}>Submit</button>
                 <button className="deletes-btn" onClick={() => setShowCoursePopup(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add Location Popup */}
+        {showLocationPopup && (
+          <div className="popup-overlay">
+            <div className="popup-box">
+              <h3>Add New Location</h3>
+              <label>Lab Name:
+                <input type="text" value={lab} onChange={e => setLab(e.target.value)} />
+              </label>
+              <label>Department:
+                <input type="text" value={dept} onChange={e => setDept(e.target.value)} />
+              </label>
+              <div style={{ marginTop: "10px" }}>
+                <button className="edits-btn" onClick={handleSubmitLocation}>Submit</button>
+                <button className="deletes-btn" onClick={() => setShowLocationPopup(false)}>Cancel</button>
               </div>
             </div>
           </div>

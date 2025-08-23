@@ -17,7 +17,7 @@
 /* Shared table styles */
 .teacher-table,
 .teacher-table table {
-  width: 100%;
+  width: 99%;
   border-collapse: collapse;
   margin-top: 0;
   overflow: hidden;

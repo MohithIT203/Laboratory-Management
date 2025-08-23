@@ -1,8 +1,8 @@
 import React from 'react';
-import { Pencil, Trash2 } from "lucide-react"; 
-import './teachertable.css'; // reuse same css
+import { Trash2 } from "lucide-react"; 
+import './teachertable.css'; // Reuse same CSS styling
 
-export default function LocationTable({ data, onDelete, onEdit }) {
+export default function LocationTable({ data, onDelete }) {
   return (
     <div className="table-wrapper">
       <div className="teacher-table">
@@ -10,15 +10,16 @@ export default function LocationTable({ data, onDelete, onEdit }) {
           <thead>
             <tr>
               <th>Lab Name</th>
+              {/* <th>Department</th> */}
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((location, index) => (
+            {data.length>0 && data.map((location, index) => (
               <tr key={index}>
-                <td>{location.lab_name}</td>
+                <td>{location.name}</td>
+                {/* <td>{location.departmen}</td> */}
                 <td>
-                  
                   <button 
                     className="delete-btn" 
                     onClick={() => onDelete(location.lab_name)}

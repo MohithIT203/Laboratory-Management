@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Eye, Trash2, Plus } from "lucide-react";
+import axios from "axios";
+import { Eye, Trash2 } from "lucide-react";
 import "./updatesubject.css";
 
-export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, onUpdateExperiment }) {
+export default function CourseTable({ courses, onDeleteCourse, onAddExperiment }) {
   const [selectedCourseCode, setSelectedCourseCode] = useState(null);
   const [selectedExperiment, setSelectedExperiment] = useState(null);
-  const [originalExpNo, setOriginalExpNo] = useState(null);
 
   const [showExperimentPopup, setShowExperimentPopup] = useState(false);
   const [showAddExperimentPopup, setShowAddExperimentPopup] = useState(false);
@@ -19,43 +19,68 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
     setSelectedExperiment(null);
   };
 
-  // Edit experiment
+  // Open edit experiment popup
   const handleViewExperiment = (exp) => {
-    setOriginalExpNo(exp.exp_no);
     setSelectedExperiment({ ...exp });
     setShowExperimentPopup(true);
   };
 
-  const handleSaveExperiment = () => {
+  // Save updated experiment to backend
+  const handleSaveExperiment = async () => {
     if (!selectedExperiment.exp_no || !selectedExperiment.exp_name || !selectedExperiment.description) {
       alert("Please fill all fields");
       return;
     }
 
-    onUpdateExperiment(selectedCourse.course_code, {
-      oldExpNo: originalExpNo,
-      ...selectedExperiment,
-      exp_no: Number(selectedExperiment.exp_no),
-    });
+    try {
+      const res = await axios.put(
+        `http://localhost:4000/courses/${selectedCourse._id}/experiments/${selectedExperiment._id}`,
+        {
+          exp_no: Number(selectedExperiment.exp_no),
+          exp_name: selectedExperiment.exp_name,
+          description: selectedExperiment.description,
+        }
+      );
 
-    setShowExperimentPopup(false);
+      alert("Experiment updated successfully!");
+      setShowExperimentPopup(false);
+
+      // Update course list locally with new data
+      const updatedCourses = courses.map(course =>
+        course._id === res.data._id ? res.data : course
+      );
+
+      window.location.reload(); // Simple refresh OR you can lift state up and update via props
+
+    } catch (err) {
+      console.error("Error updating experiment:", err);
+      alert("Failed to update experiment");
+    }
   };
 
-  // Add new experiment to selected course (after viewing course)
-  const handleAddNewExperiment = () => {
+  // Add new experiment to backend
+  const handleAddNewExperiment = async () => {
     if (!newExperiment.exp_no || !newExperiment.exp_name || !newExperiment.description) {
       alert("Please fill all fields");
       return;
     }
 
-    onAddExperiment(selectedCourse.course_code, { ...newExperiment, exp_no: Number(newExperiment.exp_no) });
-    setNewExperiment({ exp_no: "", exp_name: "", description: "" });
-    setShowAddExperimentPopup(false);
+    try {
+      await onAddExperiment(selectedCourse._id, { 
+        ...newExperiment, 
+        exp_no: Number(newExperiment.exp_no) 
+      });
+
+      setNewExperiment({ exp_no: "", exp_name: "", description: "" });
+      setShowAddExperimentPopup(false);
+    } catch (err) {
+      console.error("Error adding experiment:", err);
+    }
   };
 
   return (
     <div className="table-wrapper">
-      {/* Courses Table */}
+      {/* COURSES TABLE */}
       <div className="teacher-table">
         <table>
           <thead>
@@ -76,7 +101,7 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
                   <button className="edit-btn" onClick={() => handleViewCourse(course)}>
                     <Eye size={16} />
                   </button>
-                  <button className="delete-btn" onClick={() => onDeleteCourse(course.course_code)}>
+                  <button className="delete-btn" onClick={() => onDeleteCourse(course._id)}>
                     <Trash2 size={16} />
                   </button>
                 </td>
@@ -86,12 +111,15 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
         </table>
       </div>
 
-      {/* Experiments Table */}
+      {/* EXPERIMENTS TABLE */}
       {selectedCourse && !showExperimentPopup && (
         <div className="teacher-table" style={{ marginTop: "20px" }}>
           <h3>{selectedCourse.course_name} - Experiments</h3>
-          {/* Add Experiment Button */}
-          <button className="add-btn" style={{ marginTop: "0px" ,width:"30px",height:"30px"}} onClick={() => setShowAddExperimentPopup(true)}>
+          <button
+            className="add-btn"
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => setShowAddExperimentPopup(true)}
+          >
             +
           </button>
           <table>
@@ -99,14 +127,16 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
               <tr>
                 <th>Experiment No</th>
                 <th>Experiment Name</th>
+                <th>Description</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {selectedCourse.experiments.map((exp) => (
-                <tr key={exp.exp_no}>
+                <tr key={exp._id || exp.exp_no}>
                   <td>{exp.exp_no}</td>
                   <td>{exp.exp_name}</td>
+                  <td>{exp.description}</td>
                   <td>
                     <button className="edit-btn" onClick={() => handleViewExperiment(exp)}>
                       <Eye size={16} />
@@ -116,11 +146,10 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
               ))}
             </tbody>
           </table>
-
         </div>
       )}
 
-      {/* Edit Experiment Popup */}
+      {/* EDIT EXPERIMENT POPUP */}
       {showExperimentPopup && selectedExperiment && (
         <div className="popup-overlay">
           <div className="popup-box">
@@ -156,7 +185,7 @@ export default function CourseTable({ courses, onDeleteCourse, onAddExperiment, 
         </div>
       )}
 
-      {/* Add Experiment Popup */}
+      {/* ADD EXPERIMENT POPUP */}
       {showAddExperimentPopup && (
         <div className="popup-overlay">
           <div className="popup-box">

@@ -57,7 +57,7 @@ const handleCloseNavMenu = (page) => {
    
   if (setting.toLowerCase() === "logout") {
      try {
-      const response = await axios.post("http://localhost:4000/api/user/logout", {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/user/logout`, {
       },{ withCredentials: true });
       navigate('/');
     } catch (err) {

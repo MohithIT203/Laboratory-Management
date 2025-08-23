@@ -12,7 +12,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/auth/verify');
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_APP_URL}/auth/verify`);
         if (allowedRoles.includes(res.data.role)) {
           setAuthorized(true);
         } else {

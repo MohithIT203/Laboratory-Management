@@ -61,7 +61,7 @@ function StaffAppBar() {
     if (setting.toLowerCase() === "logout") {
       try {
         await axios.post(
-          "http://localhost:4000/api/user/logout",
+          `${import.meta.env.VITE_SERVER_APP_URL}/api/user/logout`,
           {},
           { withCredentials: true }
         );

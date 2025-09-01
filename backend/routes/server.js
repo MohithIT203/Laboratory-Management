@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-// ====================== SCHEMAS & MODELS ======================
+// // ====================== SCHEMAS & MODELS ======================
 
-// Location Schema (separate collection)
+// // Location Schema (separate collection)
 const LocationSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true }
 }, { timestamps: true });
@@ -28,9 +28,9 @@ const CourseSchema = new mongoose.Schema({
 
 const Course = mongoose.model("Course", CourseSchema);
 
-// ====================== LOCATION ROUTES ======================
+// // ====================== LOCATION ROUTES ======================
 
-// Get all locations
+// // Get all locations
 router.get("/locations", async (req, res) => {
     try {
         const locations = await Location.find({});
@@ -41,28 +41,28 @@ router.get("/locations", async (req, res) => {
     }
 });
 
-// Add new location
-router.post("/locations", async (req, res) => {
-    try {
-        const { lab,dept } = req.params;
-        console.log(lab);
-        console.log(dept);
+// // Add new location
+// // router.post("/locations", async (req, res) => {
+// //     try {
+// //         const { lab,dept } = req.params;
+// //         console.log(lab);
+// //         console.log(dept);
 
-        if (!lab) return res.status(400).json({ error: "Location name is required" });
+// //         if (!lab) return res.status(400).json({ error: "Location name is required" });
 
-        const existing = await Location.findOne({ name:lab });
-        if (existing) return res.status(400).json({ error: "Location already exists" });
+// //         const existing = await Location.findOne({ name:lab });
+// //         if (existing) return res.status(400).json({ error: "Location already exists" });
 
-        const location = new Location({ name:lab });
-        await location.save();
+// //         const location = new Location({ name:lab });
+// //         await location.save();
 
-        res.status(201).json(location);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// //         res.status(201).json(location);
+// //     } catch (err) {
+// //         res.status(500).json({ error: err.message });
+// //     }
+// // });
 
-// Delete location by ID
+// // Delete location by ID
 router.delete("/locations/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -86,7 +86,7 @@ router.delete("/locations/:id", async (req, res) => {
     }
 });
 
-// ====================== COURSE ROUTES ======================
+// // ====================== COURSE ROUTES ======================
 
 // Get all courses with populated locations in experiments
 router.get("/courses", async (req, res) => {
@@ -128,7 +128,7 @@ router.post("/courses", async (req, res) => {
     }
 });
 
-// Delete course
+// // Delete course
 router.delete("/courses/:id", async (req, res) => {
     try {
         const course = await Course.findByIdAndDelete(req.params.id);
@@ -139,7 +139,7 @@ router.delete("/courses/:id", async (req, res) => {
     }
 });
 
-// Add experiment to course (with location ID)
+// // Add experiment to course (with location ID)
 router.post("/courses/:id/experiments", async (req, res) => {
     try {
         const { exp_no, exp_name, description, location } = req.body;
@@ -203,6 +203,124 @@ router.delete("/courses/:id/experiments/:expId", async (req, res) => {
         await course.save();
 
         res.status(200).json({ message: "Experiment deleted", course });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// // routes.js (your router file)
+// router.post("/locations", async (req, res) => {
+//   try {
+//     const name  = req.body.name;   
+//     if (!name || !name.trim()) {
+//       return res.status(400).json({ error: "Location name is required" });
+//     }
+
+//     const trimmedName = name.trim();
+
+//     // Correct way: check if a document with this name already exists
+//     const existing = await Location.findOne({ name: trimmedName });
+//     if (existing) {
+//       return res.status(409).json({ error: "Location already exists" });
+//     }
+
+//     const location = new Location({ name: trimmedName });
+//     await location.save();
+
+//     console.log("New location saved:", location);
+//     return res.status(201).json(location);
+//   } catch (err) {
+//     return res.status(500).json({ error: err.message });
+//   }
+// });
+
+
+
+// module.exports = router;
+
+
+
+// ====================== SCHEMAS & MODELS ======================
+
+// Location Schema
+// const LocationSchema = new mongoose.Schema({
+//     name: { type: String, required: true, unique: true },
+//     department: { type: String, default: "" } // optional
+// }, { timestamps: true });
+
+// const Location = mongoose.model("Location", LocationSchema);
+
+// // Course Schema
+// const CourseSchema = new mongoose.Schema({
+//     course_name: { type: String, required: true },
+//     course_code: { type: String, required: true, unique: true },
+//     department: { type: String, required: true },
+//     experiments: [
+//         {
+//             exp_no: { type: Number, required: true },
+//             exp_name: { type: String, required: true },
+//             description: { type: String, default: "" },
+//             location: { type: mongoose.Schema.Types.ObjectId, ref: "Location" }
+//         }
+//     ]
+// }, { timestamps: true });
+
+// const Course = mongoose.model("Course", CourseSchema);
+
+// ====================== LOCATION ROUTES ======================
+
+// Get all locations
+router.get("/locations", async (req, res) => {
+    try {
+        const locations = await Location.find({});
+        res.status(200).json(locations);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Add new location
+router.post("/locations", async (req, res) => {
+    try {
+        const { name, department } = req.body;
+        if (!name || !name.trim()) {
+            return res.status(400).json({ error: "Location name is required" });
+        }
+
+        const trimmedName = name.trim();
+
+        const existing = await Location.findOne({ name: trimmedName });
+        if (existing) {
+            return res.status(409).json({ error: "Location already exists" });
+        }
+
+        const location = new Location({ name: trimmedName, department: department?.trim() });
+        await location.save();
+
+        res.status(201).json(location);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Delete location by ID
+router.delete("/locations/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const location = await Location.findById(id);
+        if (!location) return res.status(404).json({ error: "Location not found" });
+
+        // Remove reference to this location from all experiments
+        await Course.updateMany(
+            { "experiments.location": id },
+            { $set: { "experiments.$[elem].location": null } },
+            { arrayFilters: [{ "elem.location": id }] }
+        );
+
+        await Location.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Location deleted and experiments updated" });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

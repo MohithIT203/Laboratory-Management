@@ -82,24 +82,37 @@ export default function UpdateSubject() {
   };
 
   // Add new location
-  const handleSubmitLocation = () => {
-    if (!lab || !dept) {
-      alert("Please fill all fields");
-      return;
+  // Add new location
+const handleSubmitLocation = async (e) => {
+  e.preventDefault(); // prevent default form behavior
+
+  if (!lab || !lab.trim()) {
+    alert("Please enter a lab name");
+    return;
+  }
+
+  try {
+    const res = await axios.post("http://localhost:4000/locations", {
+      name: lab.trim()   // send only the name to backend
+    });
+
+    // Add the new location to the state to show in UI
+    setLocations([...locations, res.data]);
+
+    // Clear input and close popup
+    setLab("");
+    setShowLocationPopup(false);
+
+    console.log("Location added:", res.data);
+  } catch (err) {
+    if (err.response && err.response.status === 409) {
+      alert("Location already exists");
+    } else {
+      console.error("Error adding location:", err);
     }
-    axios.post("http://localhost:4000/locations", {
-  lab: lab,
-  dept:dept
+  }
+};
 
-})
-.then(res => {
-  setLocations([...locations, res.data]); // Use backend response
-  setNewLocation({ lab_name: "", department: "" });
-  setShowLocationPopup(false);
-})
-.catch(err => console.error("Error updating location:", err));
-
-  };
 
   return (
     <div className="page-container">
@@ -176,3 +189,94 @@ export default function UpdateSubject() {
     </div>
   );
 }
+
+
+
+// import React, { useState, useEffect } from "react";
+// import axios from "axios";
+// import LocationTable from "./locationtable"; // Your table component
+// import "./updatesubject.css";
+
+// export default function UpdateSubject() {
+//   const [locations, setLocations] = useState([]);
+//   const [lab, setLab] = useState("");
+//   const [dept, setDept] = useState("");
+//   const [showLocationPopup, setShowLocationPopup] = useState(false);
+
+//   // Fetch locations
+//   useEffect(() => {
+//     axios.get("http://localhost:4000/locations")
+//       .then(res => setLocations(res.data))
+//       .catch(err => console.error("Error fetching locations:", err));
+//   }, []);
+
+//   // Add new location
+//   const handleSubmitLocation = async (e) => {
+//     e.preventDefault();
+
+//     if (!lab || !lab.trim()) {
+//       alert("Please enter a lab name");
+//       return;
+//     }
+
+//     try {
+//       const res = await axios.post("http://localhost:4000/locations", {
+//         name: lab.trim(),
+//         department: dept.trim()
+//       });
+
+//       setLocations([...locations, res.data]);
+//       setLab("");
+//       setDept("");
+//       setShowLocationPopup(false);
+//     } catch (err) {
+//       if (err.response && err.response.status === 409) {
+//         alert("Location already exists");
+//       } else {
+//         console.error("Error adding location:", err);
+//       }
+//     }
+//   };
+
+//   // Delete location
+//   const handleDeleteLocation = async (id) => {
+//     try {
+//       await axios.delete(`http://localhost:4000/locations/${id}`);
+//       setLocations(locations.filter(loc => loc._id !== id));
+//     } catch (err) {
+//       console.error("Error deleting location:", err);
+//     }
+//   };
+
+//   return (
+//     <div className="page-container">
+//       <h2>Locations</h2>
+//       <button className="add-btn" onClick={() => setShowLocationPopup(true)}>Add Location</button>
+
+//       <LocationTable 
+//         data={locations} 
+//         onDelete={id => handleDeleteLocation(id)} 
+//       />
+
+//       {showLocationPopup && (
+//         <div className="popup-overlay">
+//           <div className="popup-box">
+//             <h3>Add New Location</h3>
+//             <label>
+//               Lab Name:
+//               <input type="text" value={lab} onChange={e => setLab(e.target.value)} />
+//             </label>
+//             <label>
+//               Department:
+//               <input type="text" value={dept} onChange={e => setDept(e.target.value)} />
+//             </label>
+//             <div style={{ marginTop: "10px" }}>
+//               <button className="edits-btn" onClick={handleSubmitLocation}>Submit</button>
+//               <button className="deletes-btn" onClick={() => setShowLocationPopup(false)}>Cancel</button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }

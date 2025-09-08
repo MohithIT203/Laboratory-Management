@@ -20,7 +20,7 @@ const Login = () => {
         const emailFromGoogle = result.user.email;
         console.log("Signed in with:", emailFromGoogle);
         setEmail(emailFromGoogle);
-        handlelogin();
+        handlelogin(emailFromGoogle);
       })
       .catch((error) => {
         console.error("Google sign-in error:", error);
@@ -28,22 +28,24 @@ const Login = () => {
   };
   
 
-const handlelogin = async () => {
+const handlelogin = async (loginemail) => {
+  const loginId=loginemail|| email;
   try {
+
     let response;
 
     if (password !== "") {
       // Normal login
       response = await axios.post(
         `${import.meta.env.VITE_SERVER_APP_URL}/api/user/login`,
-        { userEmail: email, password },
+        { userEmail: loginId, password },
         { withCredentials: true }
       );
     } else {
       // Google login
       response = await axios.post(
         `${import.meta.env.VITE_SERVER_APP_URL}/api/user/glogin`,
-        { userEmail: email },
+        { userEmail: loginId },
         { withCredentials: true }
       );
     }
@@ -80,7 +82,7 @@ const handlelogin = async () => {
          {alert.show && <LoginPopup type={alert.type} message={alert.message} />}
       <div className="outerdiv">
         <h2 className="head">BIT LAB SLOT BOOKING</h2>
-        <form onSubmit={(e) =>{ e.preventDefault(),handlelogin()}}>
+        <form onSubmit={(e) =>{ e.preventDefault();handlelogin();}}>
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
               <EmailIcon style={{ color: "#24c98b" }} /> Email:

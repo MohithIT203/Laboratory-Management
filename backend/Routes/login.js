@@ -13,7 +13,6 @@ require('dotenv').config();
 router.post('/api/user/glogin', async (req, res) => {
   const { userEmail } = req.body;
   
-
   try {
     const user = await User.findOne({ email: userEmail });
     if (!user) {

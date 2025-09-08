@@ -126,8 +126,10 @@
   color: white;
   border: none;
   border-radius: 5px;
-  width: 100px;
+  width: 150px;
   cursor: pointer;
+  position: relative;
+  bottom: 4px;
 }
 
 .add-btn:hover {
@@ -173,6 +175,8 @@
     height:35px;
     padding: 6px 2px;
     font-size: 17px;
-    margin-left: 3px;
+    margin-left:2px;
+    position: relative;
+    top:2px
 }
 }

@@ -69,6 +69,7 @@ function AdminAppBar() {
           {},
           { withCredentials: true }
         );
+        localStorage.clear();
         navigate("/");
       } catch (err) {
         console.error(err);

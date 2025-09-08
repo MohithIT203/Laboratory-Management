@@ -42,7 +42,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
           {
             exp_no: Number(formValues.exp_no),
             exp_name: formValues.exp_name,
-            description: formValues.exp_description,
+            exp_description: formValues.exp_description,
           }
         );
 

@@ -65,6 +65,7 @@ function StaffAppBar() {
           {},
           { withCredentials: true }
         );
+        localStorage.clear();
         navigate("/");
       } catch (err) {
         console.error(err);

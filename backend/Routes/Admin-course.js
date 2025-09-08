@@ -79,6 +79,43 @@ router.post("/courses/:id/experiments", async (req, res) => {
   }
 });
 
+router.put("/:id/experiments/:expid", async (req, res) => {
+  const { id, expid } = req.params;
+  const { exp_no, exp_name, exp_description } = req.body;
+  if (!exp_no || !exp_name || !exp_description) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Find the experiment by id
+    const experiment = course.experiments.id(expid);
+    if (!experiment) {
+      return res.status(404).json({ message: "Experiment not found" });
+    }
+
+    // Update fields
+    experiment.exp_no = exp_no;
+    experiment.exp_name = exp_name;
+    experiment.exp_description = exp_description;
+
+    await course.save();
+
+    res.status(200).json({
+      message: "Experiment updated successfully",
+      Exp: experiment,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 router.delete('/courses/:id',async (req,res)=>{
     const {id}=req.params;
     try {

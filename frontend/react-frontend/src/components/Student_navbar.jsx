@@ -59,6 +59,7 @@ const handleCloseNavMenu = (page) => {
      try {
       const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/user/logout`, {
       },{ withCredentials: true });
+      localStorage.clear();
       navigate('/');
     } catch (err) {
       console.error(err);

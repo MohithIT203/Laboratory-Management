@@ -10,11 +10,61 @@ const Course = require('../Schemas/courseSchema');
 require('dotenv').config();
 
 // LOGIN ROUTE
-router.post('/api/user/login', async (req, res) => {
+router.post('/api/user/glogin', async (req, res) => {
   const { userEmail } = req.body;
+  
 
   try {
     const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    if (user.role === 'Student') {
+      const student = await Student.findOne({ email: userEmail });
+      return res.json({
+        message: 'Login successful',
+        role: user.role,
+        dept: student?.dept || null,
+        user_id:student._id,
+      });
+    } else if (user.role === 'faculty') {
+      const faculty = await Faculty.findOne({ email: userEmail }); 
+      return res.json({
+        message: 'Login successful',
+        role: user.role,
+        email:faculty.email,
+        name: faculty?.Staff_name || null,
+        dept: faculty?.dept || null,
+
+      });
+    }
+
+    return res.json({ message: 'Login successful', role: user.role });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/api/user/login', async (req, res) => {
+  const { userEmail,password } = req.body;
+
+  try {
+    const user = await User.findOne({ email: userEmail,password:password });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -77,7 +127,6 @@ router.get('/auth/verify', (req, res) => {
 // LOGOUT ROUTE
 router.post('/api/user/logout', (req, res) => {
   res.clearCookie('token');
-  localStorage.clear(); 
   res.json({ message: 'Logged out successfully' });
 });
 

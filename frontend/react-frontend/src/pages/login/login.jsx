@@ -19,7 +19,8 @@ const Login = () => {
       .then((result) => {
         const emailFromGoogle = result.user.email;
         console.log("Signed in with:", emailFromGoogle);
-        handlelogin(emailFromGoogle);
+        setEmail(emailFromGoogle);
+        handlelogin();
       })
       .catch((error) => {
         console.error("Google sign-in error:", error);
@@ -27,30 +28,51 @@ const Login = () => {
   };
   
 
-  const handlelogin = async (email) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/user/login`, {
-        userEmail: email,
-      },{ withCredentials: true });
-       setAlert({ show: true, type: "success", message: "Login Successful!" });
-      if (response.data.role === "Student") {
-         localStorage.setItem("student_id", response.data.user_id);
-         localStorage.setItem("student_dept", response.data.dept);
-        navigate("/student/dashboard",{ state: { Studentdept: response.data.dept,Student_id:response.data.user_id}});
-      } else if (response.data.role === "faculty") {
-         localStorage.setItem("Facultyname", response.data.name);
+const handlelogin = async () => {
+  try {
+    let response;
+
+    if (password !== "") {
+      // Normal login
+      response = await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/api/user/login`,
+        { userEmail: email, password },
+        { withCredentials: true }
+      );
+    } else {
+      // Google login
+      response = await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/api/user/glogin`,
+        { userEmail: email },
+        { withCredentials: true }
+      );
+    }
+
+    setAlert({ show: true, type: "success", message: "Login Successful!" });
+
+    if (response.data.role === "Student") {
+      localStorage.setItem("student_id", response.data.user_id);
+      localStorage.setItem("student_dept", response.data.dept);
+      navigate("/student/dashboard", {
+        state: { Studentdept: response.data.dept, Student_id: response.data.user_id },
+      });
+    } else if (response.data.role === "faculty") {
+      localStorage.setItem("Facultyname", response.data.name);
       localStorage.setItem("FacultyEmail", response.data.email);
       localStorage.setItem("Facultydept", response.data.dept);
-        navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
-      }
-      else if (response.data.role === "Admin") {
-        navigate("/Admin/dashboard");
-      }
-    } catch (err) {
-      console.error(err);
-      setAlert({ show: true, type: "error", message: "Login Failed. Try again." });
+      navigate("/faculty/dashboard", {
+        state: { Facultyname: response.data.name, Facultydept: response.data.dept, FacultyEmail: response.data.email },
+      });
+    } else if (response.data.role === "Admin") {
+      navigate("/Admin/dashboard");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setAlert({ show: true, type: "error", message: "Login Failed. Try again." });
+  }
+};
+
+
 
   return (
     <div className="mainContainer">
@@ -58,7 +80,7 @@ const Login = () => {
          {alert.show && <LoginPopup type={alert.type} message={alert.message} />}
       <div className="outerdiv">
         <h2 className="head">BIT LAB SLOT BOOKING</h2>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={(e) =>{ e.preventDefault(),handlelogin()}}>
           <div style={{ marginBottom: "15px" }}>
             <label style={{ color: "#4b5563", display: "flex", gap: "8px" }}>
               <EmailIcon style={{ color: "#24c98b" }} /> Email:
@@ -90,7 +112,7 @@ const Login = () => {
           </div>
 
           <div>
-            <button type="submit" className="submitBtn" >
+            <button type="submit" className="submitBtn">
               Login
             </button>
           </div>

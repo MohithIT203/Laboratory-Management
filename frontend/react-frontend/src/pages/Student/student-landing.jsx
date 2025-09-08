@@ -97,6 +97,19 @@ const CourseList = () => {
     setActive(tab);
     if (tab === "booked") fetchMyBookings();
   };
+  
+  const handleCancelSlot = async (slotId) => {
+  try {
+    await axios.delete(
+      `${import.meta.env.VITE_SERVER_APP_URL}/student/cancel-slot/${slotId}/${userId}`
+    );
+
+    setMyBookings((prev) => prev.filter((slot) => slot._id !== slotId));
+  } catch (err) {
+    console.error("Error Deleting Slot:", err);
+  }
+};
+
 
   // 🔹 filtering logic
   const filterSlots = (slots) => {
@@ -315,7 +328,9 @@ const CourseList = () => {
                             Video Material
                           </a>
                         </p>
-                        <button className="remove-btn-bottom-right">Cancel</button>
+                        <button className="remove-btn-bottom-right"
+                        onClick={()=>{handleCancelSlot(slot._id)}}
+                        >Cancel</button>
                       </div>
                     ))
                   ) : (

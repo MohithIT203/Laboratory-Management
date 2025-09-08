@@ -43,6 +43,9 @@ const Login = () => {
       localStorage.setItem("Facultydept", response.data.dept);
         navigate("/faculty/dashboard",{ state: { Facultyname:response.data.name,Facultydept: response.data.dept,FacultyEmail:response.data.email }});
       }
+      else if (response.data.role === "Admin") {
+        navigate("/Admin/dashboard");
+      }
     } catch (err) {
       console.error(err);
       setAlert({ show: true, type: "error", message: "Login Failed. Try again." });

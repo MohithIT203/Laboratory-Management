@@ -59,9 +59,6 @@ router.post('/api/user/login', async (req, res) => {
   }
 });
 
-
-
-
 //VERIFY ROUTE
 router.get('/auth/verify', (req, res) => {
   const token = req.cookies.token;
@@ -80,6 +77,7 @@ router.get('/auth/verify', (req, res) => {
 // LOGOUT ROUTE
 router.post('/api/user/logout', (req, res) => {
   res.clearCookie('token');
+  localStorage.clear(); 
   res.json({ message: 'Logged out successfully' });
 });
 

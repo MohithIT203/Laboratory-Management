@@ -1,0 +1,9 @@
+.filter-bar-history {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+  position: relative;
+  margin:10px;
+}

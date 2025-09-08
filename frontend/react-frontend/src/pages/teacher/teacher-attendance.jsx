@@ -165,6 +165,7 @@ const StaffAttendance = () => {
 
         {/* Tabs */}
         <div className="options">
+          <div>
           <button
             className={active === "all" ? "tab-btn active" : "tab-btn"}
             onClick={fetchStudents}
@@ -183,6 +184,7 @@ const StaffAttendance = () => {
           >
             Absent
           </button>
+          </div>
         </div>
 
         {/* Table or Loader */}

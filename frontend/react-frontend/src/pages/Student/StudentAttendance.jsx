@@ -95,7 +95,7 @@ const StudentAttendance = () => {
               value={otp}
               required
               onChange={(e) => setOtp(e.target.value)}
-              style={{ height: "25px", margin: "10px", minWidth: "200px" }}
+              style={{ height: "25px",padding:"20px", margin: "10px",width:"90%",boxSizing:"border-box"}}
             />
             <button className="verify-btn" type="submit">
               Verify OTP

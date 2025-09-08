@@ -92,11 +92,6 @@
 .attendance-table tr:hover td {
   background: #f9fafb;
 }
-
-
-
-
-
 .attendance-btn.present {
    color: green;
   font-weight: bold;
@@ -114,11 +109,8 @@ color: #dc2626;
   font-weight: bold;
 }
 
-/* .attendance-btn.absent:hover {
-  background-color: #b91c1c;
-  color: white;
-} */
-.tab-btn {
+
+.tab-btn,.add-students {
   padding: 8px 16px;
   border: 1px solid #ccc;
   background: #f5f5f5;
@@ -128,13 +120,14 @@ color: #dc2626;
   border-radius: 4px;
   min-width: 90px;
 }
-.tab-btn.active {
+.tab-btn.active{
   background: green;
   color: white;
   border-color: green;
 }
-
-
+.add-students{
+  border-color: #15803d;
+}
 .attendance-btn.inactive {
   opacity: 0.5;
 }
@@ -195,3 +188,8 @@ color: #dc2626;
         transform: rotate(360deg);
     }
     } 
+.options{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}

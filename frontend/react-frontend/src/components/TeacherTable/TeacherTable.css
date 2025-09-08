@@ -1,0 +1,197 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* ✅ scroll horizontally on small screens */
+  -webkit-overflow-scrolling: touch;
+}
+* {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: 0.10px;
+  font: weight 400px;
+  font-style: normal;
+}
+.page-container {
+  padding-left: 40px;   /* ✅ moves content 40px to the right */
+  padding-top: 0px;    /* optional: gives some spacing below navbar */
+}
+
+/* Shared table styles */
+.teacher-table,
+.teacher-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-width: 700px;   /* ✅ ensures scroll instead of hiding buttons */
+}
+
+.teacher-table th,
+.teacher-table table th {
+  background: #f1f5f9;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px;
+  text-align: center;
+}
+
+.teacher-table td,
+.teacher-table table td {
+  padding: 16px;
+  background: white;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+
+  max-width: 200px; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
+}
+
+.teacher-table tr:hover td,
+.teacher-table table tr:hover td {
+  background: #f9fafb;
+  white-space: nowrap;
+}
+
+/* Action buttons cell */
+.teacher-table td:last-child,
+.teacher-table table td:last-child {
+  white-space: nowrap;   /* ✅ keep buttons inline */
+  min-width: 120px; 
+}
+
+/* Buttons */
+.edit-btn,
+.delete-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 3px;
+  transition: all 0.2s ease;
+  display: inline-block;   /* ✅ inline always */
+  vertical-align: middle;
+  max-width: 80px;
+}
+
+/* Edit button */
+.edit-btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+}
+
+/* Delete button */
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .teacher-table,
+  .teacher-table table {
+    min-width: 700px;  /* ✅ keeps all columns + buttons visible via scroll */
+    
+  }
+
+  .teacher-table td,
+  .teacher-table table td {
+    padding: 12px;
+  }
+  td:last-child {
+    display: flex;
+    flex-direction: column;   /* buttons go up-down */
+    align-items: center;      /* center align */
+    gap: 6px;                 /* spacing between buttons */
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 80%;               /* make them bigger */
+    margin: 0;                /* reset margin */
+  }
+}
+
+/* Popup Overlay */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Popup Box */
+.popup-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  text-align: left;
+}
+
+.popup-box h3 {
+  margin-bottom: 15px;
+}
+.popup-box label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: left;   /* ✅ Ensure labels align left */
+}
+.popup-box input,
+.popup-box textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.add-location-form {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 15px;
+  margin-left: 0px;
+}
+
+.add-location-form input {
+  width: 400px;      
+  height: 20px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.add-location-form button {
+  min-width: 140px;     /* wider button */
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}

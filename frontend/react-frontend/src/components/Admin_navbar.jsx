@@ -14,10 +14,10 @@ import MenuItem from "@mui/material/MenuItem";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const pages = ["Slots Summary", "Attendance", "Dashboard"];
+const pages = ["Courses","All Slots", "Users", "Dashboard"];
 const settings = ["Account", "Logout"];
 
-function StaffAppBar() {
+function AdminAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [active, setActive] = React.useState("Dashboard");
@@ -27,9 +27,11 @@ function StaffAppBar() {
   
   React.useEffect(() => {
     const map = {
-      "/faculty/dashboard": "Dashboard",
-      "/faculty/attendance": "Attendance",
-      "/faculty/all-slots": "Slots Summary",
+      "/Admin/dashboard": "Dashboard",
+      "/Admin/Users": "Users",
+      "/Admin/all-slots": "All Slots",
+      "/Admin/students": "All Slots",
+      "/Admin/courses": "Courses",
     };
     setActive(map[location.pathname] || "");
   }, [location.pathname]);
@@ -41,14 +43,16 @@ function StaffAppBar() {
  
   const handleCloseNavMenu = (page) => {
     setAnchorElNav(null);
-    if (page === "Attendance") {
-      navigate("/faculty/attendance");
-    } else if (page === "Slots Summary") {
-      navigate("/faculty/all-slots");
-    } else if (page === "Dashboard") {
-      navigate("/faculty/dashboard");
+    if (page === "Dashboard") {
+      navigate("/Admin/dashboard");
+    } else if (page === "Users") {
+      navigate("/Admin/Users");
+    } else if (page === "All Slots") {
+      navigate( "/Admin/all-slots");
+    } else if (page === "Courses") {
+      navigate("/Admin/courses");
     } else {
-      navigate("/faculty/dashboard");
+      navigate("/Admin/dashboard");
     }
   };
 
@@ -156,8 +160,8 @@ function StaffAppBar() {
                   display: "block",
                   fontFamily: "Inter, sans-serif",
                   textTransform: "none",
+                  margin:"2px",
                   fontWeight: active === page ? 700 : 500,
-                   margin:"2px",
                   borderRadius: "8px",
                   px: 2,
                   background: active === page ? "#ffffff" : "transparent", 
@@ -220,4 +224,4 @@ function StaffAppBar() {
   );
 }
 
-export default StaffAppBar;
+export default AdminAppBar;

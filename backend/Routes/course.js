@@ -252,5 +252,51 @@ router.put('/faculty/update-scores/:SlotId', async (req, res) => {
 });
 
 
+router.put("/faculty/update-attendance/:SlotId", async (req, res) => {
+  try {
+    const { SlotId } = req.params;
+    const { students } = req.body;
+
+    const slot = await Slot.findById(SlotId);
+    if (!slot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    for (const stuid of students) {
+      const stu = slot.students.find(
+        (s) => s.studentId.toString() === stuid.toString()
+      );
+
+      if (stu) {
+        stu.marks = 0;
+        stu.attendance = "present";
+      }
+
+      // update inside Student.slots
+      await Student.updateOne(
+        { _id: stuid, "slots.slotId": SlotId },
+        {
+          $set: {
+            "slots.$.marks": 0,
+            "slots.$.attendance": "present",
+          },
+        }
+      );
+    }
+
+    await slot.save();
+
+    res.json({
+      message: "Attendance updated successfully",
+      students: slot.students,
+    });
+  } catch (err) {
+    console.error("Error updating attendance:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
 
 module.exports = router;

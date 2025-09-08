@@ -1,5 +1,6 @@
 // routes/slotRoutes.js
 const express = require('express');
+const mongoose=require('mongoose');
 const Slot = require('../Schemas/new_SlotSchema');
 const Student=require('../Schemas/studentInfo');
 // const Slot = require('../Schemas/studentSlot');
@@ -72,8 +73,12 @@ router.post('/student/my-bookings', async (req, res) => {
 
   try {
     // Find all slots where students array contains the given Student_id
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const bookedSlots = await Slot.find({
-      "students.studentId": Student_id
+      "students.studentId": Student_id,
+      Date: { $gte: today },
+
     }).sort({ Date: 1 });;
 
     if (!bookedSlots.length) {
@@ -98,7 +103,8 @@ router.post("/slots", async (req, res) => {
     const slots = await Slot.find({
       dept,
       "students.studentId": { $ne: Student_id },
-      Date: { $gte: today }
+      Date: { $gte: today },
+       $expr: { $lt: ["$total_booked", "$capacity"] }
     });
 
     if (slots.length > 0) {
@@ -109,6 +115,75 @@ router.post("/slots", async (req, res) => {
   } catch (err) {
     console.error("Error fetching slots:", err);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/history", async (req, res) => {
+  const { dept, Student_id } = req.body;
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const slots = await Slot.find({
+      dept,
+      "students.studentId": Student_id ,
+      Date: { $lt: today },
+    });
+
+    if (slots.length > 0) {
+      return res.json(slots);
+    } else {
+      return res.status(404).json({ message: "No available slots found" });
+    }
+  } catch (err) {
+    console.error("Error fetching slots:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+router.delete("/student/cancel-slot/:slotid/:studentid", async (req, res) => {
+  const { slotid, studentid } = req.params;
+
+  try {
+    const slot = await Slot.findById(slotid);
+    if (!slot) {
+      return res.status(404).send({ message: "Slot not found" });
+    }
+
+
+    const student = await Student.findById(studentid);
+    if (!student) {
+      return res.status(404).send({ message: "Student not found" });
+    }
+
+
+    const alreadyBooked = slot.students.some(
+      (s) => s.studentId.toString() === studentid.toString()
+    );
+    if (!alreadyBooked) {
+      return res
+        .status(400)
+        .send({ message: "Student has not booked this slot" });
+    }
+
+    await Slot.findByIdAndUpdate(slotid, {
+      $pull: { students: { studentId: studentid } },
+      $inc: { total_booked: -1 },
+    });
+
+    // Remove slot from student's record
+    await Student.findByIdAndUpdate(studentid, {
+      $pull: { slots: { slotId: slotid } },
+    });
+
+    return res.status(200).send({ message: "Slot booking cancelled successfully" });
+  } catch (err) {
+    console.error("Error cancelling slot:", err);
+    return res
+      .status(500)
+      .send({ message: "Error occurred while cancelling slot" });
   }
 });
 

@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-const pages = ['Book Slot', 'Attendance','Dashboard'];
+const pages = ['History', 'Attendance','Dashboard'];
 const settings = ['Account', 'Logout'];
 
 function MiniAppBar() {
@@ -27,7 +27,7 @@ function MiniAppBar() {
       const map = {
         "/student/dashboard": "Dashboard",
         "/student/attendance": "Attendance",
-        "/student/all-slots": "Slots Summary",
+        "/student/history": "History",
       };
       setActive(map[location.pathname] || "");
     }, [location.pathname]);
@@ -43,8 +43,8 @@ const handleCloseNavMenu = (page) => {
     setAnchorElNav(null); 
     if (page === "Attendance") {
       navigate('/student/attendance');
-    } else if (page === "Book Slot") {
-      navigate('/student/all-slots');
+    } else if (page === "History") {
+      navigate('/student/history');
     } else if (page === "Dashboard") {
       navigate('/student/dashboard');
     }
@@ -136,6 +136,7 @@ const handleCloseNavMenu = (page) => {
                   display: "block",
                   fontFamily: "Inter, sans-serif",
                   textTransform: "none",
+                  margin:"2px",
                   fontWeight: active === page ? 700 : 500,
                   borderRadius: "8px",
                   px: 2,

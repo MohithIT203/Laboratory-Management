@@ -1,44 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import StaffAppBar from "../../components/Staff_navbar";
-import "./teacher-slots.css";
+import "../teacher/teacher-slots.css";
+import AdminAppBar from "../../components/Admin_navbar";
 
-function StaffSlots() {
+function AdminSlots() {
   const [allSlots, setAllSlots] = useState([]);
   const [Loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const FacultyEmail =
-    location.state?.FacultyEmail || localStorage.getItem("FacultyEmail");
-
-  useEffect(() => {
+  
     const fetchCourses = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_SERVER_APP_URL}/faculty/my-slots/${FacultyEmail}`
+          `${import.meta.env.VITE_SERVER_APP_URL}/Admin/all-slots`
         );
-        setAllSlots(response.data);
+        setAllSlots(response.data.slots);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       } finally {
         setLoading(false);
       }
     };
+    useEffect(() => {
+         fetchCourses();
+  }, []);
 
-    if (FacultyEmail) fetchCourses();
-  }, [FacultyEmail]);
-
-  const handleDetails = (slotId) => {
+  const handleDetails = (slotId,dept) => {
     localStorage.setItem("slotid", slotId);
-    navigate("/faculty/students", { state: { SlotId: slotId } });
+    localStorage.setItem("slotDept", dept);
+    navigate("/Admin/students", { state: { SlotId: slotId,deptartment:dept} });
   };
 
   return (
     <div>
-      <StaffAppBar />
+      <AdminAppBar/>
 
       {Loading && (
         <div style={{ textAlign: "center", padding: "30px" }}>
@@ -85,6 +83,14 @@ function StaffSlots() {
                       {slot.Course}
                     </p>
                     <p>
+                      <strong>Staff : </strong>
+                       {slot.Staff_name}
+                    </p>
+                    <p>
+                      <strong>Department : </strong>
+                      {slot.dept}
+                    </p>
+                    <p>
                       <strong>Exp.No : </strong>
                       {slot.experiment.exp_no}
                     </p>
@@ -105,7 +111,7 @@ function StaffSlots() {
                     </p>
                     <button
                       className="view-btn"
-                      onClick={() => handleDetails(slot._id)}
+                      onClick={() => handleDetails(slot._id,slot.dept)}
                     >
                       View Details
                     </button>
@@ -120,4 +126,4 @@ function StaffSlots() {
   );
 }
 
-export default StaffSlots;
+export default AdminSlots;

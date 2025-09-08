@@ -162,9 +162,9 @@
   }
   .otp-block{
     min-width:200px;
-   background: white;
+    /* width:100%; */
+    background: white;
     border-radius: 14px;
-    
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
     margin-bottom: 2rem;
     padding:10px;

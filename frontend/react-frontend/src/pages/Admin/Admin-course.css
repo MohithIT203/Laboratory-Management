@@ -1,0 +1,178 @@
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* ✅ scroll horizontally on small screens */
+}
+.page-container {
+  padding-left: 30px;   /* ✅ moves content 40px to the right */
+  padding-top: 0px;    /* optional: gives some spacing below navbar */
+}
+
+/* Shared table styles */
+.teacher-table,
+.teacher-table table {
+  width: 99%;
+  border-collapse: collapse;
+  margin-top: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-width: 600px;   /* ✅ ensures scroll instead of hiding buttons */
+}
+
+.teacher-table th,
+.teacher-table table th {
+  /* background: #e0e0e0; */
+  color: #3e4552;
+  font-weight: 600;
+  padding: 12px;
+  text-align: center;
+}
+
+.teacher-table td,
+.teacher-table table td {
+  padding: 16px;
+  background: white;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.teacher-table tr:hover td,
+.teacher-table table tr:hover td {
+  background: #f9fafb;
+}
+
+/* Action buttons cell */
+.teacher-table td:last-child,
+.teacher-table table td:last-child {
+  white-space: nowrap;   /* ✅ keep buttons inline */
+}
+
+/* Buttons */
+.edit-btn,
+.delete-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 3px;
+  transition: all 0.2s ease;
+  display: inline-block;   /* ✅ inline always */
+  vertical-align: middle;
+  max-width: 80px;
+}
+.edits-btn,
+.deletes-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 3px;
+  transition: all 0.2s ease;
+  display: inline-block;   /* ✅ inline always */
+  vertical-align: middle;
+  max-width: 80px;
+}
+
+/* Edit button */
+.edits-btn {
+  background: #3b82f6;
+  height: 30px;
+  color: white;
+}
+
+.edits-btn:hover {
+  background: #2563eb;
+}
+
+/* Delete button */
+.deletes-btn {
+  background: #dc2626;
+  height: 30px;
+  color: white;
+}
+
+.deletes-btn:hover {
+  background: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .teacher-table,
+  .teacher-table table {
+    min-width: 600px;  /* ✅ keeps all columns + buttons visible via scroll */
+  }
+
+  .teacher-table td,
+  .teacher-table table td {
+    padding: 12px;
+  }
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-btn {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #45a049;
+}
+
+.add-exp-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin: 7px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.add-exp-btn:hover {
+  background-color: #45a049;
+}
+
+/* Mobile: stack input and submit button */
+.add-location-form {
+  display: flex;
+  gap: 8px;
+  /* margin-bottom: 12px; */
+}
+.add-location-form input{
+  height:15px
+}
+
+@media (max-width: 600px) {
+  .add-location-form {
+    flex-direction: column;
+    gap: 0.05rem;
+  }
+
+  .add-location-form input {
+    /* height: 20px; */
+    width: 80%;
+  }
+
+  .add-location-form .add-btn {
+    width: 10%;
+    height:35px;
+    padding: 6px 2px;
+    font-size: 17px;
+    margin-left: 3px;
+}
+}

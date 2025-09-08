@@ -34,8 +34,9 @@ const SlotList = () => {
   const [venue, setvenue] = useState("");
   const [capacity, setcapacity] = useState("");
   const [allslots, setallslots] = useState([]);
-  const [materialLink, setmaterial] = useState(""); // string (fix)
-  const [video, setvideo] = useState(""); // string (fix)
+  const [materialLink, setmaterial] = useState(""); 
+  const [video, setvideo] = useState("");
+  const [totalBooked, setTotalBooked] = useState("");
   const [error, seterror] = useState("");
   const [exp, setexp] = useState({});
   const [expDB, setexpDB] = useState([]);
@@ -148,6 +149,11 @@ const SlotList = () => {
           { FacultyEmail }
         );
         setallslots(response.data);
+        setTotalBooked(() => 
+  response.data.reduce((sum, slot) => sum + slot.total_booked, 0)
+);
+
+
       } catch (error) {
         console.error("Failed to fetch slot details:", error);
       } finally {
@@ -261,11 +267,11 @@ const SlotList = () => {
       <div className="dashboard-cards">
         <div className="card">
           <p>Total Slots</p>
-          <h3>{allslots.length}</h3>
+          <h3>{processedSlots.length}</h3>
         </div>
         <div className="card">
           <p>Total Bookings</p>
-          <h3>0</h3>
+          <h3>{totalBooked}</h3>
         </div>
         <div
           className="card filter-card"
@@ -411,6 +417,7 @@ const SlotList = () => {
                     const selectedExp = JSON.parse(e.target.value);
                     setexp(selectedExp);
                   }}
+                  
                   required
                 >
                   <option value="" disabled>
@@ -418,6 +425,7 @@ const SlotList = () => {
                   </option>
                   {expDB.map((ex, i) => (
                     <option
+                    
                       key={i}
                       value={JSON.stringify({
                         exp_no: ex.exp_no,

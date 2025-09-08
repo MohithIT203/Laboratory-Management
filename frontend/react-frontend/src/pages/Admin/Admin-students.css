@@ -1,0 +1,14 @@
+.AddStudents{
+    border:1px solid green;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap:5px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.AddStudents-input{
+    display: flex;
+    /* width: 100%; */
+}

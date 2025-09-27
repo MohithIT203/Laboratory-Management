@@ -9,26 +9,35 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import "./student-landing.css";
 import "../teacher/teacher-landing.css";
-import LoginPopup from "../login/loginPopup" ;
+import LoginPopup from "../login/loginPopup";
 import MiniAppBar from "../../components/Student_navbar";
-import { FaBookOpen, FaClipboardList, FaClock, FaCalendarAlt, FaFilter } from "react-icons/fa";
+import CircularProgress from "@mui/material/CircularProgress";
+import {
+  FaBookOpen,
+  FaClipboardList,
+  FaClock,
+  FaCalendarAlt,
+  FaFilter,
+} from "react-icons/fa";
 import axios from "axios";
 
 const CourseList = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const userDept = location?.state?.Studentdept || localStorage.getItem("student_dept");
-  const userId = location?.state?.student_id || localStorage.getItem("student_id");
+  const userDept =
+    location?.state?.Studentdept || localStorage.getItem("student_dept");
+  const userId =
+    location?.state?.student_id || localStorage.getItem("student_id");
 
   const [courses, setCourses] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
   const [active, setActive] = useState("available");
+  const [bookingSlotId, setBookingSlotId] = useState(null);
 
   // filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
-  
 
   useEffect(() => {
     if (userDept) {
@@ -52,6 +61,7 @@ const CourseList = () => {
   }, [userDept, navigate]);
 
   const handleBookSlot = (Slot_id) => {
+    setBookingSlotId(Slot_id);
     axios
       .post(`${import.meta.env.VITE_SERVER_APP_URL}/student/book-slot`, {
         Slot_id,
@@ -59,34 +69,40 @@ const CourseList = () => {
       })
       .then(() => {
         setCourses((prev) => prev.filter((slot) => slot._id !== Slot_id));
-
-        axios
-          .post(`${import.meta.env.VITE_SERVER_APP_URL}/slots`, {
-            dept: userDept,
-            Student_id: userId,
-          })
-          .then((response) => {
-            setCourses(response.data);
-          });
-
+        return axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/slots`, {
+          dept: userDept,
+          Student_id: userId,
+        });
+      })
+      .then((response) => {
+        setCourses(response.data);
         fetchMyBookings();
       })
-      .catch((error) => {console.log("Error Booking Slot:", error)
+      .catch((error) => {
+        console.log("Error Booking Slot:", error);
         if (error.response) {
-      console.error("Error:", error.response.data.message);
-      <LoginPopup type={"critical"} message={error.response.data.message} />
-      // alert(error.response.data.message);
-    } else {
-      console.error("Unexpected Error:", error);
-    }
+          console.error("Error:", error.response.data.message);
+          <LoginPopup
+            type={"critical"}
+            message={error.response.data.message}
+          />;
+        } else {
+          console.error("Unexpected Error:", error);
+        }
+      })
+      .finally(() => {
+        setBookingSlotId(null);
       });
   };
 
   const fetchMyBookings = async () => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/student/my-bookings`, {
-        Student_id: userId,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/student/my-bookings`,
+        {
+          Student_id: userId,
+        }
+      );
       setMyBookings(response.data);
     } catch (err) {
       console.error("Error fetching bookings:", err);
@@ -97,19 +113,20 @@ const CourseList = () => {
     setActive(tab);
     if (tab === "booked") fetchMyBookings();
   };
-  
+
   const handleCancelSlot = async (slotId) => {
-  try {
-    await axios.delete(
-      `${import.meta.env.VITE_SERVER_APP_URL}/student/cancel-slot/${slotId}/${userId}`
-    );
+    try {
+      await axios.delete(
+        `${
+          import.meta.env.VITE_SERVER_APP_URL
+        }/student/cancel-slot/${slotId}/${userId}`
+      );
 
-    setMyBookings((prev) => prev.filter((slot) => slot._id !== slotId));
-  } catch (err) {
-    console.error("Error Deleting Slot:", err);
-  }
-};
-
+      setMyBookings((prev) => prev.filter((slot) => slot._id !== slotId));
+    } catch (err) {
+      console.error("Error Deleting Slot:", err);
+    }
+  };
 
   // 🔹 filtering logic
   const filterSlots = (slots) => {
@@ -119,9 +136,8 @@ const CourseList = () => {
         slot.venue.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesDate =
-        !filterDate || new Date(slot.Date).toISOString().split("T")[0] === filterDate;
-
-     
+        !filterDate ||
+        new Date(slot.Date).toISOString().split("T")[0] === filterDate;
 
       return matchesSearch && matchesDate;
     });
@@ -152,7 +168,9 @@ const CourseList = () => {
                 <p>Total Slots</p>
                 <FaClipboardList size={24} color="#2196f3" />
               </div>
-              <h3 style={{ fontSize: "25px" }}>{courses.length + myBookings.length}</h3>
+              <h3 style={{ fontSize: "25px" }}>
+                {courses.length + myBookings.length}
+              </h3>
             </div>
 
             <div className="stucard">
@@ -160,12 +178,11 @@ const CourseList = () => {
                 <h3>Next Session</h3>
                 <FaClock size={22} color="#f57c00" />
               </div>
-             
-              
+
               <h4 className="session-time">{myBookings[0]?.Time}</h4>
-              <h4>{myBookings[0]?.Course.toUpperCase()} - {myBookings[0]?.venue}</h4>
-            
-            
+              <h4>
+                {myBookings[0]?.Course.toUpperCase()} - {myBookings[0]?.venue}
+              </h4>
             </div>
           </div>
 
@@ -173,7 +190,9 @@ const CourseList = () => {
           <div className="tab-section">
             <div className="tabs">
               <div
-                className={`tab ${active === "available" ? "active" : "inactive"}`}
+                className={`tab ${
+                  active === "available" ? "active" : "inactive"
+                }`}
                 onClick={() => handleTabChange("available")}
               >
                 Available Slots
@@ -204,7 +223,6 @@ const CourseList = () => {
                   onChange={(e) => setFilterDate(e.target.value)}
                 />
               </div>
-             
             </div>
 
             {/* Slot List */}
@@ -217,51 +235,98 @@ const CourseList = () => {
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course}{" "}- Exp.No:{slot.experiment.exp_no}
-                            <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
+                            {slot.Course} - Exp.No:{slot.experiment.exp_no}
+                            <span className="your-slot-badge">
+                              Faculty: {slot.Staff_name}
+                            </span>
                           </h3>
                         </div>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <BookIcon fontSize="small" />
                           {new Date(slot.Date).toDateString()}
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <AccessTimeIcon fontSize="small" />
                           {slot.Time}
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <LocationOnIcon fontSize="small" />
                           {slot.venue}
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <PictureAsPdfIcon fontSize="small" />
-                          <a href={slot.pdf_material} 
-                           style={{
-                            textDecoration:"none"
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
                           }}
-                          target="_blank" rel="noopener noreferrer">
+                        >
+                          <PictureAsPdfIcon fontSize="small" />
+                          <a
+                            href={slot.pdf_material}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Pdf Material
                           </a>
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <OndemandVideoIcon fontSize="small" />
-                          <a href={slot.video_material} 
+                        <p
                           style={{
-                            textDecoration:"none"
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
                           }}
-                          target="_blank" rel="noopener noreferrer"
-                          
+                        >
+                          <OndemandVideoIcon fontSize="small" />
+                          <a
+                            href={slot.video_material}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
                             Video Material
                           </a>
                         </p>
-                        <button className="book-btn" onClick={() => handleBookSlot(slot._id)}>
-                          Book Now
+                        <button
+                          className="book-btn"
+                          disabled={bookingSlotId === slot._id}
+                          onClick={() => handleBookSlot(slot._id)}
+                        >
+                          {bookingSlotId === slot._id ? (
+                            <>
+                              <CircularProgress size={16} color="inherit" />{" "}
+                              Booking...
+                            </>
+                          ) : (
+                            "Book Now"
+                          )}
                         </button>
                       </div>
                     ))
@@ -270,11 +335,16 @@ const CourseList = () => {
                       <FaCalendarAlt size={60} color="#c0c0c0" />
                       <h4>No available slots</h4>
                       <p>Try adjusting search, date, or faculty filters</p>
-                      {(filterDate!="" || searchTerm!="" )&&
-                       <button
-                       className="clear-btn" onClick={(e) => {setFilterDate(""),setSearchTerm("")}}
-                       >Clear Filters</button>
-                      }
+                      {(filterDate != "" || searchTerm != "") && (
+                        <button
+                          className="clear-btn"
+                          onClick={(e) => {
+                            setFilterDate(""), setSearchTerm("");
+                          }}
+                        >
+                          Clear Filters
+                        </button>
+                      )}
                     </div>
                   )}
                 </>
@@ -288,49 +358,93 @@ const CourseList = () => {
                       <div key={slot._id} className="slot-card">
                         <div className="slot-header">
                           <h3>
-                            {slot.Course}{" "} - Exp.No:{slot.experiment.exp_no}
-                            <span className="your-slot-badge">Faculty: {slot.Staff_name}</span>
+                            {slot.Course} - Exp.No:{slot.experiment.exp_no}
+                            <span className="your-slot-badge">
+                              Faculty: {slot.Staff_name}
+                            </span>
                           </h3>
                         </div>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <BookIcon fontSize="small" />
                           {new Date(slot.Date).toDateString()}
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <AccessTimeIcon fontSize="small" />
                           {slot.Time}
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
                           <LocationOnIcon fontSize="small" />
                           {slot.venue}
                         </p>
 
-
-                        <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <PictureAsPdfIcon fontSize="small" />
-                          <a href={slot.pdf_material}  style={{
-                            textDecoration:"none"
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
                           }}
-                          target="_blank" rel="noopener noreferrer">
+                        >
+                          <PictureAsPdfIcon fontSize="small" />
+                          <a
+                            href={slot.pdf_material}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Pdf Material
                           </a>
                         </p>
 
-                        <p style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <OndemandVideoIcon fontSize="small" />
-                          <a href={slot.video_material}  style={{
-                            textDecoration:"none"
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
                           }}
-                          target="_blank" rel="noopener noreferrer">
+                        >
+                          <OndemandVideoIcon fontSize="small" />
+                          <a
+                            href={slot.video_material}
+                            style={{
+                              textDecoration: "none",
+                            }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Video Material
                           </a>
                         </p>
-                        <button className="remove-btn-bottom-right"
-                        onClick={()=>{handleCancelSlot(slot._id)}}
-                        >Cancel</button>
+                        <button
+                          className="remove-btn-bottom-right"
+                          onClick={() => {
+                            handleCancelSlot(slot._id);
+                          }}
+                        >
+                          Cancel
+                        </button>
                       </div>
                     ))
                   ) : (
@@ -338,11 +452,16 @@ const CourseList = () => {
                       <FaCalendarAlt size={60} color="#c0c0c0" />
                       <h4>No booked slots</h4>
                       <p>Try adjusting search, date, or faculty filters</p>
-                       {(filterDate!="" || searchTerm!="" )&&
-                       <button
-                       className="clear-btn" onClick={(e) => {setFilterDate(""),setSearchTerm("")}}
-                       >Clear Filters</button>
-                      }
+                      {(filterDate != "" || searchTerm != "") && (
+                        <button
+                          className="clear-btn"
+                          onClick={(e) => {
+                            setFilterDate(""), setSearchTerm("");
+                          }}
+                        >
+                          Clear Filters
+                        </button>
+                      )}
                     </div>
                   )}
                 </>

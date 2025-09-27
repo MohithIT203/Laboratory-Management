@@ -16,7 +16,7 @@ export default function AdminCourse() {
   const [newCourse, setNewCourse] = useState({
     course_name: "",
     course_code: "",
-    department: "",
+    department: ""
   });
   const [newLocation, setNewLocation] = useState({ lab_name: "" });
 

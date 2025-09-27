@@ -9,11 +9,12 @@ import StaffSlots from "../pages/teacher/teacher-slots";
 import StaffAttendance from "../pages/teacher/teacher-attendance";
 import StudentAttendance from "../pages/Student/StudentAttendance";
 import SlotSummary from "../pages/teacher/teacher-slotsummary";
-import AdminDashboard from "../pages/Admin/Admin-dashboard";
+import AdminDashboard from "../pages/Admin/Admin-dash";
 import AdminCourse from "../pages/Admin/Admin-course";
 import AdminSlots from "../pages/Admin/Admin-slots";
 import AdminAttendance from "../pages/Admin/Admin-students";
 import StudentHistory from "../pages/Student/student-history";
+import AdminMain from "../pages/Admin/Admin-dashboard";
 
 
 const AppLayout = () => {
@@ -39,7 +40,7 @@ const AppLayout = () => {
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
           <Route path="/Admin/dashboard" element={<AdminDashboard/>} />
-          <Route path="/Admin/Users" element={<AdminDashboard/>} />
+          <Route path="/Admin/Users" element={<AdminMain/>} />
           <Route path="/Admin/courses" element={<AdminCourse/>} />
           <Route path="/Admin/all-slots" element={<AdminSlots/>} />
           <Route path="/Admin/students" element={<AdminAttendance/>} />

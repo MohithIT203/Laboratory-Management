@@ -42,6 +42,7 @@ const AdminAttendance = () => {
     fontFamily: "Inter, sans-serif",
   };
 
+  
   const fetchStudents = async () => {
     setactive("all");
     setLoading(true);
@@ -149,7 +150,7 @@ const AdminAttendance = () => {
   };
   const handleAddStudentsSubmit=async (e)=>{
     e.preventDefault();
-    console.log(Addselected);
+   
     setAddPopup(false);
      try {
       if (!Addselected.length > 0) {
@@ -269,7 +270,10 @@ const AdminAttendance = () => {
           <div className="table-wrapper">
             <table className="attendance-table">
               {students?.length > 0 && (
-                <thead>
+                <thead style={{
+                  position:"sticky",
+                  top:"0"
+                }}>
                   <tr>
                     {active !== "all" && (
                       <th>
@@ -359,9 +363,36 @@ const AdminAttendance = () => {
                   </tr>
                 )}
               </tbody>
+              
             </table>
 
             {/* Action Buttons */}
+           
+           
+           
+             
+          </div>
+        )}
+          {active === "absent" && students.length > 0 && (
+              <>
+                <button
+                  className="save-btn"
+                  style={{
+                    marginTop: "20px",
+                    padding: "10px 20px",
+                    backgroundColor: "orange",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  
+                  }}
+                  onClick={handleUpdateAttendance}
+                >
+                  Mark Selected Present
+                </button>
+              </>
+            )}
             {active === "present" && (
               <button
                 className="save-btn"
@@ -379,29 +410,8 @@ const AdminAttendance = () => {
               >
                 Save All Scores
               </button>
+              
             )}
-            {active === "absent" && students.length > 0 && (
-              <>
-                <button
-                  className="save-btn"
-                  style={{
-                    marginTop: "20px",
-                    padding: "10px 20px",
-                    backgroundColor: "orange",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    position: "fixed",
-                  }}
-                  onClick={handleUpdateAttendance}
-                >
-                  Mark Selected Present
-                </button>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       <Modal open={Addpopup} onClose={() => setAddPopup(false)}>

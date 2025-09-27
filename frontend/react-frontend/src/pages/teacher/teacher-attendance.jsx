@@ -197,7 +197,10 @@ const StaffAttendance = () => {
           <div className="table-wrapper">
             <table className="attendance-table">
               {students?.length > 0 && (
-                <thead>
+                <thead style={{
+                  position:"sticky",
+                  top:"0"
+                }}>
                   <tr>
                     <th>S.No</th>
                     <th>Name</th>
@@ -256,7 +259,10 @@ const StaffAttendance = () => {
               </tbody>
             </table>
 
-            {active === "present" && (
+            
+          </div>
+        )}
+        {active === "present" && (
               <button
                 className="save-btn"
                 onClick={handleSaveAllScores}
@@ -268,14 +274,12 @@ const StaffAttendance = () => {
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
-                  position:"fixed"
+                  // position:"fixed"
                 }}
               >
                 Save All Scores
               </button>
             )}
-          </div>
-        )}
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import GroupIcon from "@mui/icons-material/Group";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import CircularProgress from "@mui/material/CircularProgress";
 import "./teacher-landing.css";
 import axios from "axios";
 import StaffAppBar from "../../components/Staff_navbar";
@@ -34,7 +35,7 @@ const SlotList = () => {
   const [venue, setvenue] = useState("");
   const [capacity, setcapacity] = useState("");
   const [allslots, setallslots] = useState([]);
-  const [materialLink, setmaterial] = useState(""); 
+  const [materialLink, setmaterial] = useState("");
   const [video, setvideo] = useState("");
   const [totalBooked, setTotalBooked] = useState("");
   const [error, seterror] = useState("");
@@ -43,7 +44,7 @@ const SlotList = () => {
   const [loading, setloading] = useState(false);
   const [slotLoading, setSlotLoading] = useState(true); // loader for all slots
   const [filterSortOption, setFilterSortOption] = useState("all-latest");
-
+  const [creating, setCreating] = useState(false);
   const timeSlots = [
     "8:45 AM TO 10:30 AM",
     "10:50 AM TO 12:30 PM",
@@ -149,11 +150,9 @@ const SlotList = () => {
           { FacultyEmail }
         );
         setallslots(response.data);
-        setTotalBooked(() => 
-  response.data.reduce((sum, slot) => sum + slot.total_booked, 0)
-);
-
-
+        setTotalBooked(() =>
+          response.data.reduce((sum, slot) => sum + slot.total_booked, 0)
+        );
       } catch (error) {
         console.error("Failed to fetch slot details:", error);
       } finally {
@@ -164,20 +163,24 @@ const SlotList = () => {
   }, [FacultyEmail]);
 
   const createSlot = async () => {
+    setCreating(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER_APP_URL}/api/courses`, {
-        Staff_name: Facultyname,
-        email: FacultyEmail,
-        Course: subject,
-        dept: Facultydept,
-        Date: date,
-        Time: time,
-        venue,
-        capacity,
-        pdf_material: materialLink,
-        video_material: video,
-        experiment: exp,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/api/courses`,
+        {
+          Staff_name: Facultyname,
+          email: FacultyEmail,
+          Course: subject,
+          dept: Facultydept,
+          Date: date,
+          Time: time,
+          venue,
+          capacity,
+          pdf_material: materialLink,
+          video_material: video,
+          experiment: exp,
+        }
+      );
       setOpen(false);
       setallslots((prev) => [...prev, response.data.slot]);
 
@@ -193,6 +196,8 @@ const SlotList = () => {
     } catch (error) {
       seterror(error.response?.data?.message || "Failed to create slot");
       console.error("Failed to create Slot:", error);
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -209,14 +214,15 @@ const SlotList = () => {
   const handleRemove = async () => {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_SERVER_APP_URL}/api/faculty/allSlots/${selectedSlotId}`
+        `${
+          import.meta.env.VITE_SERVER_APP_URL
+        }/api/faculty/allSlots/${selectedSlotId}`
       );
-      setallslots((prev) =>
-        prev.filter((slot) => slot._id !== selectedSlotId)
-      );
+      setallslots((prev) => prev.filter((slot) => slot._id !== selectedSlotId));
       setPopupOpen(false);
       setSelectedSlotId(null);
     } catch (error) {
+
       console.log("Error deleting the slot:", error);
     }
   };
@@ -259,9 +265,12 @@ const SlotList = () => {
     <div className="dashboard-container">
       <StaffAppBar />
       <h2
-      style={{
-        marginLeft:"18px"
-      }}>Faculty Dashboard</h2>
+        style={{
+          marginLeft: "18px",
+        }}
+      >
+        Faculty Dashboard
+      </h2>
       <p>Welcome back, Dr. {Facultyname}</p>
 
       <div className="dashboard-cards">
@@ -271,7 +280,7 @@ const SlotList = () => {
         </div>
         <div className="card">
           <p>Total Bookings</p>
-          <h3>{totalBooked}</h3>
+          <h3>{totalBooked.toString()}</h3>
         </div>
         <div
           className="card filter-card"
@@ -417,7 +426,6 @@ const SlotList = () => {
                     const selectedExp = JSON.parse(e.target.value);
                     setexp(selectedExp);
                   }}
-                  
                   required
                 >
                   <option value="" disabled>
@@ -425,7 +433,6 @@ const SlotList = () => {
                   </option>
                   {expDB.map((ex, i) => (
                     <option
-                    
                       key={i}
                       value={JSON.stringify({
                         exp_no: ex.exp_no,
@@ -538,7 +545,19 @@ const SlotList = () => {
               )}
 
               <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                <button type="submit">Confirm</button>
+                <button
+                  type="submit"
+                  disabled={creating}
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  {creating ? (
+                    <>
+                      <CircularProgress size={16} color="inherit" /> Creating...
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
+                </button>
                 <button
                   type="button"
                   onClick={() => {

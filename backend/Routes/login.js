@@ -109,6 +109,7 @@ router.post('/api/user/login', async (req, res) => {
 });
 
 //VERIFY ROUTE
+
 router.get('/auth/verify', (req, res) => {
   const token = req.cookies.token;
   if (!token) {

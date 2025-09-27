@@ -3,6 +3,8 @@ const Faculty = require('../Schemas/facultyInfo');
 const Access=require('../Schemas/AccessSchema');
 const Student=require('../Schemas/studentInfo');
 const Slot=require('../Schemas/new_SlotSchema');
+const Location = require('../Schemas/location');
+const Course = require('../Schemas/courseSchema');
 const router = express.Router();
 
 //Teacher Routes
@@ -214,5 +216,23 @@ router.put("/Admin/add-students/:slotId", async (req, res) => {
     return res.status(500).send({ message: "Error Adding Data" });
   }
 });
+
+
+router.get("/stats", async (req, res) => {
+  const totalStudents = await Student.countDocuments();
+  const totalTeachers = await Faculty.countDocuments();
+  const totalCourses = await Course.countDocuments();
+  const totalSlots = await Slot.countDocuments();
+  const totalLocations = await Location.countDocuments();
+
+  res.json({
+    totalStudents,
+    totalTeachers,
+    totalCourses,
+    totalSlots,
+    totalLocations,
+  });
+});
+
 
 module.exports = router;

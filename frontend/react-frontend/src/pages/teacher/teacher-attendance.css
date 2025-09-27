@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: auto;
   padding: 20px;
+  overflow-y: auto;
   background: #ffffff;
 }
 
@@ -60,13 +61,14 @@
 /* Table Styling */
 .table-wrapper {
   overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .attendance-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 0;
-  overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -76,6 +78,7 @@
   color: #374151;
   font-weight: 600;
   padding: 12px;
+  
 }
 
 .attendance-table td {

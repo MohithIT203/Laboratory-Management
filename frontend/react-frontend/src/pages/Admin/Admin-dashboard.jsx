@@ -237,7 +237,7 @@ export default function AdminMain() {
             >
               Previous
             </button>
-            <span className="page-number">Page {teacherPage}</span>
+            <span className="page-number">Page {teacherPage}/{Math.ceil(filteredTeachers.length/teachersPerPage)}</span>
             <button
               className="pagination-btn"
               disabled={teacherPage >= Math.ceil(filteredTeachers.length / teachersPerPage)}
@@ -306,7 +306,7 @@ export default function AdminMain() {
             >
               Previous
             </button>
-            <span className="page-number">Page {studentPage}</span>
+            <span className="page-number">Page {studentPage}/{Math.ceil(filteredStudents.length/studentsPerPage)}</span>
             <button
               className="pagination-btn"
               disabled={studentPage >= Math.ceil(filteredStudents.length / studentsPerPage)}

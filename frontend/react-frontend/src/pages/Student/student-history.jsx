@@ -6,8 +6,9 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import GroupIcon from "@mui/icons-material/Group";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import ScienceIcon from "@mui/icons-material/Science";
 import "./student-landing.css";
-import "./student-history.css"
+import "./student-history.css";
 import "../teacher/teacher-landing.css";
 import LoginPopup from "../login/loginPopup";
 import MiniAppBar from "../../components/Student_navbar";
@@ -72,9 +73,13 @@ const StudentHistory = () => {
   return (
     <>
       <MiniAppBar />
-      <h2 style={{
-        marginLeft:"10px"
-      }}>Slot History</h2>
+      <h2
+        style={{
+          marginLeft: "10px",
+        }}
+      >
+        Slot History
+      </h2>
       <div className="filter-bar-history">
         <input
           type="text"
@@ -103,12 +108,18 @@ const StudentHistory = () => {
               <div key={slot._id} className="slot-card">
                 <div className="slot-header">
                   <h3>
-                    {slot.Course} - Exp.No:{slot.experiment.exp_no}
+                    {slot.Course}
                     <span className="your-slot-badge">
                       Faculty: {slot.Staff_name}
                     </span>
                   </h3>
                 </div>
+                <p
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <ScienceIcon fontSize="small" />
+                  <strong>Exp.No:{slot.experiment.exp_no}</strong>
+                </p>
 
                 <p
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
@@ -162,7 +173,6 @@ const StudentHistory = () => {
                     Video Material
                   </a>
                 </p>
-                
               </div>
             ))
           ) : (

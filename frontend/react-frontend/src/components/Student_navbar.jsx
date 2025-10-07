@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 const pages = ['History', 'Attendance','Dashboard'];
-const settings = ['Account', 'Logout'];
+const settings = ['Logout'];
 
 function MiniAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);

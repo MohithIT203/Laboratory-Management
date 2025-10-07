@@ -1,23 +1,12 @@
 import React from "react";
 import AppLayout from "./AppLayout/AppLayout";
-// import MiniAppBar from "./components/navbar";
-import SlotList from "./pages/teacher/teacher-landing";
-import StudentAttendance from "./pages/Student/StudentAttendance";
-import LoginPopup from "./pages/login/loginPopup";
-// import AttendanceOTP from "./pages/teacher/sample";
 
-// import BasicModal from "./AppLayout/modal";
+
 
 const App = () => {
   return (
     <div>
-      {/* <MiniAppBar/> */}
       <AppLayout />
-      {/* <AttendanceOTP/> */}
-      
-      {/* <StudentAttendance/> */}
-      {/* <BasicModal/> */}
-      {/* <SlotList/> */}
     </div>
   );
 };

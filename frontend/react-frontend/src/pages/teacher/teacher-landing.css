@@ -149,6 +149,13 @@
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
 }
+.your-slot-badge-inactive {
+  background-color: #ff6158;
+  color: white;
+  font-size: 15px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+}
 
 /* Materials */
 .materials {

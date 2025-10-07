@@ -4,7 +4,7 @@ const Access=require('../Schemas/AccessSchema');
 const Student=require('../Schemas/studentInfo');
 const Slot=require('../Schemas/new_SlotSchema');
 const Location = require('../Schemas/location');
-const Course = require('../Schemas/courseSchema');
+const Course = require('../Schemas/new_courseSchema');
 const router = express.Router();
 
 //Teacher Routes
@@ -179,19 +179,19 @@ router.put("/Admin/add-students/:slotId", async (req, res) => {
       return res.status(404).send({ message: "Slot Not Found" });
     }
 
-    const existingIds = slot.students.map((s) => s.studentId.toString());
-
+    const existingIds = (slot.students || []).map((s) => s.studentId.toString());
     const newStudents = students.filter((id) => !existingIds.includes(id));
-    var total=0;
+
     if (newStudents.length === 0) {
       return res.status(200).send({ message: "No new students to add" });
     }
 
+    slot.total_booked = slot.total_booked || 0;
     newStudents.forEach((id) => {
       slot.students.push({ studentId: id, attendance: "absent", marks: 0 });
-      total++;
+      slot.total_booked++;
     });
-    slot.total_booked+=total;
+
     await slot.save();
 
     await Student.updateMany(

@@ -98,7 +98,7 @@ function StaffSlots() {
                     </p>
                     <p>
                       <strong>Total Students : </strong>
-                      {slot.total_booked}
+                      {slot?.total_booked||0}
                     </p>
                     <p>
                       <strong>{slot.venue}</strong>

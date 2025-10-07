@@ -15,15 +15,30 @@ router.get('/locations',async(req,res)=>{
     }
 })
 
+router.get('/locations/:capacity',async(req,res)=>{
+    const {capacity}=req.params;
+    console.log(capacity);
+    try{
+        const response = await Location.find({ capacity: { $gte: capacity } });
+        if(!response){
+            return res.status(404).send({message:"Locations not found"});
+        }
+        return res.status(200).send(response);
+    }catch(err){
+        return res.status(500).send({message:"Error getting locations"});
+    }
+})
+
 router.post('/locations',async(req,res)=>{
-    const {name}=req.body;
+    const {name,capacity}=req.body;
     try{
         const duplicate=await Location.find({Lab_name:name});
         if(!duplicate){
             return res.status(409).send({message:"Location already exists"});
         }
         const newLocation=new Location({
-            Lab_name:name
+            Lab_name:name,
+            capacity:capacity
         })
         await newLocation.save();
         return res.status(200).send({message:"Locations Added to Database",newLocation});

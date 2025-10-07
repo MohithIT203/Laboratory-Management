@@ -16,9 +16,12 @@ export default function AdminCourse() {
   const [newCourse, setNewCourse] = useState({
     course_name: "",
     course_code: "",
-    department: ""
+    department: "",
   });
-  const [newLocation, setNewLocation] = useState({ lab_name: "" });
+  const [newLocation, setNewLocation] = useState({
+    lab_name: "",
+    capacity: "",
+  });
 
   // Popup state
   const [isCoursePopupOpen, setIsCoursePopupOpen] = useState(false);
@@ -54,7 +57,10 @@ export default function AdminCourse() {
     setCourses((prevCourses) =>
       prevCourses.map((course) =>
         course._id === courseId
-          ? { ...course, experiments: [...(course.experiments || []), newExperiment] }
+          ? {
+              ...course,
+              experiments: [...(course.experiments || []), newExperiment],
+            }
           : course
       )
     );
@@ -94,20 +100,31 @@ export default function AdminCourse() {
     );
   };
 
-  // ========== LOCATIONS ==========
-  const handleSubmitLocation = async () => {
-    if (!newLocation.lab_name || !newLocation.lab_name.trim()) {
-      alert("Please enter a lab name");
+  const handleSubmitLocation = async (e) => {
+    e.preventDefault();
+    if (
+      !newLocation.lab_name ||
+      !newLocation.lab_name.trim() ||
+      !newLocation.capacity
+    ) {
+      alert("Please enter a lab name and valid capacity");
       return;
     }
-
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_SERVER_APP_URL}/locations`,
-        { name: newLocation.lab_name.trim() }
+        {
+          name: newLocation.lab_name.trim(),
+          capacity: Number(newLocation.capacity),
+        }
       );
-      setLocations((prev) => [...prev, res.data]);
-      setNewLocation({ lab_name: "" });
+      const newLoc = {
+    lab_name: res.data.Lab_name,
+    capacity: res.data.capacity,
+  };
+
+  setLocations((prev) => [...prev, newLoc]);
+      setNewLocation({ lab_name: "", capacity: "" });
     } catch (err) {
       if (err.response && err.response.status === 409) {
         alert("Location already exists");
@@ -119,7 +136,9 @@ export default function AdminCourse() {
 
   const handleDeleteLocation = async (locationId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_APP_URL}/locations/${locationId}`);
+      await axios.delete(
+        `${import.meta.env.VITE_SERVER_APP_URL}/locations/${locationId}`
+      );
       setLocations((prev) => prev.filter((loc) => loc._id !== locationId));
     } catch (err) {
       console.error("Error deleting location:", err);
@@ -152,137 +171,159 @@ export default function AdminCourse() {
 
   return (
     <>
-    <AdminAppBar/>
-    <div className="page-container">
-      <div className="update-subject-page">
-        <h2>Update Subject</h2>
+      <AdminAppBar />
+      <div className="page-container">
+        <div className="update-subject-page">
+          <h2>Update Subject</h2>
 
-        {/* Courses Section */}
-        <div className="table-section">
-          <div className="section-header">
-            <h3>Courses</h3>
-            <button className="add-btn" onClick={() => setIsCoursePopupOpen(true)}>
-              +
-            </button>
+          {/* Courses Section */}
+          <div className="table-section">
+            <div className="section-header">
+              <h3>Courses</h3>
+              <button
+                className="add-btn"
+                onClick={() => setIsCoursePopupOpen(true)}
+              >
+                +
+              </button>
+            </div>
+
+            {/* 🔍 Search + Filter */}
+            <div className="search-filter">
+              <div className="search-wrapper">
+                <FaSearch className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search Course..."
+                  value={courseSearch}
+                  className="search-bar"
+                  onChange={(e) => setCourseSearch(e.target.value)}
+                />
+              </div>
+
+              <select
+                className="dept-filter"
+                value={courseDeptFilter}
+                onChange={(e) => setCourseDeptFilter(e.target.value)}
+              >
+                <option value="all">All Departments</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="MECH">MECH</option>
+                <option value="EEE">EEE</option>
+                <option value="IT">IT</option>
+              </select>
+            </div>
+
+            {/* Courses Table */}
+            <CourseTable
+              courses={paginatedCourses}
+              pagination={coursePage}
+              onDeleteCourse={handleDeleteCourse}
+              onUpdateCourse={handleUpdateCourse}
+              onAddExperiment={handleAddExperiment}
+            />
+
+            {/* Pagination for Courses */}
+            <div className="pagination-container">
+              <div className="pagination-buttons">
+                <button
+                  className="pagination-btn"
+                  disabled={coursePage === 1}
+                  onClick={() => setCoursePage((prev) => prev - 1)}
+                >
+                  Previous
+                </button>
+                <span className="page-number">Page {coursePage}/{Math.ceil(filteredCourses.length/coursesPerPage)}</span>
+                <button
+                  className="pagination-btn"
+                  disabled={
+                    coursePage >=
+                    Math.ceil(filteredCourses.length / coursesPerPage)
+                  }
+                  onClick={() => setCoursePage((prev) => prev + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* 🔍 Search + Filter */}
-          <div className="search-filter">
-            <div className="search-wrapper">
-              <FaSearch className="search-icon" />
+          {/* Locations Section */}
+          <div className="table-section">
+            <div className="section-header">
+              <h3>Locations</h3>
+            </div>
+
+            {/* Input + Submit */}
+            <div className="add-location-form">
               <input
                 type="text"
-                placeholder="Search Course..."
-                value={courseSearch}
-                className="search-bar"
-                onChange={(e) => setCourseSearch(e.target.value)}
+                placeholder="Add location"
+                value={newLocation.lab_name}
+                onChange={(e) =>
+                  setNewLocation({ ...newLocation, lab_name: e.target.value })
+                }
               />
-            </div>
 
-            <select
-              className="dept-filter"
-              value={courseDeptFilter}
-              onChange={(e) => setCourseDeptFilter(e.target.value)}
-            >
-              <option value="all">All Departments</option>
-              <option value="CSE">CSE</option>
-              <option value="ECE">ECE</option>
-              <option value="MECH">MECH</option>
-              <option value="EEE">EEE</option>
-              <option value="IT">IT</option>
-            </select>
-          </div>
+              <input
+                type="number"
+                placeholder="Capacity"
+                min={1}
+                value={newLocation.capacity}
+                onChange={(e) =>
+                  setNewLocation({ ...newLocation, capacity: e.target.value })
+                }
+              />
 
-          {/* Courses Table */}
-          <CourseTable
-            courses={paginatedCourses}
-            pagination={coursePage}
-            onDeleteCourse={handleDeleteCourse}
-            onUpdateCourse={handleUpdateCourse}
-            onAddExperiment={handleAddExperiment}
-          />
-
-          {/* Pagination for Courses */}
-          <div className="pagination-container">
-            <div className="pagination-buttons">
-              <button
-                className="pagination-btn"
-                disabled={coursePage === 1}
-                onClick={() => setCoursePage((prev) => prev - 1)}
-              >
-                Previous
-              </button>
-              <span className="page-number">Page {coursePage}</span>
-              <button
-                className="pagination-btn"
-                disabled={coursePage >= Math.ceil(filteredCourses.length / coursesPerPage)}
-                onClick={() => setCoursePage((prev) => prev + 1)}
-              >
-                Next
+              <button className="add-btn" onClick={handleSubmitLocation}>
+                Add Location
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Locations Section */}
-        <div className="table-section">
-          <div className="section-header">
-            <h3>Locations</h3>
-          </div>
-
-          {/* Input + Submit */}
-          <div className="add-location-form">
-            <input
-              type="text"
-              placeholder="Add location"
-              value={newLocation.lab_name}
-              onChange={(e) => setNewLocation({ lab_name: e.target.value })}
+            <LocationTable
+              data={paginatedLocations}
+              pagination={locationPage}
+              onDelete={handleDeleteLocation}
             />
-            <button className="add-btn" onClick={handleSubmitLocation}>
-              Submit
-            </button>
-          </div>
 
-          <LocationTable
-            data={paginatedLocations}
-            pagination={locationPage}
-            onDelete={handleDeleteLocation}
-          />
-
-          {/* Pagination for Locations */}
-          <div className="pagination-container">
-            <div className="pagination-buttons">
-              <button
-                className="pagination-btn"
-                disabled={locationPage === 1}
-                onClick={() => setLocationPage((prev) => prev - 1)}
-              >
-                Previous
-              </button>
-              <span className="page-number">Page {locationPage}</span>
-              <button
-                className="pagination-btn"
-                disabled={locationPage >= Math.ceil(locations.length / locationsPerPage)}
-                onClick={() => setLocationPage((prev) => prev + 1)}
-              >
-                Next
-              </button>
+            {/* Pagination for Locations */}
+            <div className="pagination-container">
+              <div className="pagination-buttons">
+                <button
+                  className="pagination-btn"
+                  disabled={locationPage === 1}
+                  onClick={() => setLocationPage((prev) => prev - 1)}
+                >
+                  Previous
+                </button>
+                <span className="page-number">Page {locationPage}/{Math.ceil(locations.length/locationsPerPage)}</span>
+                <button
+                  className="pagination-btn"
+                  disabled={
+                    locationPage >=
+                    Math.ceil(locations.length / locationsPerPage)
+                  }
+                  onClick={() => setLocationPage((prev) => prev + 1)}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Course Popup */}
-      <AddPopup
-        title="Add New Course"
-        open={isCoursePopupOpen}
-        onClose={() => setIsCoursePopupOpen(false)}
-        onSave={handleSaveCourse}
-        values={newCourse}
-        setValues={setNewCourse}
-        fields={["course_name", "course_code", "department"]}
-      />
-    </div>
+        {/* Course Popup */}
+        <AddPopup
+          title="Add New Course"
+          open={isCoursePopupOpen}
+          onClose={() => setIsCoursePopupOpen(false)}
+          onSave={handleSaveCourse}
+          values={newCourse}
+          setValues={setNewCourse}
+          fields={["course_name", "course_code", "department"]}
+        />
+      </div>
     </>
   );
 }

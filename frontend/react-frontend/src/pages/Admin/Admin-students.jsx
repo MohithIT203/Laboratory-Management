@@ -8,6 +8,7 @@ import "../teacher/teacher-attendance.css";
 import "./Admin-students.css";
 import { FaArrowLeft, FaDatabase, FaPlus } from "react-icons/fa";
 import AdminAppBar from "../../components/Admin_navbar";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const AdminAttendance = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const AdminAttendance = () => {
   const [selected, setSelected] = useState([]);
   const [Addselected, setAddSelected] = useState([]);
   const [AddStudents, setAddStudents] = useState([]);
+  const [Adding,setAdding]=useState(false);
 
   const style = {
     position: "absolute",
@@ -42,7 +44,6 @@ const AdminAttendance = () => {
     fontFamily: "Inter, sans-serif",
   };
 
-  
   const fetchStudents = async () => {
     setactive("all");
     setLoading(true);
@@ -148,27 +149,27 @@ const AdminAttendance = () => {
       prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
     );
   };
-  const handleAddStudentsSubmit=async (e)=>{
+  const handleAddStudentsSubmit = async (e) => {
     e.preventDefault();
-   
-    setAddPopup(false);
-     try {
-      if (!Addselected.length > 0) {
+    setAdding(true);
+    
+    try {
+      if (Addselected.length === 0) {
         return alert("select Any Users");
       }
       await axios.put(
-        `${
-          import.meta.env.VITE_SERVER_APP_URL
-        }/Admin/add-students/${slotId}`,
+        `${import.meta.env.VITE_SERVER_APP_URL}/Admin/add-students/${slotId}`,
         {
           students: Addselected,
         }
       );
+      setAddPopup(false);
+      setAdding(false);
       fetchStudents();
     } catch (err) {
       console.error("Error Updating Attendance!!");
     }
-  }
+  };
   const handleSelectAll = () => {
     if (selected.length === students.length) {
       setSelected([]);
@@ -214,7 +215,7 @@ const AdminAttendance = () => {
           />
         </p>
         <h2 className="mark-attendance-title">
-          Mark Attendance & Scores for: {slotId || "Unknown Slot"}
+          Mark Attendance & Scores for slotId:{slotId || "Unknown Slot"}
         </h2>
         {/* Tabs */}
         <div className="options">
@@ -270,10 +271,12 @@ const AdminAttendance = () => {
           <div className="table-wrapper">
             <table className="attendance-table">
               {students?.length > 0 && (
-                <thead style={{
-                  position:"sticky",
-                  top:"0"
-                }}>
+                <thead
+                  style={{
+                    position: "sticky",
+                    top: "0",
+                  }}
+                >
                   <tr>
                     {active !== "all" && (
                       <th>
@@ -363,55 +366,48 @@ const AdminAttendance = () => {
                   </tr>
                 )}
               </tbody>
-              
             </table>
 
             {/* Action Buttons */}
-           
-           
-           
-             
           </div>
         )}
-          {active === "absent" && students.length > 0 && (
-              <>
-                <button
-                  className="save-btn"
-                  style={{
-                    marginTop: "20px",
-                    padding: "10px 20px",
-                    backgroundColor: "orange",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  
-                  }}
-                  onClick={handleUpdateAttendance}
-                >
-                  Mark Selected Present
-                </button>
-              </>
-            )}
-            {active === "present" && (
-              <button
-                className="save-btn"
-                onClick={handleSaveAllScores}
-                style={{
-                  marginTop: "20px",
-                  padding: "10px 20px",
-                  backgroundColor: "green",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  position: "fixed",
-                }}
-              >
-                Save All Scores
-              </button>
-              
-            )}
+        {active === "absent" && students.length > 0 && (
+          <>
+            <button
+              className="save-btn"
+              style={{
+                marginTop: "20px",
+                padding: "10px 20px",
+                backgroundColor: "orange",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+              onClick={handleUpdateAttendance}
+            >
+              Mark Selected Present
+            </button>
+          </>
+        )}
+        {active === "present" && (
+          <button
+            className="save-btn"
+            onClick={handleSaveAllScores}
+            disabled={students.length === 0}
+            style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: students.length === 0 ? "#ccc" : "green",
+              color: students.length === 0 ? "#666" : "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: students.length === 0 ? "not-allowed" : "pointer",
+            }}
+          >
+            Save All Scores
+          </button>
+        )}
       </div>
 
       <Modal open={Addpopup} onClose={() => setAddPopup(false)}>
@@ -422,40 +418,51 @@ const AdminAttendance = () => {
               {/* <label>Department:{userDept}</label> */}
               {AddStudents.map((student, index) => (
                 <label key={index}>
-                <div key={index} className="AddStudents">
-                  
-                  <div className="AddStudents-input">
-                    
-                    <input
-                      type="checkbox"
-                      style={{
-                        height: "40px",
-                        width: "20px",
-                        position: "relative",
-                        alignSelf: "center",
-                      }}
-                      checked={Addselected.includes(student._id)}
-                              onChange={() => handleSelectedAdd(student._id)}
-                    />
+                  <div key={index} className="AddStudents">
+                    <div className="AddStudents-input">
+                      <input
+                        type="checkbox"
+                        style={{
+                          height: "40px",
+                          width: "20px",
+                          position: "relative",
+                          alignSelf: "center",
+                        }}
+                        checked={Addselected.includes(student._id)}
+                        onChange={() => handleSelectedAdd(student._id)}
+                      />
+                    </div>
 
+                    <div>
+                      <p>
+                        <strong>Name</strong>:{" "}
+                        {student.Student_name.toUpperCase()}
+                      </p>
+                      <p>
+                        <strong>Reg.No </strong>: {student.regno}
+                      </p>
+                    </div>
                   </div>
-                  
-                  <div>
-                    <p>
-                      <strong>Name</strong>:{" "}
-                      {student.Student_name.toUpperCase()}
-                    </p>
-                    <p>
-                      <strong>Reg.No </strong>: {student.regno}
-                    </p>
-                  </div>
-              
-
-                </div>
-                  </label>
+                </label>
               ))}
+              {
+                AddStudents.length==0 &&<p>No Students to Add</p>
+              }
               <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                <button type="submit">Confirm</button>
+                <button type="submit"
+                   disabled={AddStudents.length===0}
+                  style={{ cursor: AddStudents.length === 0 ? "not-allowed" : "pointer",
+                            backgroundColor:AddStudents.length==0?"grey":""
+                   }}
+                >
+                  {Adding ? (
+                    <>
+                      <CircularProgress size={16} color="inherit" /> Please Wait...
+                    </>
+                  ) : (
+                    "Confirm"
+                  )}
+                </button>
                 <button
                   type="button"
                   onClick={() => {

@@ -12,7 +12,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
   // Popup state
   const [isExperimentPopupOpen, setIsExperimentPopupOpen] = useState(false);
   const [formValues, setFormValues] = useState({ exp_no: "", exp_name: "", exp_description: "" });
-  const [popupMode, setPopupMode] = useState("add"); // "add" or "edit"
+  const [popupMode, setPopupMode] = useState("add");
 
   // ----- COURSE HANDLERS -----
   const handleViewCourse = (course) => {

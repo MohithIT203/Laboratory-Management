@@ -12,7 +12,7 @@ export default function LocationTable({ data, pagination,onDelete }) {
             <tr>
               <th>S.No</th>
               <th>Lab Name</th>
-              {/* <th>Department</th> */}
+              <th>Capacity</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -21,7 +21,7 @@ export default function LocationTable({ data, pagination,onDelete }) {
               <tr key={index}>
                 <td>{(pagination - 1) * 5 + (index + 1)}</td>
                 <td>{location.Lab_name}</td>
-                {/* <td>{location.departmen}</td> */}
+                <td>{location?.capacity||0}</td>
                 <td>
                   <button 
                     className="delete-btn" 

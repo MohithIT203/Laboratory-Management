@@ -15,7 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const pages = ["Slots Summary", "Attendance", "Dashboard"];
-const settings = ["Account", "Logout"];
+const settings = ["Logout"];
 
 function StaffAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);

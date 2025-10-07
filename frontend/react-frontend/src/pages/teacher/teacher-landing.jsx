@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import BookIcon from "@mui/icons-material/Book";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ScienceIcon from "@mui/icons-material/Science";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import GroupIcon from "@mui/icons-material/Group";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
@@ -52,24 +53,7 @@ const SlotList = () => {
     "3:00 PM TO 4:30 PM",
   ];
 
-  const venueOptions = [
-    "AIML LAB 1",
-    "AIML LAB 2",
-    "AIML LAB 3",
-    "AIML LAB 4",
-    "AIML LAB 5",
-    "IT LAB 1",
-    "IT LAB 2",
-    "IT LAB 3",
-    "IT LAB 4",
-    "IT LAB 5",
-    "CSE LAB 1",
-    "CSE LAB 2",
-    "CSE LAB 3",
-    "CSE LAB 4",
-    "MECH CAD LAB",
-    "MECH CT LAB",
-  ];
+  const [Locations, setLocations] = useState([]);
 
   const style = {
     position: "absolute",
@@ -151,7 +135,7 @@ const SlotList = () => {
         );
         setallslots(response.data);
         setTotalBooked(() =>
-          response.data.reduce((sum, slot) => sum + slot.total_booked, 0)
+          response.data.reduce((sum, slot) => sum + (slot.total_booked ?? 0), 0)
         );
       } catch (error) {
         console.error("Failed to fetch slot details:", error);
@@ -211,6 +195,19 @@ const SlotList = () => {
     setSelectedSlotId(null);
   };
 
+  const handlevenue = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_SERVER_APP_URL}/locations/${capacity}`
+      );
+      const venues = res.data.map((lab) => lab.Lab_name);
+      console.log(venues);
+      setLocations(venues);
+    } catch (error) {
+      console.log("Error fetching location", error);
+    }
+  };
+
   const handleRemove = async () => {
     try {
       await axios.delete(
@@ -222,7 +219,6 @@ const SlotList = () => {
       setPopupOpen(false);
       setSelectedSlotId(null);
     } catch (error) {
-
       console.log("Error deleting the slot:", error);
     }
   };
@@ -280,7 +276,7 @@ const SlotList = () => {
         </div>
         <div className="card">
           <p>Total Bookings</p>
-          <h3>{totalBooked.toString()}</h3>
+          <h3>{totalBooked}</h3>
         </div>
         <div
           className="card filter-card"
@@ -331,10 +327,20 @@ const SlotList = () => {
             <div key={slot._id} className="slot-card">
               <div className="slot-header">
                 <h3>
-                  {slot.Course} - Exp.No: {slot.experiment.exp_no}
-                  <span className="your-slot-badge">Your Slot</span>
+                  {slot.Course}
+                  {new Date(slot.Date) > new Date() ?(<>
+                    <span className="your-slot-badge">Active</span>
+                  </>):(<>
+                  <span className="your-slot-badge-inactive">InActive</span>
+                  </>)}
+                  
                 </h3>
               </div>
+
+              <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <ScienceIcon fontSize="small" />
+                <strong>Exp.No:{slot.experiment.exp_no}</strong>
+              </p>
 
               <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <BookIcon fontSize="small" />
@@ -353,7 +359,7 @@ const SlotList = () => {
 
               <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <GroupIcon fontSize="small" />
-                {slot.total_booked}/{slot.capacity} Capacity
+                {slot?.total_booked || 0}/{slot.capacity} Capacity
               </p>
 
               <p style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -384,7 +390,10 @@ const SlotList = () => {
                 className="remove-btn-bottom-right"
                 title="Remove Slot"
                 onClick={() => handleOpenDelete(slot._id)}
-                style={{ backgroundColor: "red" }}
+                style={{
+                  backgroundColor: "red",
+                  display: new Date(slot.Date) < new Date() ? "none" : "block",
+                }}
               >
                 Delete
               </button>
@@ -478,26 +487,6 @@ const SlotList = () => {
                   ))}
                 </select>
               </label>
-
-              <label>
-                Venue:
-                <select
-                  value={venue}
-                  onChange={(e) => {
-                    setvenue(e.target.value);
-                    seterror("");
-                  }}
-                  required
-                >
-                  <option value="" disabled>
-                    -- Select Venue --
-                  </option>
-                  {venueOptions.map((v, i) => (
-                    <option key={i}>{v}</option>
-                  ))}
-                </select>
-              </label>
-
               <label>
                 Capacity:
                 <input
@@ -508,6 +497,27 @@ const SlotList = () => {
                   required
                   onChange={(e) => setcapacity(e.target.value)}
                 />
+              </label>
+              <label>
+                Venue:
+                <select
+                  value={venue}
+                  disabled={capacity == 0}
+                  style={{ cursor: capacity == 0 ? "not-allowed" : "pointer" }}
+                  onChange={(e) => {
+                    setvenue(e.target.value);
+                    seterror("");
+                  }}
+                  onClick={handlevenue}
+                  required
+                >
+                  <option value="" disabled>
+                    -- Select Venue --
+                  </option>
+                  {Locations.map((v, i) => (
+                    <option key={i}>{v}</option>
+                  ))}
+                </select>
               </label>
 
               <label>

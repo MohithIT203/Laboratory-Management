@@ -13,9 +13,7 @@ const transporter = mailer.createTransport({
   auth: {
     user: process.env.MAIL_ID,
     pass: process.env.MAIL_PASSWORD,
-  },
-  logger: true,
-  debug: true,
+  }
 });
 async function sendMail({ to, subject, text, html = null }) {
   try {

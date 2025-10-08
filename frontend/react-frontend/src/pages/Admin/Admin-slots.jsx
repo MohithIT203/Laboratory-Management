@@ -177,7 +177,14 @@ function AdminSlots() {
                   />
 
                   <div className="slot-info">
-                    <p>
+                     <p
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "200px",
+                      }}
+                    >
                       <strong>Course : </strong>
                       {slot.Course}
                     </p>

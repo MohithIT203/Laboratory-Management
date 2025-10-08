@@ -262,7 +262,7 @@ const StaffAttendance = () => {
             
           </div>
         )}
-        {active === "present" && (
+        {active === "present" && students.length!=0 && (
               <button
                 className="save-btn"
                 onClick={handleSaveAllScores}

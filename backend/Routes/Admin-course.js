@@ -1,9 +1,10 @@
 const express = require('express');
 const Course=require('../Schemas/new_courseSchema');
 const Slots=require('../Schemas/new_SlotSchema');
+const auth = require("../middlewares/auth");
 const router = express.Router();
 
-router.get('/courses',async(req,res)=>{
+router.get('/courses',auth,async(req,res)=>{
     try{
         const response=await Course.find({}).select("Course_id Course_name dept experiments");
         if(!response){
@@ -15,7 +16,7 @@ router.get('/courses',async(req,res)=>{
     }
 })
 
-router.post("/courses", async (req, res) => {
+router.post("/courses", auth,async (req, res) => {
 
   const { course_code, course_name, department } = req.body;
   if (!course_code || !course_name || !department) {
@@ -44,7 +45,7 @@ router.post("/courses", async (req, res) => {
   }
 });
 
-router.post("/courses/:id/experiments", async (req, res) => {
+router.post("/courses/:id/experiments", auth,async (req, res) => {
   const { id } = req.params;
   const { exp_no, exp_name, exp_description } = req.body;
   console.log(req.body);
@@ -79,7 +80,7 @@ router.post("/courses/:id/experiments", async (req, res) => {
   }
 });
 
-router.put("/:id/experiments/:expid", async (req, res) => {
+router.put("/:id/experiments/:expid", auth,async (req, res) => {
   const { id, expid } = req.params;
   const { exp_no, exp_name, exp_description } = req.body;
   if (!exp_no || !exp_name || !exp_description) {
@@ -116,7 +117,7 @@ router.put("/:id/experiments/:expid", async (req, res) => {
 });
 
 
-router.delete('/courses/:id',async (req,res)=>{
+router.delete('/courses/:id',auth,async (req,res)=>{
     const {id}=req.params;
     try {
     const staff=await Course.findByIdAndDelete(id);
@@ -131,7 +132,7 @@ router.delete('/courses/:id',async (req,res)=>{
     }
 })
 
-router.get('/Admin/all-slots',async(req,res)=>{
+router.get('/Admin/all-slots',auth,async(req,res)=>{
   try{
     const response=await Slots.find({});
     // console.log(response);

@@ -9,7 +9,7 @@ const BookedSlot=require("../Schemas/studentSlot");
 const auth = require("../middlewares/auth");
 
 //ADD NEW COURSE
-router.post("/add/course", async (req, res) => {
+router.post("/add/course", auth,async (req, res) => {
 
   const { Course_id, Course_name, staffs, dept,experiments } = req.body;
 
@@ -42,7 +42,7 @@ router.post("/add/course", async (req, res) => {
 });
 
 //GET DEPT COURSES
-router.get("/api/courses/:dept",async (req, res) => {
+router.get("/api/courses/:dept",auth,async (req, res) => {
   try {
     const { dept } = req.params;
     const courses = await Course.find({ dept });
@@ -54,7 +54,7 @@ router.get("/api/courses/:dept",async (req, res) => {
   }
 });
 
-router.get("/api/exp/:course",async (req, res) => {
+router.get("/api/exp/:course",auth,async (req, res) => {
   try {
     const { course } = req.params;
     
@@ -75,7 +75,7 @@ router.get("/api/exp/:course",async (req, res) => {
 
 
 //GET FACULTY SLOTS
-router.get('/faculty/my-slots/:FacultyEmail',async (req,res)=>{
+router.get('/faculty/my-slots/:FacultyEmail',auth,async (req,res)=>{
   try{
   const {FacultyEmail}=req.params;
   const response=await Slot.find({email:FacultyEmail}).select("Course experiment Date Time venue capacity pdf_material video_material total_booked students").sort({Date:1});
@@ -95,7 +95,7 @@ router.get('/faculty/my-slots/:FacultyEmail',async (req,res)=>{
 
 
 //ALL STUDENTS
-router.get('/faculty/students/:SlotId', async (req, res) => {
+router.get('/faculty/students/:SlotId',auth, async (req, res) => {
   try {
     const { SlotId } = req.params;
     const slot = await Slot.findById(SlotId).select("students");
@@ -129,7 +129,7 @@ router.get('/faculty/students/:SlotId', async (req, res) => {
 
 
 //PRESENT STUDENTS
-router.get('/faculty/present-students/:SlotId', async (req, res) => {
+router.get('/faculty/present-students/:SlotId',auth, async (req, res) => {
   try {
     const { SlotId } = req.params;
     const slot = await Slot.findById(SlotId).select("students");
@@ -171,7 +171,7 @@ router.get('/faculty/present-students/:SlotId', async (req, res) => {
 });
 
 //ABSENT STUDENTS
-router.get('/faculty/absent-students/:SlotId', async (req, res) => {
+router.get('/faculty/absent-students/:SlotId',auth, async (req, res) => {
   try {
     const { SlotId } = req.params;
     const slot = await Slot.findById(SlotId).select("students");
@@ -214,7 +214,7 @@ router.get('/faculty/absent-students/:SlotId', async (req, res) => {
 
 
 //SCORE UPDATE
-router.put('/faculty/update-scores/:SlotId', async (req, res) => {
+router.put('/faculty/update-scores/:SlotId',auth, async (req, res) => {
   try {
     const { SlotId } = req.params;
     const { students } = req.body;
@@ -252,7 +252,7 @@ router.put('/faculty/update-scores/:SlotId', async (req, res) => {
 });
 
 
-router.put("/faculty/update-attendance/:SlotId", async (req, res) => {
+router.put("/faculty/update-attendance/:SlotId", auth,async (req, res) => {
   try {
     const { SlotId } = req.params;
     const { students } = req.body;

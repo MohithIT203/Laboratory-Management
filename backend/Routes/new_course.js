@@ -9,7 +9,7 @@ const auth = require("../middlewares/auth");
 //add new course
 
 
-router.post("/add/new_course", async (req, res) => {
+router.post("/add/new_course", auth,async (req, res) => {
 
   const { Course_id, Course_name, staffs, dept,experiments } = req.body;
 
@@ -40,7 +40,7 @@ router.post("/add/new_course", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-router.get("/api/courses/:dept", async (req, res) => {
+router.get("/api/courses/:dept", auth,async (req, res) => {
   try {
     const { dept } = req.params;
     const courses = await Course.find({ dept });
@@ -52,7 +52,7 @@ router.get("/api/courses/:dept", async (req, res) => {
   }
 });
 
-router.get("/api/exp/:course", async (req, res) => {
+router.get("/api/exp/:course",auth, async (req, res) => {
   try {
     const { course } = req.params;
     

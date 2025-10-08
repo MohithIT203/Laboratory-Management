@@ -3,11 +3,11 @@ const express = require('express');
 const mongoose=require('mongoose');
 const Slot = require('../Schemas/new_SlotSchema');
 const Student=require('../Schemas/studentInfo');
-// const Slot = require('../Schemas/studentSlot');
+const auth = require("../middlewares/auth");
 const router = express.Router();
 
 //BOOK NEW SLOT
-router.post("/student/book-slot", async (req, res) => {
+router.post("/student/book-slot", auth,async (req, res) => {
   const { Slot_id, Student_id } = req.body;
 
   try {
@@ -68,7 +68,7 @@ router.post("/student/book-slot", async (req, res) => {
 
 
 //VIEW BOOKED SLOTS
-router.post('/student/my-bookings', async (req, res) => {
+router.post('/student/my-bookings', auth,async (req, res) => {
   const { Student_id } = req.body;
 
   try {
@@ -93,7 +93,7 @@ router.post('/student/my-bookings', async (req, res) => {
 });
 
 
-router.post("/slots", async (req, res) => {
+router.post("/slots",auth, async (req, res) => {
   const { dept, Student_id } = req.body;
 
   try {
@@ -143,7 +143,7 @@ router.post("/history", async (req, res) => {
 });
 
 
-router.delete("/student/cancel-slot/:slotid/:studentid", async (req, res) => {
+router.delete("/student/cancel-slot/:slotid/:studentid",auth, async (req, res) => {
   const { slotid, studentid } = req.params;
 
   try {
@@ -188,7 +188,7 @@ router.delete("/student/cancel-slot/:slotid/:studentid", async (req, res) => {
 });
 
 //VIEW ATTENDANCE FOR THE SLOTS
-router.get("/student/attendance-history/:Student_id", async (req, res) => {
+router.get("/student/attendance-history/:Student_id", auth,async (req, res) => {
   const { Student_id } = req.params;
 
   try {

@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Slot = require("../Schemas/new_SlotSchema");
 const Student = require("../Schemas/studentInfo");
+const auth = require("../middlewares/auth");
 const mailer = require("nodemailer");
 require("dotenv").config();
 const router = express.Router();
@@ -33,7 +34,7 @@ async function sendMail({ to, subject, text, html = null }) {
 }
 
 //CREATE NEW SLOT
-router.post("/api/courses", async (req, res) => {
+router.post("/api/courses", auth,async (req, res) => {
   const existing = await Slot.findOne({
     Date: req.body.Date,
     Time: req.body.Time,
@@ -85,7 +86,7 @@ Experiment: ${experiment?.exp_name || "N/A"}
 });
 
 //VIEW ALL SLOTS
-router.post("/api/faculty/allSlots", async (req, res) => {
+router.post("/api/faculty/allSlots", auth,async (req, res) => {
   const { FacultyEmail } = req.body;
 
   try {
@@ -100,7 +101,7 @@ router.post("/api/faculty/allSlots", async (req, res) => {
 });
 
 //DELETE SLOT
-router.delete("/api/faculty/allSlots/:id", async (req, res) => {
+router.delete("/api/faculty/allSlots/:id", auth,async (req, res) => {
   const slotId = req.params.id;
   try {
     const DelSlot = await Slot.findByIdAndDelete(slotId);

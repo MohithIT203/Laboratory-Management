@@ -1,9 +1,10 @@
 const express = require('express');
 const Location=require('../Schemas/location');
 const locations = require('../Schemas/location');
+const auth = require("../middlewares/auth");
 const router = express.Router();
 
-router.get('/locations',async(req,res)=>{
+router.get('/locations',auth,async(req,res)=>{
     try{
         const response=await Location.find({});
         if(!response){
@@ -15,9 +16,8 @@ router.get('/locations',async(req,res)=>{
     }
 })
 
-router.get('/locations/:capacity',async(req,res)=>{
+router.get('/locations/:capacity',auth,async(req,res)=>{
     const {capacity}=req.params;
-    console.log(capacity);
     try{
         const response = await Location.find({ capacity: { $gte: capacity } });
         if(!response){
@@ -29,7 +29,7 @@ router.get('/locations/:capacity',async(req,res)=>{
     }
 })
 
-router.post('/locations',async(req,res)=>{
+router.post('/locations',auth,async(req,res)=>{
     const {name,capacity}=req.body;
     try{
         const duplicate=await Location.find({Lab_name:name});
@@ -47,7 +47,7 @@ router.post('/locations',async(req,res)=>{
         return res.status(500).send({message:"Error getting locations"});
     }
 })
-router.delete('/locations/:id',async (req,res)=>{
+router.delete('/locations/:id',auth,async (req,res)=>{
     const {id}=req.params;
     try {
     const staff=await Location.findByIdAndDelete(id);

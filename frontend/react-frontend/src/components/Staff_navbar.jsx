@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-const pages = ["Slots Summary", "Attendance", "Dashboard"];
+const pages = ["Attendance", "Dashboard"];
 const settings = ["Logout"];
 
 function StaffAppBar() {

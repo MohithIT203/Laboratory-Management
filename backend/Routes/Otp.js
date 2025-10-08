@@ -4,9 +4,10 @@ const router = express.Router();
 const Otp = require('../Schemas/otpSchema');
 const Faculty_Slot=require('../Schemas/new_SlotSchema');
 const Student=require('../Schemas/studentInfo');
+const auth = require("../middlewares/auth");
 
 // Store OTP
-router.post('/faculty/otp', async (req, res) => {
+router.post('/faculty/otp', auth,async (req, res) => {
     try {
         const { slotId, otp } = req.body;
 
@@ -23,7 +24,7 @@ router.post('/faculty/otp', async (req, res) => {
 });
 
 // Verify OTP
-router.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', auth,async (req, res) => {
   try {
     const { Student_id, otp } = req.body;
 

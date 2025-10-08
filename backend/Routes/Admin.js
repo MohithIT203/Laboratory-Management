@@ -5,10 +5,11 @@ const Student=require('../Schemas/studentInfo');
 const Slot=require('../Schemas/new_SlotSchema');
 const Location = require('../Schemas/location');
 const Course = require('../Schemas/new_courseSchema');
+const auth = require("../middlewares/auth");
 const router = express.Router();
 
 //Teacher Routes
-router.get('/admin/all-faculties',async (req,res)=>{
+router.get('/admin/all-faculties',auth,async (req,res)=>{
     try{
         const response=await Faculty.find({});
         return res.status(200).send(response);
@@ -17,7 +18,7 @@ router.get('/admin/all-faculties',async (req,res)=>{
     }
 })
 
-router.post('/admin/all-faculties',async (req,res)=>{
+router.post('/admin/all-faculties',auth,async (req,res)=>{
     const {Staff_name,Staff_id,email,dept }=req.body;
     try {
     const existing = await Faculty.findOne({ email });
@@ -46,7 +47,7 @@ router.post('/admin/all-faculties',async (req,res)=>{
     }
 })
 
-router.put('/admin/all-faculties/:id',async (req,res)=>{
+router.put('/admin/all-faculties/:id',auth,async (req,res)=>{
     const {id}=req.params;
     try {
     const staff=await Faculty.findByIdAndUpdate(id,req.body);
@@ -61,7 +62,7 @@ router.put('/admin/all-faculties/:id',async (req,res)=>{
     }
 })
 
-router.delete('/admin/all-faculties/:id',async (req,res)=>{
+router.delete('/admin/all-faculties/:id',auth,async (req,res)=>{
     const {id}=req.params;
     try {
     const staff=await Faculty.findByIdAndDelete(id);
@@ -78,7 +79,7 @@ router.delete('/admin/all-faculties/:id',async (req,res)=>{
 })
 
 //Student Routes
-router.get('/admin/all-students',async (req,res)=>{
+router.get('/admin/all-students',auth,async (req,res)=>{
     try{
         const response=await Student.find({});
         return res.status(200).send(response);
@@ -87,7 +88,7 @@ router.get('/admin/all-students',async (req,res)=>{
     }
 })
 
-router.post('/admin/all-students',async (req,res)=>{
+router.post('/admin/all-students',auth,async (req,res)=>{
     const {Student_name,email,dept,regno }=req.body;
     try {
     const existing = await Student.findOne({ email });
@@ -116,7 +117,7 @@ router.post('/admin/all-students',async (req,res)=>{
     }
 })
 
-router.put('/admin/all-students/:id',async (req,res)=>{
+router.put('/admin/all-students/:id',auth,async (req,res)=>{
     const {id}=req.params;
     try {
     const staff=await Student.findByIdAndUpdate(id,req.body);
@@ -131,7 +132,7 @@ router.put('/admin/all-students/:id',async (req,res)=>{
     }
 })
 
-router.delete('/Admin/all-students/:id',async (req,res)=>{
+router.delete('/Admin/all-students/:id',auth,async (req,res)=>{
     const {id}=req.params;
     console.log(id);
     try {
@@ -148,7 +149,7 @@ router.delete('/Admin/all-students/:id',async (req,res)=>{
     }
 })
 
-router.get("/Admin/add-students/:userDept/:id", async (req, res) => {
+router.get("/Admin/add-students/:userDept/:id", auth,async (req, res) => {
   const { userDept, id } = req.params;
 
   try {
@@ -169,7 +170,7 @@ router.get("/Admin/add-students/:userDept/:id", async (req, res) => {
   }
 });
 
-router.put("/Admin/add-students/:slotId", async (req, res) => {
+router.put("/Admin/add-students/:slotId", auth,async (req, res) => {
   const { students } = req.body;
   const { slotId } = req.params;
 
@@ -218,7 +219,7 @@ router.put("/Admin/add-students/:slotId", async (req, res) => {
 });
 
 
-router.get("/stats", async (req, res) => {
+router.get("/stats",auth, async (req, res) => {
   const totalStudents = await Student.countDocuments();
   const totalTeachers = await Faculty.countDocuments();
   const totalCourses = await Course.countDocuments();

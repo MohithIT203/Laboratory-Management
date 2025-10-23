@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Eye, Trash2 } from "lucide-react";
 import AddPopup from "../AddPopup/AddPopup"; 
+import toast from "react-hot-toast";
 import "../TeacherTable/TeacherTable.css";
 
 export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pagination}) {
@@ -30,7 +31,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
 
   const handleSaveExperiment = async () => {
     if (!formValues.exp_no || !formValues.exp_name || !formValues.exp_description) {
-      alert("Please fill all fields");
+      toast.error("Please fill all fields");
       return;
     }
 
@@ -55,7 +56,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
 
         onUpdateCourse(updatedCourse);
         setSelectedCourse(updatedCourse);
-        alert("Experiment updated successfully!");
+        toast.success("Experiment updated successfully!");
       } else {
         // Add new experiment
         
@@ -75,7 +76,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
 
         onUpdateCourse(updatedCourse);
         setSelectedCourse(updatedCourse);
-        alert("Experiment added successfully!");
+        toast.success("Experiment added successfully!");
       }
 
       // Reset popup
@@ -84,7 +85,7 @@ export default function CourseTable({ courses, onDeleteCourse, onUpdateCourse,pa
       setSelectedExperiment(null);
     } catch (err) {
       console.error("Error saving experiment:", err);
-      alert("Failed to save experiment");
+      toast.error("Failed to save experiment");
     }
   };
 

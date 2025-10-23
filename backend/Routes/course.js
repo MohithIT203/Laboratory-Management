@@ -78,7 +78,7 @@ router.get("/api/exp/:course",auth,async (req, res) => {
 router.get('/faculty/my-slots/:FacultyEmail',auth,async (req,res)=>{
   try{
   const {FacultyEmail}=req.params;
-  const response=await Slot.find({email:FacultyEmail}).select("Course experiment Date Time venue capacity pdf_material video_material total_booked students").sort({Date:1});
+  const response=await Slot.find({email:FacultyEmail}).select("Course experiment Date Time venue capacity total_booked").sort({Date:1});
   if(response.length>0){
     res.json(response);
   }

@@ -48,7 +48,6 @@ router.post("/courses", auth,async (req, res) => {
 router.post("/courses/:id/experiments", auth,async (req, res) => {
   const { id } = req.params;
   const { exp_no, exp_name, exp_description } = req.body;
-  console.log(req.body);
   if (!id || !exp_no || !exp_name || !exp_description) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -135,7 +134,6 @@ router.delete('/courses/:id',auth,async (req,res)=>{
 router.get('/Admin/all-slots',auth,async(req,res)=>{
   try{
     const response=await Slots.find({});
-    // console.log(response);
     if(!response){
        return res.status(404).send({message:"Slots Not found"})
     }

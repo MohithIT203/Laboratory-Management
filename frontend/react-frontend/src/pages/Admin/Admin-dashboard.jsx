@@ -8,6 +8,7 @@ import { isToday, isThisWeek } from 'date-fns';
 import { FaSearch } from "react-icons/fa"; 
 import './Admin-dashboard.css';
 import AdminAppBar from '../../components/Admin_navbar';
+import toast from 'react-hot-toast';
 
 export default function AdminMain() {
   const [filter, setFilter] = useState("all");
@@ -54,9 +55,11 @@ export default function AdminMain() {
       setNewTeacher({});
       setShowTeacherPopup(false);
       setEditTeacherId(null);
+      toast.success("Updated Data Successfully!!");
       fetchTeachers();
     } catch (err) {
       console.error("Error saving teacher:", err);
+      toast.error("Error Updating Data");
     }
   };
 
@@ -70,8 +73,10 @@ export default function AdminMain() {
     try {
       await axios.delete(`${import.meta.env.VITE_SERVER_APP_URL}/admin/all-faculties/${id}`);
       fetchTeachers();
+      toast.success("Deleted Successfully!!");
     } catch (err) {
       console.error("Error deleting teacher:", err);
+      toast.error("Error Deleting Teacher")
     }
   };
 
@@ -122,9 +127,11 @@ export default function AdminMain() {
       setNewStudent({});
       setShowStudentPopup(false);
       setEditStudentId(null);
+      toast.success("Updated Data Successfully!!");
       fetchStudents();
     } catch (err) {
       console.error("Error saving student:", err);
+      toast.error("Error Saving Data");
     }
   };
 
@@ -137,9 +144,11 @@ export default function AdminMain() {
   const handleDeleteStudent = async (id) => {
     try {
       await axios.delete(`${import.meta.env.VITE_SERVER_APP_URL}/Admin/all-students/${id}`);
+      toast.success("Deleted Successfully!!");
       fetchStudents();
     } catch (err) {
       console.error("Error deleting student:", err);
+      toast.success("Error Deleting Student");
     }
   };
 
@@ -287,6 +296,7 @@ export default function AdminMain() {
             <option value="ECE">ECE</option>
             <option value="MECH">MECH</option>
             <option value="EEE">EEE</option>
+            <option value="EEE">IT</option>
           </select>
         </div>
 

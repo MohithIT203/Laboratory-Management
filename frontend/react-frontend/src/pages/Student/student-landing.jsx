@@ -20,6 +20,7 @@ import {
   FaCalendarAlt,
   FaFilter,
 } from "react-icons/fa";
+import toast from 'react-hot-toast';
 import axios from "axios";
 
 const CourseList = () => {
@@ -40,9 +41,8 @@ const CourseList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
-  useEffect(() => {
-    if (userDept) {
-      axios
+  const availableslots =async ()=>{
+    axios
         .post(`${import.meta.env.VITE_SERVER_APP_URL}/slots`, {
           dept: userDept,
           Student_id: userId,
@@ -53,7 +53,10 @@ const CourseList = () => {
         .catch((error) => {
           console.error("Failed to fetch courses:", error);
         });
-
+  } 
+  useEffect(() => {
+    if (userDept) {
+      availableslots();
       fetchMyBookings();
     } else {
       alert("Please login first!");
@@ -80,7 +83,7 @@ const CourseList = () => {
         fetchMyBookings();
       })
       .catch((error) => {
-        console.log("Error Booking Slot:", error);
+       console.error(error.response?.data?.message || "Error booking slot");
         if (error.response) {
           console.error("Error:", error.response.data.message);
           <LoginPopup
@@ -90,8 +93,10 @@ const CourseList = () => {
         } else {
           console.error("Unexpected Error:", error);
         }
+        
       })
       .finally(() => {
+
         setBookingSlotId(null);
       });
   };
@@ -113,6 +118,7 @@ const CourseList = () => {
   const handleTabChange = (tab) => {
     setActive(tab);
     if (tab === "booked") fetchMyBookings();
+    if (tab === "available") availableslots();
   };
 
   const handleCancelSlot = async (slotId) => {
@@ -124,8 +130,10 @@ const CourseList = () => {
       );
 
       setMyBookings((prev) => prev.filter((slot) => slot._id !== slotId));
+      toast.success("Slot Cancelled Successfully!!");
     } catch (err) {
       console.error("Error Deleting Slot:", err);
+      toast.error("An Error Occurred");
     }
   };
 

@@ -4,6 +4,7 @@ import { FaCalendarAlt, FaCheckCircle, FaTimesCircle,FaUserCircle, FaAward  } fr
 import { FiTrendingUp } from "react-icons/fi";
 import { IoCalendarOutline } from "react-icons/io5";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import toast from "react-hot-toast";
 import MiniAppBar from "../../components/Student_navbar";
 import axios from "axios";
 
@@ -42,10 +43,12 @@ const StudentAttendance = () => {
         otp: Number(otp),
       });
       fetchHistory();
-      setMessage(res.data.message);
+      // setMessage(res.data.message);
+      toast.success("OTP verified and Attendance Marked")
     } catch (err) {
       console.error("Error verifying OTP", err);
-      setMessage("❌ Error verifying OTP.");
+      // setMessage("❌ Error verifying OTP.");
+      toast.error("Error verifying OTP");
     }
   };
 

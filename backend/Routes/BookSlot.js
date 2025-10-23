@@ -7,62 +7,46 @@ const auth = require("../middlewares/auth");
 const router = express.Router();
 
 //BOOK NEW SLOT
-router.post("/student/book-slot", auth,async (req, res) => {
+router.post("/student/book-slot", auth, async (req, res) => {
   const { Slot_id, Student_id } = req.body;
 
   try {
-    const selectedSlot = await Slot.findById(Slot_id);
-    const student = await Student.findById(Student_id);
-    const capacity=selectedSlot.capacity;
-    const total=selectedSlot.total_booked;
-    if (!selectedSlot) {
-      return res.status(404).send({ message: "Slot not found" });
-    }
-    if (!student) {
-      return res.status(404).send({ message: "Student not found" });
+   
+    const updatedSlot = await Slot.findOneAndUpdate(
+      {
+        _id: Slot_id,
+        $expr: { $lt: ["$total_booked", "$capacity"] },
+        "students.studentId": { $ne: Student_id },
+      },
+      {
+        $push: {
+          students: { studentId: Student_id, attendance: "absent", marks: 0 },
+        },
+        $inc: { total_booked: 1 },
+      },
+      { new: true }
+    );
+
+    if (!updatedSlot) {
+      return res.status(400).send({
+        message: "Slot full or already booked by student.",
+      });
     }
 
-    if(total+1>capacity){
-      return res.status(400).send({ message: "Choosen Slot reached Maximum Capacity" });
-    }
-
-    // check if student already booked in slot
-    if (selectedSlot.students.some(s => s.studentId === Student_id)) {
-      return res.status(400).send({ message: "Student already booked this slot" });
-    }
-
-    // check if slot already exists in student's slots
-    if (student.slots.some(s => s.slotId === Slot_id)) {
-      return res.status(400).send({ message: "Slot already added to student" });
-    }
-
-    // Add student to slot (follow slot schema)
-    selectedSlot.students.push({
-      studentId: Student_id,
-      attendance: "absent",
-      marks: 0
+    
+    await Student.findByIdAndUpdate(Student_id, {
+      $push: {
+        slots: { slotId: Slot_id, attendance: "absent", marks: 0 },
+      },
     });
-    selectedSlot.total_booked = selectedSlot.students.length;
-
-    // Add slot to student (follow student schema)
-    student.slots.push({
-      slotId: Slot_id,
-      attendance: "absent",
-      marks: 0
-    });
-
-    // Save both
-    await selectedSlot.save();
-    await student.save();
 
     return res.status(200).send({
       message: "Slot booked successfully",
-      slot: selectedSlot,
-      student: student,
+      slot: updatedSlot,
     });
   } catch (err) {
     console.error("Error booking slot:", err);
-    return res.status(500).send({ message: "Error occurred while booking slot" });
+    res.status(500).send({ message: "Error occurred while booking slot" });
   }
 });
 
@@ -79,7 +63,7 @@ router.post('/student/my-bookings', auth,async (req, res) => {
       "students.studentId": Student_id,
       Date: { $gte: today },
 
-    }).sort({ Date: 1 });;
+    }).sort({ Date: 1 }).select("Staff_name Course experiment Date Time venue pdf_material video_material");
 
     if (!bookedSlots.length) {
       return res.status(404).json({ message: "No bookings found for this student" });
@@ -105,7 +89,7 @@ router.post("/slots",auth, async (req, res) => {
       "students.studentId": { $ne: Student_id },
       Date: { $gte: today },
        $expr: { $lt: ["$total_booked", "$capacity"] }
-    });
+    }).select("Staff_name Course experiment Date Time venue pdf_material video_material");
 
     if (slots.length > 0) {
       return res.json(slots);
@@ -129,7 +113,7 @@ router.post("/history", async (req, res) => {
       dept,
       "students.studentId": Student_id ,
       Date: { $lt: today },
-    });
+    }).select("Staff_name Course experiment Date Time venue pdf_material video_material");
 
     if (slots.length > 0) {
       return res.json(slots);

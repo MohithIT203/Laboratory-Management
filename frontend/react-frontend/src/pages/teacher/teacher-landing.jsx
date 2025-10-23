@@ -15,6 +15,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import "./teacher-landing.css";
 import axios from "axios";
 import StaffAppBar from "../../components/Staff_navbar";
+import toast from "react-hot-toast";
 
 const SlotList = () => {
   const location = useLocation();
@@ -139,6 +140,7 @@ const SlotList = () => {
         );
       } catch (error) {
         console.error("Failed to fetch slot details:", error);
+        toast.error("Failed to fetch slot details")
       } finally {
         setSlotLoading(false);
       }
@@ -167,7 +169,7 @@ const SlotList = () => {
       );
       setOpen(false);
       setallslots((prev) => [...prev, response.data.slot]);
-
+      toast.success("Slot Created Successfully!!");
       // reset form
       setsubject("");
       setdate("");
@@ -180,6 +182,7 @@ const SlotList = () => {
     } catch (error) {
       seterror(error.response?.data?.message || "Failed to create slot");
       console.error("Failed to create Slot:", error);
+      toast.error("Failed to create Slot");
     } finally {
       setCreating(false);
     }
@@ -218,8 +221,10 @@ const SlotList = () => {
       setallslots((prev) => prev.filter((slot) => slot._id !== selectedSlotId));
       setPopupOpen(false);
       setSelectedSlotId(null);
+      toast.success("Slot deleted Successfully!!");
     } catch (error) {
       console.log("Error deleting the slot:", error);
+      toast.error("Error Deleting The Slot");
     }
   };
 

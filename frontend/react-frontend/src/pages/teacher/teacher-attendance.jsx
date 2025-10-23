@@ -4,6 +4,7 @@ import { useLocation ,useBeforeUnload} from "react-router-dom";
 import axios from "axios";
 import "./teacher-attendance.css";
 import { FaArrowLeft, FaDatabase, FaSpinner } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const StaffAttendance = () => {
   const location = useLocation();
@@ -28,6 +29,7 @@ const StaffAttendance = () => {
       setStudents(response.data.students);
     } catch (error) {
       console.error("Failed to fetch students:", error);
+      toast.error("Failed to fetch students")
     } finally {
       setLoading(false);
     }
@@ -49,6 +51,7 @@ const StaffAttendance = () => {
       setStudents(res.data.students);
     } catch (err) {
       console.error("Error fetching present students", err);
+      toast.error("Error fetching present students")
     } finally {
       setLoading(false);
     }
@@ -64,6 +67,7 @@ const StaffAttendance = () => {
       setStudents(res.data.students);
     } catch (err) {
       console.error("Error fetching absent students", err);
+      toast.error("Error fetching absent students")
     } finally {
       setLoading(false);
     }
@@ -84,6 +88,7 @@ const StaffAttendance = () => {
       });
     } catch (error) {
       console.error("Failed to post Otp", error);
+      toast.error("Failed to post OTP");
     }
   };
 
@@ -95,10 +100,10 @@ const StaffAttendance = () => {
           score: s.marks,
         })),
       });
-      alert("✅ Scores updated successfully!");
+      toast.success("Scores updated successfully!");
     } catch (err) {
       console.error("Error updating scores", err);
-      alert(" Failed to update scores!!!");
+      toast.error("Failed to update scores!!!");
     }
   };
 

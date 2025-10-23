@@ -9,7 +9,7 @@ import "./Admin-students.css";
 import { FaArrowLeft, FaDatabase, FaPlus } from "react-icons/fa";
 import AdminAppBar from "../../components/Admin_navbar";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import toast from "react-hot-toast";
 const AdminAttendance = () => {
   const location = useLocation();
   const slotId =
@@ -54,6 +54,7 @@ const AdminAttendance = () => {
       setStudents(response.data.students);
     } catch (error) {
       console.error("Failed to fetch students:", error);
+      toast.error("Error Fetching Students!!");
     } finally {
       setLoading(false);
     }
@@ -77,6 +78,7 @@ const AdminAttendance = () => {
       setStudents(res.data.students);
     } catch (err) {
       console.error("Error fetching present students", err);
+       toast.error("Error Fetching Students!!");
     } finally {
       setLoading(false);
     }
@@ -94,6 +96,7 @@ const AdminAttendance = () => {
       setStudents(res.data.students);
     } catch (err) {
       console.error("Error fetching absent students", err);
+       toast.error("Error Fetching Students!!");
     } finally {
       setLoading(false);
     }
@@ -118,10 +121,10 @@ const AdminAttendance = () => {
           })),
         }
       );
-      alert("✅ Scores updated successfully!");
+      toast.success("Scores updated successfully!");
     } catch (err) {
       console.error("Error updating scores", err);
-      alert(" Failed to update scores!!!");
+      toast.error("Failed to update scores!!!");
     }
   };
 
@@ -139,8 +142,10 @@ const AdminAttendance = () => {
         }/Admin/add-students/${userDept}/${slotId}`
       );
       setAddStudents(response.data);
+      
     } catch (err) {
       console.error("Error Fetching Students");
+       
     }
   };
 
@@ -165,9 +170,11 @@ const AdminAttendance = () => {
       );
       setAddPopup(false);
       setAdding(false);
+      toast.success("Students Added Successfully!!");
       fetchStudents();
     } catch (err) {
       console.error("Error Updating Attendance!!");
+      toast.error("Error Fetching Students!!");
     }
   };
   const handleSelectAll = () => {
@@ -191,9 +198,11 @@ const AdminAttendance = () => {
           students: selected,
         }
       );
+      toast.success("Attendance Updated Successfully!!");
       fetchStudents();
     } catch (err) {
       console.error("Error Updating Attendance!!");
+       toast.error("Error Updating Attendance!!");
     }
   };
 

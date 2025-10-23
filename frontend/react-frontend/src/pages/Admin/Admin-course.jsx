@@ -7,6 +7,7 @@ import AddPopup from "../../components/AddPopup/AddPopup";
 import { FaSearch } from "react-icons/fa";
 import "./Admin-course.css";
 import AdminAppBar from "../../components/Admin_navbar";
+import toast from "react-hot-toast";
 
 export default function AdminCourse() {
   const [courses, setCourses] = useState([]);
@@ -66,7 +67,7 @@ export default function AdminCourse() {
     );
   };
 
-  // ========== COURSES ==========
+ 
   const handleSaveCourse = () => {
     const { course_name, course_code, department } = newCourse;
     if (!course_name || !course_code || !department) {
@@ -78,9 +79,12 @@ export default function AdminCourse() {
       .then((res) => {
         setCourses((prev) => [...prev, res.data.course]);
         setNewCourse({ course_name: "", course_code: "", department: "" });
+        toast.success("Course Added Successfully!!");
         setIsCoursePopupOpen(false);
       })
-      .catch((err) => console.error("Error adding course:", err));
+      .catch((err) =>{ console.error("Error adding course:", err);
+         toast.error("Error Adding Course");
+      });
   };
 
   const handleDeleteCourse = (courseId) => {
@@ -88,8 +92,11 @@ export default function AdminCourse() {
       .delete(`${import.meta.env.VITE_SERVER_APP_URL}/courses/${courseId}`)
       .then(() => {
         setCourses((prev) => prev.filter((c) => c._id !== courseId));
+        toast.success("Course Deleted Successfully!!");
       })
-      .catch((err) => console.error("Error deleting course:", err));
+      .catch((err) => {console.error("Error deleting course:", err);
+        toast.success("Error Deleting Course");
+      });
   };
 
   const handleUpdateCourse = (updatedCourse) => {
@@ -107,7 +114,7 @@ export default function AdminCourse() {
       !newLocation.lab_name.trim() ||
       !newLocation.capacity
     ) {
-      alert("Please enter a lab name and valid capacity");
+      toast.error("Please enter a lab name and valid capacity");
       return;
     }
     try {
@@ -127,9 +134,10 @@ export default function AdminCourse() {
       setNewLocation({ lab_name: "", capacity: "" });
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        alert("Location already exists");
+        toast.error("Location already exists");
       } else {
         console.error("Error adding location:", err);
+        toast.error("Error Adding Location")
       }
     }
   };
@@ -140,8 +148,10 @@ export default function AdminCourse() {
         `${import.meta.env.VITE_SERVER_APP_URL}/locations/${locationId}`
       );
       setLocations((prev) => prev.filter((loc) => loc._id !== locationId));
+      toast.success("Location Deleted Successfully!!");
     } catch (err) {
       console.error("Error deleting location:", err);
+      toast.error("Error Deleting Location")
     }
   };
 
@@ -152,7 +162,7 @@ export default function AdminCourse() {
   // 🔍 Filter + Search Courses
   const filteredCourses = courses.filter(
     (c) =>
-      (courseDeptFilter === "all" || c.department === courseDeptFilter) &&
+      (courseDeptFilter === "all" || c.dept === courseDeptFilter) &&
       Object.values(c).some((value) =>
         String(value).toLowerCase().includes(courseSearch.toLowerCase())
       )
